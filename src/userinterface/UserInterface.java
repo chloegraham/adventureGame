@@ -5,11 +5,13 @@ import java.awt.event.FocusEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import renderer.RenderPane;
+import userinterface.Action.Actions;
 import controller.Controller;
 
 /**
@@ -24,13 +26,9 @@ public class UserInterface {
 	public UserInterface(Controller controller) {
 		this.controller = controller;
 		addListeners();
-		run();
-	}
-	
-	public void run(){
 		frame.setVisible(true);
 	}
-
+	
 	/**
 	 * Require rendering window to maintain focus, and assign all listeners to it.
 	 * Requests confirmation and closes the system if player tries to close the window.
@@ -38,7 +36,7 @@ public class UserInterface {
 	private void addListeners() {
 		graphics.setFocusable(true);
 		
-		graphics.addKeyListener(new Listener(controller));
+		graphics.addKeyListener(new Listener(controller, this));
 		graphics.addFocusListener(new FocusAdapter() {		// Reclaim focus when lost
 	          public void focusLost(FocusEvent ev) {
 	        	  graphics.requestFocus();
@@ -59,7 +57,32 @@ public class UserInterface {
 		};
 		frame.addWindowListener(exitListener);
 	}
+	
+	/**
+	 * Rotates the graphics pane either clockwise or counterclockwise
+	 */
+	public void rotation(Actions direction){
+		if (direction == Actions.CLOCKWISE){ }
+		else if (direction == Actions.COUNTERCLOCKWISE){ }
+	}
+	
+	/**
+	 * Display a message on the graphics window
+	 * @param message 
+	 */
+	public void addMessage(String message){
+	}
+	
+	/**
+	 * Display a list of items that the player is currently holding
+	 * @param inventory
+	 */
+	public void showInventory(List<String> inventory){
+	}
 
+	/**
+	 * Set the level and redraw the pane
+	 */
 	public void redraw(char[][] level){
 		graphics.setLevel(level);
 		frame.repaint();

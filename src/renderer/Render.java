@@ -1,10 +1,6 @@
 package renderer;
 
-import gameWorld.Level;
-
 import javax.swing.JFrame;
-
-import userinterface.Listener;
 
 public class Render {
 	private RenderPane gameCanvas;

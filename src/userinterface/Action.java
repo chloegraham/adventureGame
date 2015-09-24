@@ -1,4 +1,4 @@
-package controller;
+package userinterface;
 
 import java.awt.event.KeyEvent;
 
@@ -26,8 +26,8 @@ public class Action {
 		LOAD (KeyEvent.VK_L),
 		/* Adding new events below this line will increase the number of unnecessary checks.
 		 * Better to place above instead. */
-		CAMROTATELEFT (KeyEvent.VK_NUMPAD7),
-		CAMROTATERIGHT (KeyEvent.VK_NUMPAD9),
+		COUNTERCLOCKWISE (KeyEvent.VK_NUMPAD7),		// Graphics rotation
+		CLOCKWISE (KeyEvent.VK_NUMPAD9),
 		NORTH (KeyEvent.VK_W),
 		EAST (KeyEvent.VK_D),
 		SOUTH (KeyEvent.VK_S),

@@ -5,7 +5,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-import controller.Action.Actions;
+import userinterface.Action.Actions;
 import controller.Controller;
 
 /**
@@ -14,6 +14,7 @@ import controller.Controller;
  * @author Kirsty
  */
 public class Listener implements KeyListener, ActionListener {
+	private final UserInterface UI;
 	// Stores the direction the screen is currently being shown at. Key Events are rotated to match, must remain in this order.
 	private final Actions[] ROTATION = new Actions[]{Actions.NORTH, Actions.EAST, Actions.SOUTH, Actions.WEST};
 	private int DIR = 0;
@@ -21,8 +22,14 @@ public class Listener implements KeyListener, ActionListener {
 	private final Actions[] ACTIONS = Actions.values();	// All possible movements the player may make
 	private final Controller controller;
 	
-	public Listener(Controller controller) {
+	public Listener(Controller controller, UserInterface ui) {
 		this.controller = controller;
+		this.UI = ui;
+	}
+	
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
 	}
 	
 	@Override
@@ -30,14 +37,16 @@ public class Listener implements KeyListener, ActionListener {
 		int event = e.getKeyCode();
 		
 		/* First let's check for camera rotations. Does not yet rotate the actual view. */
-		if (Actions.CAMROTATELEFT.getKeyCode() == event){
+		if (Actions.COUNTERCLOCKWISE.getKeyCode() == event){
 			DIR--;
 			if (DIR < 0) DIR = ROTATION.length-1;
+			UI.rotation(Actions.COUNTERCLOCKWISE);
 			return;
 		}
-		if (Actions.CAMROTATERIGHT.getKeyCode() == event){
-			DIR--;
+		if (Actions.CLOCKWISE.getKeyCode() == event){
+			DIR++;
 			if (DIR >= ROTATION.length) DIR = 0;
+			UI.rotation(Actions.CLOCKWISE);
 			return;
 		}
 		
@@ -46,6 +55,7 @@ public class Listener implements KeyListener, ActionListener {
 			if (ROTATION[i].getKeyCode() == event){
 				int send = i + DIR;			// If the screen has not been rotated, the direction will not be changed.
 				if (send > 3){ send -= 4; }
+				if (send < 0){ send += 4; }
 				controller.passUserAction(ROTATION[send].ordinal());
 				return;
 			}
@@ -65,10 +75,4 @@ public class Listener implements KeyListener, ActionListener {
 	public void keyReleased(KeyEvent e) {}
 	@Override
 	public void keyTyped(KeyEvent e) {}
-
-	@Override
-	public void actionPerformed(ActionEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
 }

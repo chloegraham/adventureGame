@@ -33,5 +33,12 @@ public class Controller {
 	public void passUserAction(int action){
 		level.handleAction(action);
 	}
+	
+	/**
+	 * Add a message to the user interface
+	 */
+	public void addMessage(String message){
+		ui.addMessage(message);
+	}
 
 }

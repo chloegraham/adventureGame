@@ -16,9 +16,6 @@ import renderer.RenderPane;
  * @author Kirsty
  */
 public class GameFrame extends JFrame {
-	private final RenderPane RENDERER;
-	private final JPanel BORDER = new JPanel();
-	
 	/* Determine size of game window */
 	private static final int frameWidth = 850;
 	private static final int frameHeight = 650;
@@ -28,19 +25,20 @@ public class GameFrame extends JFrame {
 	public static final int FRAMEX = (int) ((dim.getWidth() / 2)-(frameWidth / 2));
 	public static final int FRAMEY = (int) ((dim.getHeight() / 2)-(frameHeight / 2));
 	
+	private final JPanel graphicsPane = new JPanel();
+	
 	/**
 	 * Sets up the window to display the game and all controls/menus.
 	 * Adds Action, Key & Mouse listeners.
 	 */
-	public GameFrame(RenderPane renderer) {
+	public GameFrame(RenderPane graphics) {
 		super("Chicken Little");
 		
-		this.RENDERER = renderer;
-		buildBorderPanel();
+		buildGraphicsPane(graphics);
 		
 		/* TODO Set up layered game menus */
 		
-		add(BORDER);
+		add(graphicsPane);
 		
 		/* Set sizes, locations and decoration options for the full frame. */
 		this.setPreferredSize(FRAMESIZE);
@@ -53,23 +51,23 @@ public class GameFrame extends JFrame {
 	/**
 	 * Builds the Panel that displays the game graphics. Includes a solid black border around the Renderer.  
 	 */
-	private void buildBorderPanel(){
-		BoxLayout layout = new BoxLayout(BORDER, BoxLayout.Y_AXIS);
-		BORDER.setLayout(layout);
+	private void buildGraphicsPane(RenderPane graphics){
+		BoxLayout layout = new BoxLayout(graphicsPane, BoxLayout.Y_AXIS);
+		graphicsPane.setLayout(layout);
 		
 		// Add Renderer to the centre of the panel
-		BORDER.add(Box.createVerticalGlue());
-		BORDER.add(RENDERER);
-		BORDER.add(Box.createVerticalGlue());
+		graphicsPane.add(Box.createVerticalGlue());
+		graphicsPane.add(graphics);
+		graphicsPane.add(Box.createVerticalGlue());
 		
 		// Set size, alignment and background colour
 		Dimension rendererSize = new Dimension(frameWidth-50, frameHeight-50);
-		RENDERER.setMaximumSize(rendererSize);		// leave a small border around the Renderer
-		RENDERER.setPreferredSize(rendererSize);
-		RENDERER.setAlignmentX(CENTER_ALIGNMENT);
+		graphics.setMaximumSize(rendererSize);		// leave a small border around the Renderer
+		graphics.setPreferredSize(rendererSize);
+		graphics.setAlignmentX(CENTER_ALIGNMENT);
 		
-		BORDER.setPreferredSize(FRAMESIZE);
-		BORDER.setBackground(Color.black);
+		graphicsPane.setPreferredSize(FRAMESIZE);
+		graphicsPane.setBackground(Color.black);
 	}
 	
 	private static final long serialVersionUID = 1L;

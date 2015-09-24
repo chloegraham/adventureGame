@@ -2,11 +2,11 @@ package gameWorld;
 
 import java.awt.Point;
 
-import controller.Action.Actions;
 import controller.Controller;
 import tiles.EmptyTile;
 import tiles.Tile;
 import tiles.Wall;
+import userinterface.Action.Actions;
 
 public class Level {
 	private static final int WIDTH = 25;
