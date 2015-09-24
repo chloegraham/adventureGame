@@ -5,6 +5,11 @@ import gameWorld.Level;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
+/**
+ * Notifies master connection of player input.
+ * Organises camera rotation.
+ * @author Kirsty
+ */
 public class Listener implements KeyListener{
 	private Level level;
 	

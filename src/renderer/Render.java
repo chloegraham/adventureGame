@@ -8,14 +8,11 @@ import userinterface.Listener;
 
 public class Render {
 	private RenderPane gameCanvas;
-	private Level level;
 	
 	public Render() {
-		this.level = new Level(this);
-		
 		JFrame f = new JFrame("Elliots Awesome Renderer");
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        f.addKeyListener(new Listener(level));
+        //f.addKeyListener(new Listener(level));
        
         this.gameCanvas = new RenderPane();
         
@@ -35,9 +32,5 @@ public class Render {
 	public void redraw(char[][] level){
 		this.gameCanvas.setLevel(level);
 		this.gameCanvas.repaint();
-	}
-	
-	public void horriblemethod() {
-		level.horriblemethod();
 	}
 }

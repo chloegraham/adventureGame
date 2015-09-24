@@ -1,9 +1,10 @@
 package main;
 
-import userinterface.UserInterface;
+
+import controller.Controller;
 
 public class Main {
 	public static void main(String[] args) {
-		new UserInterface();
+		new Controller();
 	}
 }

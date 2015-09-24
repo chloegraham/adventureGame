@@ -2,7 +2,8 @@ package gameWorld;
 
 import java.awt.Point;
 
-import renderer.Render;
+import controller.Action.Actions;
+import controller.Controller;
 import tiles.EmptyTile;
 import tiles.Tile;
 import tiles.Wall;
@@ -11,13 +12,13 @@ public class Level {
 	private static final int WIDTH = 25;
 	private static final int HEIGHT = 25;
 	
+	private Controller controller;
 	private Tile[][] tiles;
 	private Player player;
-	private Render ui;
 	private GameLogic logic;
 	
-	public Level(Render ui) {
-		this.ui = ui;
+	public Level(Controller controller) {
+		this.controller = controller;
 		tiles = new Tile[HEIGHT][WIDTH];
 		setupEmptyTiles();
 		setupWalls();
@@ -53,25 +54,31 @@ public class Level {
 		logic = new GameLogic(tiles);
 	}
 	
+	public void handleAction(int action){
+		if (Actions.NORTH.ordinal() == action){ moveUp(); }
+		else if (Actions.SOUTH.ordinal() == action){ moveDown(); }
+		else if (Actions.EAST.ordinal() == action){ moveRight(); }
+		else if (Actions.WEST.ordinal() == action){ moveLeft(); }
+	}
 	
 	public void moveLeft() {
 		if (logic.moveLeft(player))
-			ui.redraw(getLevelImg());
+			controller.updateUI(getLevelImg());
 	}
 	
 	public void moveRight() {
 		if (logic.moveRight(player))
-			ui.redraw(getLevelImg());
+			controller.updateUI(getLevelImg());
 	}
 	
 	public void moveUp() {
 		if (logic.moveUp(player))
-			ui.redraw(getLevelImg());
+			controller.updateUI(getLevelImg());
 	}
 	
 	public void moveDown() {
 		if (logic.moveDown(player))
-			ui.redraw(getLevelImg());
+			controller.updateUI(getLevelImg());
 	}
 	
 	public char[][] getLevelImg() {
@@ -84,9 +91,5 @@ public class Level {
 		array[loc.y][loc.x] = player.toString().charAt(0);
 		
 		return array;
-	}
-
-	public void horriblemethod() {
-		ui.redraw(getLevelImg());
 	}
 }
