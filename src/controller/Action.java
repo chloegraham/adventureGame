@@ -28,7 +28,6 @@ public class Action {
 		 * Better to place above instead. */
 		CAMROTATELEFT (KeyEvent.VK_NUMPAD7),
 		CAMROTATERIGHT (KeyEvent.VK_NUMPAD9),
-		EXIT (KeyEvent.VK_ESCAPE),
 		NORTH (KeyEvent.VK_W),
 		EAST (KeyEvent.VK_D),
 		SOUTH (KeyEvent.VK_S),
