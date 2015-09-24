@@ -1,5 +1,14 @@
 package userinterface;
 
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+
 import renderer.RenderPane;
 import controller.Controller;
 
@@ -8,14 +17,51 @@ import controller.Controller;
  * @author Kirsty
  */
 public class UserInterface {
-	Controller controller;
 	RenderPane graphics = new RenderPane();
+	GameFrame frame = new GameFrame(graphics);
+	Controller controller;
 	
 	public UserInterface(Controller controller) {
 		this.controller = controller;
+		addListeners();
+		run();
 	}
 	
+	public void run(){
+		frame.setVisible(true);
+	}
+
+	/**
+	 * Require rendering window to maintain focus, and assign all listeners to it.
+	 * Requests confirmation and closes the system if player tries to close the window.
+	 */
+	private void addListeners() {
+		graphics.setFocusable(true);
+		
+		graphics.addKeyListener(new Listener(controller));
+		graphics.addFocusListener(new FocusAdapter() {		// Reclaim focus when lost
+	          public void focusLost(FocusEvent ev) {
+	        	  graphics.requestFocus();
+	          }
+	        });
+
+		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);		// Use a window listener to close the game
+		WindowListener exitListener = new WindowAdapter() {
+		    @Override
+		    public void windowClosing(WindowEvent e) {				// Override closing event. If OK is not selected, don't do anything.
+		        int confirm = JOptionPane.showOptionDialog(null,
+		        	"Are you sure you want to exit the game?\nProgress since last save will be lost.\nConnection to server will be closed.", 
+		        	"Exit Game", JOptionPane.CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
+		        if (confirm == 0) {
+		           System.exit(0);
+		        }
+		    }
+		};
+		frame.addWindowListener(exitListener);
+	}
+
 	public void redraw(char[][] level){
 		graphics.setLevel(level);
+		frame.repaint();
 	}
 }

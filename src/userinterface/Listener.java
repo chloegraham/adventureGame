@@ -1,5 +1,7 @@
 package userinterface;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
@@ -11,7 +13,7 @@ import controller.Controller;
  * Organises camera rotation.
  * @author Kirsty
  */
-public class Listener implements KeyListener{
+public class Listener implements KeyListener, ActionListener {
 	// Stores the direction the screen is currently being shown at. Key Events are rotated to match, must remain in this order.
 	private final Actions[] ROTATION = new Actions[]{Actions.NORTH, Actions.EAST, Actions.SOUTH, Actions.WEST};
 	private int DIR = 0;
@@ -63,4 +65,10 @@ public class Listener implements KeyListener{
 	public void keyReleased(KeyEvent e) {}
 	@Override
 	public void keyTyped(KeyEvent e) {}
+
+	@Override
+	public void actionPerformed(ActionEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
 }
