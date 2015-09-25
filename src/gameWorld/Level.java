@@ -9,8 +9,8 @@ import tiles.Wall;
 import userinterface.Action.Actions;
 
 public class Level {
-	private static final int WIDTH = 8;
-	private static final int HEIGHT = 8;
+	private static final int WIDTH = 9;
+	private static final int HEIGHT = 9;
 	
 	private Controller controller;
 	private Tile[][] tiles;
