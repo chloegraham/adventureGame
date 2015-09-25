@@ -18,14 +18,7 @@ public class Render {
         f.addKeyListener(new Listener(level));
        
         this.gameCanvas = new RenderPane();
-        
-        
-       
-//        char[][] level =    {{'w','w','e','e'},
-//                            {'w','e','p','e'},
-//                            {'e','e','e','e'},
-//                            {'e','e','e','e'}};
-
+     
 
         f.add(gameCanvas);
         f.pack();

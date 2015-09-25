@@ -12,7 +12,7 @@ public class RenderPane extends JPanel {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private final int tilesize = 100;
+	private final int tilesize = 128;
     private TileDrawingMachine tilePainter = new TileDrawingMachine(tilesize);
     private char[][] level;
 
@@ -43,8 +43,16 @@ public class RenderPane extends JPanel {
 
 
     private void paintLayer(Graphics2D g2, int depth, char[][] layer){
+    	
+    	
+    	char[][] levelTester =    {{'w','d','w','w'},
+                 {'w','e','p','e'},
+                 {'o','e','e','e'},
+                 {'w','l','c','e'}};
+  
+  		// Uncomment for tile testing
+  		//layer = levelTester;
 
-        // Will find better system later
         int numberOfRows = layer.length;
         int numberOfColums = layer[0].length;
 
@@ -67,6 +75,17 @@ public class RenderPane extends JPanel {
 
                     case 'p': tilePainter.drawCharachter(g2, isoTile.x, isoTile.y);
                         break;
+                        
+                    case 'c': tilePainter.drawChest(g2, isoTile.x, isoTile.y);
+                    	break;
+                    	
+                    case 'l': tilePainter.drawOpenedChest(g2, isoTile.x, isoTile.y);
+                		break;
+                		
+                    case 'd': tilePainter.drawDoor(g2, isoTile.x, isoTile.y);
+                    	break;
+                    	
+                    case 'o': tilePainter.drawFloorTile(g2, isoTile.x, isoTile.y);
                 }
             }
         }
