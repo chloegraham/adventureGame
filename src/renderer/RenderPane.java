@@ -45,8 +45,8 @@ public class RenderPane extends JPanel {
     private void paintLayer(Graphics2D g2, int depth, char[][] layer){
 
         // Will find better system later
-        int numberOfRows = 4;
-        int numberOfColums = 4;
+        int numberOfRows = layer.length;
+        int numberOfColums = layer[0].length;
 
         g2.setStroke(new BasicStroke(1));
 

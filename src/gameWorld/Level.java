@@ -8,8 +8,8 @@ import tiles.Tile;
 import tiles.Wall;
 
 public class Level {
-	private static final int WIDTH = 25;
-	private static final int HEIGHT = 25;
+	private static final int WIDTH = 8;
+	private static final int HEIGHT = 8;
 	
 	private Tile[][] tiles;
 	private Player player;
