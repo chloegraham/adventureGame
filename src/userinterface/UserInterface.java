@@ -84,6 +84,24 @@ public class UserInterface {
 	 * Set the level and redraw the pane
 	 */
 	public void redraw(char[][] level){
+		 int numberOfRows = level.length;
+	        int numberOfColums = level[0].length;
+
+		
+		int camX = 0;
+		int camY = 0;
+		
+		 for (int i = 0; i < numberOfRows; i++) {
+	            for (int j = 0; j < numberOfColums; j++) {
+	            	if(level[i][j] == 'p'){
+	            		camX = j;
+	            		camY = i;
+	            	}
+	            }
+		 }
+		 		
+		
+		graphics.setCameraLocation(camX,camY);
 		graphics.setLevel(level);
 		frame.repaint();
 	}

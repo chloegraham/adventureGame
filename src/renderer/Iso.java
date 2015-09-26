@@ -7,7 +7,13 @@ import java.awt.Point;
  */
 public final class Iso {
     private Iso(){}
-
+    
+    public static Point cameraOffset = new Point(0,0);
+    private static int tileSize = 128;
+    
+    public void setOffset(Point camPoint){
+    	cameraOffset = camPoint;
+    }
 
     public static void isoTo2d(Point iso){
 
@@ -15,8 +21,18 @@ public final class Iso {
 
     public static Point twoDToIso(Point twoDee){
         Point tempPoint = new Point(0,0);
+        
+        int camX = cameraOffset.x * (tileSize / 2);
+        int camY = cameraOffset.y * (tileSize / 2);
+                
+        //Camera Offset
+        twoDee.x -= camX;
+        twoDee.y -= camY;
+        
+      
+        
         tempPoint.x = (twoDee.x - twoDee.y) + 400; // Half the screen width, to center 0,0.
-        tempPoint.y = ((twoDee.x + twoDee.y) / 2) + 100; // Half the screen height
+        tempPoint.y = ((twoDee.x + twoDee.y) / 2) + 300; // Half the screen height
         return tempPoint;
     }
 
