@@ -26,6 +26,14 @@ public class Level {
 		setupGameLogic();
 	}
 	
+	public Level() {
+		tiles = new Tile[HEIGHT][WIDTH];
+		setupEmptyTiles();
+		setupWalls();
+		setupPlayer();
+		setupGameLogic();
+	}
+	
 	private void setupEmptyTiles() {
 		for (int x = 0; x < WIDTH; x++) {
 			for (int y = 0; y < HEIGHT; y++) {
@@ -51,7 +59,7 @@ public class Level {
 	}
 	
 	private void setupGameLogic() {
-		logic = new GameLogic(tiles);
+		logic = new GameLogic(tiles, player, this);
 	}
 	
 	public void handleAction(int action){

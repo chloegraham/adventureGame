@@ -1,17 +1,18 @@
 package tiles;
 
 public class Door implements Tile {
-	private boolean Closed = true;
+	
+	private boolean closed = true;
 	
 	public String toString() {
 		return "d";
 	}
 	
 	public void openDoor(){
-		this.Closed = false;
+		this.closed = false;
 	}
 	
 	public boolean getState(){
-		return Closed; 
+		return closed; 
 	}
 }

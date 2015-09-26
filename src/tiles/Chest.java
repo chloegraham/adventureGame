@@ -3,9 +3,8 @@ package tiles;
 import item.Item;
 import item.Key;
 
-
-
 public class Chest implements Tile {
+	
 	private boolean state = true;
 	private Key myKey = new Key("Key1122");
 	
