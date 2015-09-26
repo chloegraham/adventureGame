@@ -34,7 +34,7 @@ public class GameLogic {
 	private boolean move(Player player, Point newLoc) {
 		
 		Tile tile = tiles[newLoc.y][newLoc.x];
-		if(tile instanceof EmptyTile){
+		if(tile instanceof EmptyTile || (tile instanceof Door && !((Door)tile).isLocked()) ) {
 			player.setMyLocation(newLoc);
 			return true;
 		}

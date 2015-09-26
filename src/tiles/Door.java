@@ -15,7 +15,7 @@ public class Door implements Tile {
 	public void openDoor(Key pKey){
 		if(key.equals(pKey)){
 			this.locked = false;
-			this.character = "D";
+			this.character = "o";
 		}
 	}
 	
