@@ -44,15 +44,15 @@ public class Player {
 		this.direction = direction;
 	}
 
-	public List<Item> getInven(){
+	public List<Item> getInventory(){
 		return inventory;
 	}
 	
-	public void addToInven(Item item){
+	public void addToInventory(Item item){
 		inventory.add(item);
 	}
 	
-	public void testInven(){
+	public void testInventory(){
 		for (Item s : inventory){
 			System.out.println(s.toString());
 		}
