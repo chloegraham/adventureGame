@@ -12,21 +12,27 @@ import javax.swing.JOptionPane;
 
 import renderer.RenderPane;
 import userinterface.Action.Actions;
-import controller.Controller;
 
 /**
  * Organises what displays to the user.
  * @author Kirsty
  */
 public class UserInterface {
-	RenderPane graphics = new RenderPane();
-	GameFrame frame = new GameFrame(graphics);
-	Controller controller;
+	private RenderPane graphics = new RenderPane();
+	private GameFrame frame = new GameFrame(graphics);
+	private int action = 0;
 	
-	public UserInterface(Controller controller) {
-		this.controller = controller;
+	public UserInterface() {
 		addListeners();
 		frame.setVisible(true);
+	}
+	
+	public int getAction() {
+		return action; 
+	}
+	
+	public void sendUIAction(int action) {
+		this.action = action;
 	}
 	
 	/**
@@ -36,7 +42,7 @@ public class UserInterface {
 	private void addListeners() {
 		graphics.setFocusable(true);
 		
-		graphics.addKeyListener(new Listener(controller, this));
+		graphics.addKeyListener(new Listener(this));
 		graphics.addFocusListener(new FocusAdapter() {		// Reclaim focus when lost
 	          public void focusLost(FocusEvent ev) {
 	        	  graphics.requestFocus();
@@ -98,8 +104,6 @@ public class UserInterface {
 	            	}
 	            }
 		 }
-		
-		
 		
 		graphics.setCameraLocation(camX,camY);
 		graphics.setLevel(level);
