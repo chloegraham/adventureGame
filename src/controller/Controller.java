@@ -15,9 +15,9 @@ public class Controller {
 	 * Set up a game and initialise the UI.
 	 */
 	public Controller(){
-		this.level = new Level(this);
-		this.ui = new UserInterface(this);
-		updateUI(level.getLevelImg());
+//		this.level = new Level(this);
+//		this.ui = new UserInterface(this);
+//		updateUI(level.getLevelImg());
 	} 
 
 	/**

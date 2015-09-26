@@ -5,6 +5,10 @@ import userinterface.UserInterface;
 public class Client {
 	private UserInterface ui;
 	
+	public Client() {
+		ui = new UserInterface();
+	}
+	
 	// TEMP
 	private int uid = 0;
 	// TEMP
