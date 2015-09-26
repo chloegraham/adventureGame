@@ -6,7 +6,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 import userinterface.Action.Actions;
-import controller.Controller;
 
 /**
  * Notifies master connection of player input.
@@ -16,21 +15,16 @@ import controller.Controller;
 public class Listener implements KeyListener, ActionListener {
 	private final UserInterface UI;
 	// Stores the direction the screen is currently being shown at. Key Events are rotated to match, must remain in this order.
-	private final Actions[] ROTATION = new Actions[]{Actions.NORTH, Actions.EAST, Actions.SOUTH, Actions.WEST};
+	private final Actions[] ROTATION = new Actions[] { Actions.NORTH, Actions.EAST, Actions.SOUTH, Actions.WEST };
 	private int DIR = 0;
 	
 	private final Actions[] ACTIONS = Actions.values();	// All possible movements the player may make
-	private final Controller controller;
 	
-	public Listener(Controller controller, UserInterface ui) {
-		this.controller = controller;
+	public Listener(UserInterface ui) {
 		this.UI = ui;
 	}
 	
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
-	}
+
 	
 	@Override
 	public void keyPressed(KeyEvent e) {
@@ -56,7 +50,7 @@ public class Listener implements KeyListener, ActionListener {
 				int send = i + DIR;			// If the screen has not been rotated, the direction will not be changed.
 				if (send > 3){ send -= 4; }
 				if (send < 0){ send += 4; }
-				controller.passUserAction(ROTATION[send].ordinal());
+				UI.sendUIAction(ROTATION[send].ordinal());
 				return;
 			}
 		}
@@ -64,7 +58,7 @@ public class Listener implements KeyListener, ActionListener {
 		/* All other keys must be sent directly through the server. Find the ordinal and send it. */
 		for (Actions ac : ACTIONS){
 			if (ac.getKeyCode() == event){
-				controller.passUserAction(ac.ordinal());
+				UI.sendUIAction(ac.ordinal());
 				return;
 			}
 		}
@@ -75,4 +69,6 @@ public class Listener implements KeyListener, ActionListener {
 	public void keyReleased(KeyEvent e) {}
 	@Override
 	public void keyTyped(KeyEvent e) {}
+	@Override
+	public void actionPerformed(ActionEvent e) {}
 }
