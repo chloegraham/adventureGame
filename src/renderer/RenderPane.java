@@ -12,7 +12,7 @@ public class RenderPane extends JPanel {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private final int tilesize = 128;
+	public final int tilesize = 128;
     private TileDrawingMachine tilePainter = new TileDrawingMachine(tilesize);
     private char[][] level;
     private Point CameraLocation = new Point(0,0);
@@ -95,6 +95,9 @@ public class RenderPane extends JPanel {
 	public void setCameraLocation(int x, int y) {
 		this.CameraLocation.x = x;
 		this.CameraLocation.y = y;
+		
+		Iso.cameraOffset.x = x;
+		Iso.cameraOffset.y = y;
 	}
 
 }
