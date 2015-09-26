@@ -24,9 +24,7 @@ public final class Iso {
         
         int camX = cameraOffset.x * (tileSize / 2);
         int camY = cameraOffset.y * (tileSize / 2);
-        
-        System.out.println(camX);
-        
+                
         //Camera Offset
         twoDee.x -= camX;
         twoDee.y -= camY;
