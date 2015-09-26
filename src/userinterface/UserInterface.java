@@ -20,7 +20,7 @@ import userinterface.Action.Actions;
 public class UserInterface {
 	private RenderPane graphics = new RenderPane();
 	private GameFrame frame = new GameFrame(graphics);
-	private int action = 0;
+	private int action = 99;
 	
 	public UserInterface() {
 		addListeners();
@@ -28,7 +28,9 @@ public class UserInterface {
 	}
 	
 	public int getAction() {
-		return action; 
+		int temp = action;
+		action = 99;
+		return temp; 
 	}
 	
 	public void sendUIAction(int action) {

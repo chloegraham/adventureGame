@@ -2,13 +2,15 @@ package gameWorld;
 
 import java.awt.Point;
 
+import tiles.Chest;
+import tiles.Door;
 import tiles.EmptyTile;
 import tiles.Tile;
 import tiles.Wall;
 
 public class Level {
-	private static final int WIDTH = 25;
-	private static final int HEIGHT = 25;
+	private static final int WIDTH = 6;
+	private static final int HEIGHT = 6;
 	
 	private Tile[][] tiles;
 	private Player player;
@@ -17,7 +19,13 @@ public class Level {
 		tiles = new Tile[HEIGHT][WIDTH];
 		setupEmptyTiles();
 		setupWalls();
+		setupDoors();
+		setupChests();
 		setupPlayer();
+	}
+	
+	public Player getPlayer(){
+		return this.player;
 	}
 	
 	private void setupPlayer() {
@@ -25,8 +33,12 @@ public class Level {
 		this.player = new Player(p);
 	}
 	
-	public Player getPlayer(){
-		return this.player;
+	private void setupDoors() {
+		tiles[0][3] = new Door();
+	}
+	
+	private void setupChests() {
+		tiles[3][3] = new Chest();
 	}
 
 	private void setupEmptyTiles() {

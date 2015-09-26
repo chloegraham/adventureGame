@@ -52,7 +52,7 @@ public class RenderPane extends JPanel {
                  {'w','l','c','e'}};
   
   		// Uncomment for tile testing
-  		layer = levelTester;
+//  		layer = levelTester;
 
         int numberOfRows = layer.length;
         int numberOfColums = layer[0].length;

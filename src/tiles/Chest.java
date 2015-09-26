@@ -4,7 +4,7 @@ import item.Key;
 
 public class Chest implements Tile {
 	
-	private Key myKey = new Key("Key1122");
+	private Key myKey = new Key("1234");
 	private String character = "c";
 	
 	@Override
@@ -13,7 +13,7 @@ public class Chest implements Tile {
 	}
 
 	public Key getKey() {
-		this.character = "C";
+		this.character = "l";
 		Key key = myKey;
 		myKey = null;
 		return key;
