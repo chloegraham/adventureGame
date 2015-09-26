@@ -6,8 +6,8 @@ public class Server {
 	private Client client;
 	private GameLogic logic;
 	
-	private Server(Client client, GameLogic logic) {
-		this.client = client;
+	public Server(GameLogic logic) {
+		this.client = new Client();
 		this.logic = logic;
 	}
 	
