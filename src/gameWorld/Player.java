@@ -9,7 +9,7 @@ import java.util.List;
 
 public class Player {
 	private Point myLocation;
-	private String direction; //String representing which direction player is facing
+	private String direction = "North"; //String representing which direction player is facing
 	private List<Item> inventory = new ArrayList<Item>();
 	
 	public Player(Point loc){

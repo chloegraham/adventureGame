@@ -2,7 +2,7 @@ package serverclient;
 
 import gameWorld.GameLogic;
 
-public class Server {
+public class Server implements Runnable {
 	private Client client;
 	private GameLogic logic;
 	
@@ -11,10 +11,8 @@ public class Server {
 		this.logic = logic;
 	}
 	
-	public void run() throws InterruptedException {
+	public void run() {
 		while (true) {
-			Thread.sleep(1000);
-			
 			// Get int.action from Client and tell GameLogic
 			int action = client.getAction();
 			int uid = client.getUID();
@@ -24,6 +22,8 @@ public class Server {
 			// Get char[][].gameWorld and send it to the Client/Renderer
 			char[][] gameWorld = logic.getGameWorld();
 			client.updateClient(gameWorld);
+			
+			
 		}
 	}
 }
