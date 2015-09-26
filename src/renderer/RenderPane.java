@@ -15,6 +15,7 @@ public class RenderPane extends JPanel {
 	private final int tilesize = 128;
     private TileDrawingMachine tilePainter = new TileDrawingMachine(tilesize);
     private char[][] level;
+    private Point CameraLocation = new Point(0,0);
 
 
     public RenderPane() {
@@ -45,10 +46,10 @@ public class RenderPane extends JPanel {
     private void paintLayer(Graphics2D g2, int depth, char[][] layer){
     	
     	
-    	char[][] levelTester =    {{'w','d','w','w'},
-                 {'w','e','p','e'},
-                 {'o','e','e','e'},
-                 {'w','l','c','e'}};
+//    	char[][] levelTester =    {{'w','d','w','w'},
+//                 {'w','e','p','e'},
+//                 {'o','e','e','e'},
+//                 {'w','l','c','e'}};
   
   		// Uncomment for tile testing
   		//layer = levelTester;
@@ -90,5 +91,10 @@ public class RenderPane extends JPanel {
             }
         }
     }
+
+	public void setCameraLocation(int x, int y) {
+		this.CameraLocation.x = x;
+		this.CameraLocation.y = y;
+	}
 
 }
