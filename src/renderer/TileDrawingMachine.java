@@ -162,6 +162,43 @@ public class TileDrawingMachine {
 
         g2.setPaint(new Color(168, 65, 49));
         g2.fillPolygon(xlPoints, ylPoints, 4);
-
+    }
+    
+    protected void drawOpenDoor(Graphics2D g2, int x, int y){
+	    int xPoints[] = {x, x + (tilesize / 2), x, x - (tilesize / 2)};
+	    int yPoints[] = {y, y + (tilesize / 4), y + (tilesize / 2), y + (tilesize / 4)};
+	
+	    g2.setPaint(new Color(255, 106, 79));
+	    g2.fillPolygon(xPoints, yPoints, 4);
+	
+	    g2.setPaint(new Color(50, 50, 50));
+	    g2.drawPolygon(xPoints, yPoints, 4);
+    }
+    
+    protected void drawPressurePad(Graphics2D g2, int x, int y){
+    	int sixthenth = tilesize / 16;	
+    	
+    	// First draw a floor tile
+        drawFloorTile(g2, x, y);
+	
+		int xPoints[] = {x, x + (tilesize / 2), x, x - (tilesize / 2)};
+	    int yPoints[] = {y - sixthenth, y + (tilesize / 4) - sixthenth, y + (tilesize / 2) - sixthenth, y + (tilesize / 4) - sixthenth};
+	
+	    g2.setPaint(new Color(100, 100, 100));
+	    g2.fillPolygon(xPoints, yPoints, 4);
+	
+	    g2.setPaint(new Color(50, 50, 50));
+	    g2.drawPolygon(xPoints, yPoints, 4);
+    }
+    
+    protected void drawPressurePadActive(Graphics2D g2, int x, int y){    	
+		int xPoints[] = {x, x + (tilesize / 2), x, x - (tilesize / 2)};
+	    int yPoints[] = {y, y + (tilesize / 4), y + (tilesize / 2), y + (tilesize / 4)};
+	
+	    g2.setPaint(new Color(80, 80, 80));
+	    g2.fillPolygon(xPoints, yPoints, 4);
+	
+	    g2.setPaint(new Color(50, 50, 50));
+	    g2.drawPolygon(xPoints, yPoints, 4);
     }
 }

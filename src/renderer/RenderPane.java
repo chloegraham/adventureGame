@@ -46,13 +46,13 @@ public class RenderPane extends JPanel {
     private void paintLayer(Graphics2D g2, int depth, char[][] layer){
     	
     	
-//    	char[][] levelTester =    {{'w','d','w','w'},
-//                 {'w','e','p','e'},
-//                 {'o','e','e','e'},
-//                 {'w','l','c','e'}};
+    	char[][] levelTester =    {{'w','d','w','w'},
+                 {'w','b','p','a'},
+                 {'o','e','e','e'},
+                 {'w','l','c','e'}};
   
   		// Uncomment for tile testing
-  		//layer = levelTester;
+  		layer = levelTester;
 
         int numberOfRows = layer.length;
         int numberOfColums = layer[0].length;
@@ -86,7 +86,14 @@ public class RenderPane extends JPanel {
                     case 'd': tilePainter.drawDoor(g2, isoTile.x, isoTile.y);
                     	break;
                     	
-                    case 'o': tilePainter.drawFloorTile(g2, isoTile.x, isoTile.y);
+                    case 'o': tilePainter.drawOpenDoor(g2, isoTile.x, isoTile.y);
+                    	break;
+                    	
+                    case 'b' : tilePainter.drawPressurePad(g2, isoTile.x, isoTile.y);
+                    	break;
+                    	
+                    case 'a' :tilePainter.drawPressurePadActive(g2, isoTile.x, isoTile.y);
+                    	break;
                 }
             }
         }
