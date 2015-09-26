@@ -1,6 +1,7 @@
 package gameWorld;
 
 import item.Item;
+import item.Key;
 
 import java.awt.Point;
 import java.util.ArrayList;
@@ -44,8 +45,13 @@ public class Player {
 		this.direction = direction;
 	}
 
-	public List<Item> getInventory(){
-		return inventory;
+	public Key getKey(){
+		for(Item i: this.inventory){
+			if(i instanceof Key){
+				return (Key) i;
+			}
+		}
+		return null;
 	}
 	
 	public void addToInventory(Item item){

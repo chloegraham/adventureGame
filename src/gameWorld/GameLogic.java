@@ -1,5 +1,7 @@
 package gameWorld;
 
+import item.Key;
+
 import java.awt.Point;
 
 import userinterface.Action.Actions;
@@ -10,12 +12,12 @@ import tiles.Tile;
 
 public class GameLogic {
 	private Tile[][] tiles;
-	Player player;
-	Level level;
+	private Player player;
+	private Level level;
 	
 	public GameLogic() {
-		this.level = new Level(this);
-		this.player = new Player(new Point(2, 2));
+		this.level = new Level();
+		this.player = level.getPlayer();
 		this.tiles = level.getTiles();
 	}
 
@@ -26,7 +28,7 @@ public class GameLogic {
 		else if (Actions.EAST.ordinal() == ordinal && player.getMyLocation().getX() < tiles.length){ move(player, new Point(current.x+1, current.y)); }
 		else if (Actions.SOUTH.ordinal() == ordinal && player.getMyLocation().getY() < tiles[0].length-1){ move(player, new Point(current.x, current.y+1)); }
 		else if (Actions.WEST.ordinal() == ordinal && player.getMyLocation().getX() > 0 ){ move(player, new Point(current.x-1, current.y)); }
-		else if (Actions.INTERACT.ordinal() == ordinal){ interact(player); }
+		else if (Actions.INTERACT.ordinal() == ordinal){ interact(player, current); }
 	}
 	
 	private boolean move(Player player, Point newLoc) {
@@ -39,8 +41,8 @@ public class GameLogic {
 		return false;
 	}
 	
-	private boolean interact(Player p) {
-		Point now = p.getMyLocation();
+	private boolean interact(Player p, Point now) {
+		
 		String direction = p.getDirection();
 		Point interactWith;
 		switch(direction){
@@ -59,36 +61,24 @@ public class GameLogic {
 		}
 		Tile tile = tiles[interactWith.y][interactWith.x];
 		if (tile instanceof Chest){
-			openChest((Chest)tile, p);
-			return true;
-		} 
-		if (tile instanceof Door){
-			if (openDoor((Door) tile, p) == true){
-				tiles[interactWith.y][interactWith.x] = new EmptyTile();
-				return true;
+			Key key = ((Chest)tile).getKey();
+			if(key != null){
+				p.addToInventory(key);
 			}
 		} 
+		if (tile instanceof Door){
+			((Door) tile).openDoor(p.getKey());
+		} 
 		return false;
 	}
 	
-	private boolean openDoor(Door tile, Player p) {
-		if (p.getInventory().size() > 0){
-			tile.openDoor();
-			return true;
-		}
-		return false;
-	}
-
-	private void openChest(Chest tile, Player p) {
-		if (tile.getState() == true){
-			tile.emptyChest();
-			p.addToInventory(tile.getKey());
-			p.testInventory();
-		}		
+	public char[][] getGameWorld(){
+		return level.getLevel();
 	}
 	
-	public Player getPlayer(){
-		return this.player;
-	}
+	
+	
+	
+	
 	
 }

@@ -1,23 +1,22 @@
 package tiles;
 
-import item.Item;
 import item.Key;
 
 public class Chest implements Tile {
 	
-	private boolean state = true;
 	private Key myKey = new Key("Key1122");
+	private String character = "c";
 	
+	@Override
 	public String toString() {
-		return "c";
+		return character;
 	}
-	public boolean getState(){
-		return state;
+
+	public Key getKey() {
+		this.character = "C";
+		Key key = myKey;
+		myKey = null;
+		return key;
 	}
-	public void emptyChest(){
-		this.state = false;
-	}
-	public Item getKey() {
-		return myKey;
-	}
+	
 }

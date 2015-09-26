@@ -11,15 +11,24 @@ public class Level {
 	private static final int HEIGHT = 25;
 	
 	private Tile[][] tiles;
-	GameLogic g;
+	private Player player;
 	
-	public Level(GameLogic g) {
-		this.g = g;
+	public Level() {
 		tiles = new Tile[HEIGHT][WIDTH];
 		setupEmptyTiles();
 		setupWalls();
+		setupPlayer();
 	}
 	
+	private void setupPlayer() {
+		Point p = new Point(2, 2);
+		this.player = new Player(p);
+	}
+	
+	public Player getPlayer(){
+		return this.player;
+	}
+
 	private void setupEmptyTiles() {
 		for (int x = 0; x < WIDTH; x++) {
 			for (int y = 0; y < HEIGHT; y++) {
@@ -40,14 +49,14 @@ public class Level {
 		}
 	}
 	
-	public char[][] getLevelImg() {
+	public char[][] getLevel() {
 		char[][] array = new char[HEIGHT][WIDTH];
 		for (int x = 0; x < WIDTH; x++)
 			for (int y = 0; y < HEIGHT; y++) 
 				array[y][x] = tiles[y][x].toString().charAt(0);
 
-		Point loc = g.getPlayer().getMyLocation();
-		array[loc.y][loc.x] = g.getPlayer().toString().charAt(0);
+		Point loc = this.player.getMyLocation();
+		array[loc.y][loc.x] = this.player.toString().charAt(0);
 		return array;
 	}
 
