@@ -90,8 +90,9 @@ public class UserInterface {
 	 * Set the level and redraw the pane
 	 */
 	public void redraw(char[][] level){
-		int numberOfRows = 8;
-		int numberOfColums = 8;
+		 int numberOfRows = level.length;
+	        int numberOfColums = level[0].length;
+
 		
 		int camX = 0;
 		int camY = 0;
