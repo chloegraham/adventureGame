@@ -5,7 +5,6 @@ import java.awt.event.FocusEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -75,17 +74,16 @@ public class UserInterface {
 	}
 	
 	/**
-	 * Display a message on the graphics window
-	 * @param message 
+	 * Stores and displays a message to the user. Will display up to the 3 most recent messages.
 	 */
 	public void addMessage(String message){
+		if (message != null){
+			frame.addMessage(message);
+		}
 	}
 	
-	/**
-	 * Display a list of items that the player is currently holding
-	 * @param inventory
-	 */
-	public void showInventory(List<String> inventory){
+	public void clearMessageHistory(){
+		frame.clearMessages();
 	}
 
 	/**
