@@ -20,6 +20,12 @@ public class GameLogic {
 		this.player = level.getPlayer();
 		this.tiles = level.getTiles();
 	}
+	
+	public GameLogic(String test) {
+		this.level = Level.parseLevel();;
+		this.player = level.getPlayer();
+		this.tiles = level.getTiles();
+	}
 
 	public void handleAction(int ordinal, int userID){
 		
