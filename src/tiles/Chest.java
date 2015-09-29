@@ -1,8 +1,8 @@
 package tiles;
 
-import item.Key;
+import movable.Key;
 
-public class Chest implements Tile {
+public class Chest extends Unmoveable implements Tile {
 	
 	private Key myKey = new Key("1234");
 	private String character = "c";

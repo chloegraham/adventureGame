@@ -17,8 +17,6 @@ public class Server implements Runnable {
 			int action = client.getAction();
 			int uid = client.getUID();
 			logic.handleAction(action, uid);
-			
-			
 			// Get char[][].gameWorld and send it to the Client/Renderer
 			char[][] gameWorld = logic.getGameWorld();
 			client.updateClient(gameWorld);
