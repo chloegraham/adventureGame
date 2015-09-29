@@ -20,6 +20,7 @@ public class UserInterface {
 	private RenderPane graphics = new RenderPane();
 	private GameFrame frame = new GameFrame(graphics);
 	private int action = 99;
+	private int keys = 0;
 	
 	public UserInterface() {
 		addListeners();
@@ -84,6 +85,27 @@ public class UserInterface {
 	
 	public void clearMessageHistory(){
 		frame.clearMessages();
+	}
+	
+	/**
+	 * Increments the number of keys displayed to the user
+	 */
+	public void addKey(){
+		keys++;
+		frame.updateInventory(keys);
+	}
+	
+	/**
+	 * Attempts to decrement the number of keys displayed to the user.
+	 * @return true if a key was removed, false otherwise.
+	 */
+	public boolean removeKey(){
+		if (keys >= 0){
+			keys--;
+			frame.updateInventory(keys);
+			return true;
+		}
+		return false;
 	}
 
 	/**
