@@ -118,11 +118,11 @@ public class UserInterface {
 	}
 
 	/**
-	 * Set the level and redraw the pane
+	 * Set the level and redraw the pane.
 	 */
 	public void redraw(char[][] level){
 		 int numberOfRows = level.length;
-	        int numberOfColums = level[0].length;
+	     int numberOfColums = level[0].length;
 
 		
 		int camX = 0;
@@ -139,6 +139,35 @@ public class UserInterface {
 		
 		graphics.setCameraLocation(camX,camY);
 		graphics.setLevel(level);
+		frame.repaint();
+	}
+	
+	
+	/**
+	 * Same as redraw, but this time from 3 separate char layers not one.
+	 * @param level
+	 * @param objects
+	 * @param moveables
+	 */
+	public void redrawFromLayers(char[][]level, char[][]objects, char[][]moveables){
+    	
+    	int numberOfRows = level.length;
+	    int numberOfColums = level[0].length;
+    	
+		int camX = 0;
+		int camY = 0;
+		
+		 for (int i = 0; i < numberOfRows; i++) {
+	            for (int j = 0; j < numberOfColums; j++) {
+	            	if(moveables[i][j] == 'p'){
+	            		camX = j;
+	            		camY = i;
+	            	}
+	            }
+		 }
+		
+		graphics.setCameraLocation(camX,camY);
+		graphics.setLayers(level, objects, moveables);
 		frame.repaint();
 	}
 }
