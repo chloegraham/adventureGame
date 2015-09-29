@@ -107,6 +107,15 @@ public class UserInterface {
 		}
 		return false;
 	}
+	
+	/**
+	 * Directly set the number of keys that show up on UI.
+	 * @param keys
+	 */
+	public void setKeyCount(int keys){
+		this.keys = keys;
+		frame.updateInventory(keys);
+	}
 
 	/**
 	 * Set the level and redraw the pane
