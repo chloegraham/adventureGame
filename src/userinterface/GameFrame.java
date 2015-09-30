@@ -1,11 +1,17 @@
 package userinterface;
 
 import java.awt.Dimension;
+import java.awt.Image;
 import java.awt.Toolkit;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLayeredPane;
@@ -25,6 +31,8 @@ public class GameFrame extends JFrame {
 	private final int textHeight = 110;
 	private final int inventoryWidth = 100;
 	
+	private final Icon iconKey = loadImage("icon-key.png");
+	
 	private final Dimension frameSize;
 	private final Dimension buttonSize = new Dimension(inventoryWidth, 25);
 	
@@ -33,7 +41,7 @@ public class GameFrame extends JFrame {
 	private final JPanel inventoryPane = new JPanel();
 	
 	private ArrayList<String> messages = new ArrayList<String>();
-	private final JButton[] inventory = new JButton[]{new JButton("Keys: 0")};
+	private final JButton[] inventory = new JButton[]{new JButton("0")};
 	
 	/**
 	 * Sets up the window to display the game and all controls/menus.
@@ -78,6 +86,7 @@ public class GameFrame extends JFrame {
 		inventoryPane.setBounds(xPos, 0, 100, 100);
 		inventoryPane.setLayout(new BoxLayout(inventoryPane, BoxLayout.Y_AXIS));
 		inventoryPane.setBorder(BorderFactory.createTitledBorder("Inventory"));
+		if (iconKey != null) inventory[0].setIcon(iconKey);
 		inventory[0].setMaximumSize(buttonSize);
 		inventory[0].setBorderPainted(false);
 		inventory[0].setContentAreaFilled(false);
@@ -102,7 +111,18 @@ public class GameFrame extends JFrame {
 	}
 	
 	public void updateInventory(int keys){
-		inventory[0].setText("Keys: " + keys);
+		inventory[0].setText(Integer.toString(keys));
+	}
+	
+	/**
+	 * Loads the image given by the String name. If failed, will return null.
+	 */
+	private ImageIcon loadImage(String imageAddress){
+		Image img = null;
+		try {
+			img = ImageIO.read(new File(imageAddress));
+		} catch (IOException e) { e.printStackTrace(); }
+		return new ImageIcon(img);
 	}
 
 	private static final long serialVersionUID = 1L;
