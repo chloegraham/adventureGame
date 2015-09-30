@@ -1,8 +1,8 @@
 package tiles;
 
-import item.Key;
+import movable.Key;
 //either set tile as empty once open so can walk through it, otherwise door implememnts walk throughable
-public class Door implements Tile {
+public class Door extends Unmoveable implements Tile {
 	
 	private boolean locked = true;
 	private String character = "d";
