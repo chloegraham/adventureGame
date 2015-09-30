@@ -92,33 +92,22 @@ public class GameLogic {
 	}
 
 	public void handleAction(int ordinal, int userID){
-		String direction = this.player.getDirection();
 		Point current = this.player.getMyLocation();
 		if(Actions.NORTH.ordinal() == ordinal && player.getMyLocation().getY() > 0){
 			this.player.setDirection("North");	
 			move(player, new Point(current.x, current.y-1));
 		}
 		else if (Actions.EAST.ordinal() == ordinal && player.getMyLocation().getX() < tiles.length){
-			if(player.getDirection().equals("East")){
-				move(player, new Point(current.x+1, current.y));
-			} else {
-				this.player.setDirection("East");
-			}
+			this.player.setDirection("East");
+			move(player, new Point(current.x+1, current.y));
 		}
 		else if (Actions.SOUTH.ordinal() == ordinal && player.getMyLocation().getY() < tiles[0].length-1){
-			if(player.getDirection().equals("South")){
-				move(player, new Point(current.x, current.y+1));
-			} else {
-				this.player.setDirection("South");
-			}
+			this.player.setDirection("South");
+			move(player, new Point(current.x, current.y+1));
 		}
 		else if (Actions.WEST.ordinal() == ordinal && player.getMyLocation().getX() > 0 ){
-			if(player.getDirection().equals("West")){
-				move(player, new Point(current.x-1, current.y));
-			} else {
-				this.player.setDirection("West");
-		
-			}
+			this.player.setDirection("West");
+			move(player, new Point(current.x-1, current.y));
 	   }
 		else if (Actions.INTERACT.ordinal() == ordinal){ 
 			interact(player, current);
