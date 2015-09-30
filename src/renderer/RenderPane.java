@@ -166,6 +166,12 @@ public class RenderPane extends JPanel {
 		    	
 		    case 'b' : tilePainter.drawBoulder(g2,  isoTile.x, isoTile.y);
 		    	break;
+		    	
+		    case 'S' : tilePainter.drawSpikesUp(g2,  isoTile.x, isoTile.y);
+	    		break;
+	    		
+	        case 's' : tilePainter.drawSpikesDown(g2,  isoTile.x, isoTile.y);
+				break;
     	}
     }
 
