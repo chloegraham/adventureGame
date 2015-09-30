@@ -3,7 +3,6 @@ package gameWorld;
 import java.awt.Point;
 import java.util.HashSet;
 import java.util.Set;
-
 import movable.Boulder;
 import movable.Item;
 import movable.Key;
@@ -25,23 +24,24 @@ public class GameLogic {
 	private Player player;
 	private Level level;
 	private Set<Boulder> boulders = new HashSet<Boulder>();
-	private Tile[][] staticBoard = new Tile[5][5];
+	//private Tile[][] staticBoard = new Tile[5][5];
 	
 	public GameLogic() {
 		this.level = Level.parseLevel("board.txt");
 		this.tiles = level.getLevel();
-		for (int i = 0; i < 5; i++){
+		/*for (int i = 0; i < 5; i++){
 			for(int j = 0; j < 5; j++){
 				this.staticBoard[i][j] = this.tiles[i][j];
 			}
-		}
+		}*/
 		//System.out.println(Level.toStringss());
 		this.player = level.getPlayer();
-		boulders.add(new Boulder(new Point(1,1), "hello i'm mr boul", "1"));
+		boulders.add(new Boulder(new Point(0,3), "i'm mr boul", "extra special"));
+		//boulders.add(new Boulder(new Point(2,4), "i'm mr boul", "not so special"));
 		makeLayer3();
 		makeLayer1();
 		makeLayer2();
-		System.out.println(toString(tiles));
+		//System.out.println(toString(tiles));
 	}
 	
 	private void makeLayer3() {
@@ -97,30 +97,29 @@ public class GameLogic {
 		//needs to handle userID
 		Point current = this.player.getLocation();
 		if(Actions.NORTH.ordinal() == ordinal){
-			this.player.setDirection("North");	
+			this.player.setDirection(Direction.NORTH);	
 			move(player, new Point(current.x, current.y-1));
 		}
 		else if (Actions.EAST.ordinal() == ordinal){
-			this.player.setDirection("East");
+			this.player.setDirection(Direction.EAST);
 			move(player, new Point(current.x+1, current.y));
 		}
 		else if (Actions.SOUTH.ordinal() == ordinal){
-			this.player.setDirection("South");
+			this.player.setDirection(Direction.SOUTH);
 			move(player, new Point(current.x, current.y+1));
 		}
 		else if (Actions.WEST.ordinal() == ordinal){
-			this.player.setDirection("West");
+			this.player.setDirection(Direction.WEST);
 			move(player, new Point(current.x-1, current.y));
 	   }
 		else if (Actions.INTERACT.ordinal() == ordinal){ 
 			interact(player, current);
 			}
-		//if(ordinal != 99) {System.out.println(player.getDirection());}
 	}
 	
 	private boolean move(Player player, Point newLoc) {
-//		System.out.println("x: " + player.getMyLocation().x + "y: " + player.getMyLocation().y);
-		//check for out bounds
+		
+		//check for out of bounds
 		if (newLoc.y < 0 || newLoc.y > tiles.length-1 || newLoc.x < 0 || newLoc.x > tiles[0].length-1){
 			return false;
 		}	
@@ -133,23 +132,88 @@ public class GameLogic {
 		}
 		if (tile instanceof Chest || tile instanceof Wall || tile instanceof Door && ((Door)tile).isLocked()){
 			return false;
-		}
+		} //activate pressure pad if moved onto one
 		else if (tile instanceof PressurePad){
 			((PressurePad)tile).activate();
 		}
 		else if (tile instanceof Spikes){
 		  if(((Spikes)tile).isActive()){
+			  //player can't walk onto spikes if active
 			  return false;
 		  } 
 		}
 		return player.setLocation(newLoc);		
 	}	
 	
+	private boolean interact(Player p, Point now) {
+		
+		Direction direction = p.getDirection();
+		Point interactWith;
+		switch(direction){
+		case NORTH:
+			interactWith = new Point(now.x, now.y-1);
+			break;
+		case SOUTH:
+			interactWith = new Point(now.x, now.y+1);
+			break;
+		case EAST:
+			interactWith = new Point(now.x+1, now.y);
+			break;
+		case WEST:
+			interactWith = new Point(now.x-1, now.y);
+			break;
+		default:
+			throw new RuntimeException();
+		}
+		if (interactWith.y < 0 || interactWith.y > tiles.length-1 || interactWith.x < 0 || interactWith.x > tiles[0].length-1){
+			System.out.println("Stay inside bounds pls");
+			return false;
+		}	
+		Tile tile = tiles[interactWith.y][interactWith.x];
+		if (tile instanceof Chest){
+			Key key = ((Chest)tile).getKey();
+			((Chest)tile).setCharacter();
+			if(key != null){
+				p.addToInventory(key);
+			}
+		} 
+		else if (tile instanceof Door){
+			((Door) tile).openDoor(p.getKey());
+		} 	
+		//pick up boulder if one is in front of player
+		for(Boulder b: this.boulders){
+			if(b.getLocation().equals(interactWith)){
+				System.out.println("picking up boulder, id = " + b.getId());
+				player.addToInventory(b);
+				//now remove the boulder from the list so that it can't be redrawn/picked up again
+				boulders.remove(b);
+				return true;
+			}
+		}
+		//otherwise try to drop a boulder
+		if(tile instanceof EmptyTile || tile instanceof PressurePad){
+			System.out.println("Trying to drop a boulder on an empty tile or pressure pad..");
+			for(Item i: player.getInventory()){
+				if(i instanceof Boulder){
+					if(tiles[interactWith.y][interactWith.x] instanceof EmptyTile || tiles[interactWith.y][interactWith.x] instanceof PressurePad){
+						((Boulder) i).setLocation(interactWith);
+						boulders.add((Boulder) i);
+						player.removeBoulder();
+						System.out.println("dropped boulder");
+						return true;
+					}
+				}
+			}
+			System.out.println("shame you aint got no boulder bitch");
+		}
+		player.testInventory();
+		return false;
+	}
+	
 	@SuppressWarnings("unused")
 	private void violence(Player player2) {
 		
 		System.out.println("HHA U DIED");
-		//TODO: reset game to default
 		
 	}
 
@@ -167,63 +231,6 @@ public class GameLogic {
 		return rtn;
 	}
 	
-	private boolean interact(Player p, Point now) {
-		
-		String direction = p.getDirection();
-		Point interactWith;
-		switch(direction){
-		case "North":
-			interactWith = new Point(now.x, now.y-1);
-			break;
-		case "South":
-			interactWith = new Point(now.x, now.y+1);
-			break;
-		case "East":
-			interactWith = new Point(now.x+1, now.y);
-			break;
-		case "West":
-			interactWith = new Point(now.x-1, now.y);
-			break;
-		default:
-			throw new RuntimeException();
-		}
-		Tile tile = tiles[interactWith.y][interactWith.x];
-		if (tile instanceof Chest){
-			Key key = ((Chest)tile).getKey();
-			if(key != null){
-				p.addToInventory(key);
-			}
-		} 
-		else if (tile instanceof Door){
-			((Door) tile).openDoor(p.getKey());
-		} 	
-		//pick up boulder
-		for(Boulder b: this.boulders){
-			if(b.getLocation().equals(interactWith)){
-				System.out.println("picking up boulder");
-				player.addToInventory(b);
-				boulders.remove(b);
-				return true;
-			}
-		}
-		//TODO: dropping multiple boulders
-		//otherwise drop boulder
-		for(Item i: player.getInventory()){
-			if(i instanceof Boulder){
-				if(tiles[interactWith.y][interactWith.x] instanceof EmptyTile || tiles[interactWith.y][interactWith.x] instanceof PressurePad){
-					((Boulder) i).setLocation(interactWith);
-					boulders.add((Boulder) i);
-					player.removeBoulder();
-					System.out.println("dropped boulder");
-					return true;
-				}
-				System.out.println("can't drop here");
-			}
-		}
-		player.testInventory();
-		return false;
-	}
-	
 	private char[][] convertToChar(Tile[][] tileArray){
 		
 		char[][] newArray = new char[tileArray.length][tileArray[0].length];
@@ -232,6 +239,11 @@ public class GameLogic {
 				newArray[i][j] = tileArray[i][j].toString().charAt(0);
 			}
 		}	
+		//overwrite char in array with boulder
+		for(Boulder b: this.boulders){
+			Point boulderPoint = b.getLocation();
+			newArray[boulderPoint.y][boulderPoint.x] = b.toString().charAt(0);
+		}
 		Point myPoint = this.player.getLocation();
 		//overwrite char in array with player
 		newArray[myPoint.y][myPoint.x] = this.player.toString().charAt(0);
