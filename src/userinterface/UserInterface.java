@@ -18,7 +18,8 @@ import userinterface.Action.Actions;
  */
 public class UserInterface {
 	private RenderPane graphics = new RenderPane();
-	private GameFrame frame = new GameFrame(graphics);
+	private Listener listener = new Listener(this);
+	private GameFrame frame = new GameFrame(graphics, listener);
 	private int action = 99;
 	private int keys = 0;
 	
@@ -30,7 +31,7 @@ public class UserInterface {
 	public int getAction() {
 		int temp = action;
 		action = 99;
-		return temp; 
+		return temp;
 	}
 	
 	public void sendUIAction(int action) {
@@ -44,7 +45,7 @@ public class UserInterface {
 	private void addListeners() {
 		graphics.setFocusable(true);
 		
-		graphics.addKeyListener(new Listener(this));
+		graphics.addKeyListener(listener);
 		graphics.addFocusListener(new FocusAdapter() {		// Reclaim focus when lost
 	          public void focusLost(FocusEvent ev) {
 	        	  graphics.requestFocus();
