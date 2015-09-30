@@ -82,11 +82,15 @@ public class GameFrame extends JFrame {
 		this.pack();
 	}
 	
+	/**
+	 * Create the inventory panel to display number of keys the player is carrying.
+	 * @param xPos
+	 */
 	private void buildInventoryPane(int xPos){
 		inventoryPane.setBounds(xPos, 0, 100, 100);
 		inventoryPane.setLayout(new BoxLayout(inventoryPane, BoxLayout.Y_AXIS));
 		inventoryPane.setBorder(BorderFactory.createTitledBorder("Inventory"));
-		if (iconKey != null) inventory[0].setIcon(iconKey);
+		if (iconKey != null){ inventory[0].setIcon(iconKey); }
 		inventory[0].setMaximumSize(buttonSize);
 		inventory[0].setBorderPainted(false);
 		inventory[0].setContentAreaFilled(false);
@@ -106,10 +110,17 @@ public class GameFrame extends JFrame {
 		messagePane.setText(msg);
 	}
 	
+	/**
+	 * Erase message history
+	 */
 	public void clearMessages(){
 		messages = new ArrayList<String>();
 	}
 	
+	/**
+	 * Update the number of keys appearing
+	 * @param keys
+	 */
 	public void updateInventory(int keys){
 		inventory[0].setText(Integer.toString(keys));
 	}
@@ -122,7 +133,7 @@ public class GameFrame extends JFrame {
 		ImageIcon icon = null;
 		try {
 			img = ImageIO.read(new File(imageAddress));
-			new ImageIcon(img);
+			icon = new ImageIcon(img);
 		} catch (IOException e) { e.printStackTrace(); }
 		return icon;
 	}
