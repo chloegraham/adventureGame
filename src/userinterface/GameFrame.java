@@ -15,7 +15,9 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLayeredPane;
+import javax.swing.JMenu;
 import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JTextPane;
 
@@ -50,7 +52,7 @@ public class GameFrame extends JFrame {
 	 * Sets up the window to display the game and all controls/menus.
 	 * Adds Action, Key & Mouse listeners.
 	 */
-	public GameFrame(RenderPane graphics) {
+	public GameFrame(RenderPane graphics, Listener listener) {
 		super("Adventure Game");
 		
 		Dimension dim = graphics.getPreferredSize();
@@ -70,7 +72,9 @@ public class GameFrame extends JFrame {
 		graphics.setBounds(0, 20, renderWidth, renderHeight);
 		messagePane.setBounds(0, renderHeight, renderWidth, textHeight);
 		menuBar.setBounds(0, 0, frameWidth, menuHeight);
+		
 		buildInventoryPane(renderWidth);
+		buildMenuBar(listener);
 		
 		add(layerPane);
 
@@ -102,6 +106,22 @@ public class GameFrame extends JFrame {
 		inventory[0].setContentAreaFilled(false);
 		inventoryPane.add(inventory[0]);
 		inventoryPane.setOpaque(false);
+	}
+	
+	/**
+	 * Create all items inside the menu bar
+	 */
+	private void buildMenuBar(Listener listener){
+		JMenu file = new JMenu("File");
+		menuBar.add(file);
+		
+		JMenuItem item = new JMenuItem("Save");
+		item.addActionListener(listener);
+		file.add(item);
+		
+		item = new JMenuItem("Load");
+		item.addActionListener(listener);
+		file.add(item);
 	}
 	
 	/**

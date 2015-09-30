@@ -64,11 +64,16 @@ public class Listener implements KeyListener, ActionListener {
 		}
 		// Any other key pressed is not applicable. Ignore it.
 	}
+	
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		String ac = e.getActionCommand();
+		if (ac.equals("Save")){ UI.sendUIAction(Actions.SAVE.ordinal()); }
+		else if (ac.equals("Load")){ UI.sendUIAction(Actions.LOAD.ordinal()); }
+	}
 
 	@Override
 	public void keyReleased(KeyEvent e) {}
 	@Override
 	public void keyTyped(KeyEvent e) {}
-	@Override
-	public void actionPerformed(ActionEvent e) {}
 }
