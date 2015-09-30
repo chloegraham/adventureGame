@@ -3,6 +3,8 @@ package userinterface;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -20,6 +22,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JTextPane;
+import javax.swing.KeyStroke;
 
 import renderer.RenderPane;
 
@@ -115,13 +118,20 @@ public class GameFrame extends JFrame {
 		JMenu file = new JMenu("File");
 		menuBar.add(file);
 		
-		JMenuItem item = new JMenuItem("Save");
+		file.add(menuItemHelper(listener, "Save", KeyEvent.VK_S));
+		file.add(menuItemHelper(listener, "Load", KeyEvent.VK_L));
+		file.addSeparator();
+		file.add(menuItemHelper(listener, "Exit", KeyEvent.VK_X));
+	}
+
+	/**
+	 * Create a menu item with a listener, and a Ctrl+KeyEvent accelerator
+	 */
+	private JMenuItem menuItemHelper(Listener listener, String name, int keyEvent){
+		JMenuItem item = new JMenuItem(name);
 		item.addActionListener(listener);
-		file.add(item);
-		
-		item = new JMenuItem("Load");
-		item.addActionListener(listener);
-		file.add(item);
+		item.setAccelerator(KeyStroke.getKeyStroke(keyEvent, ActionEvent.CTRL_MASK));
+		return item;
 	}
 	
 	/**

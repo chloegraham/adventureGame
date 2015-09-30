@@ -5,6 +5,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
+import javax.swing.JOptionPane;
+
 import userinterface.Action.Actions;
 
 /**
@@ -24,7 +26,17 @@ public class Listener implements KeyListener, ActionListener {
 		this.UI = ui;
 	}
 	
-
+	/**
+	 * Checks if the user really wants to quit the game and ends the function.
+	 */
+	private void exitGame(){
+		int confirm = JOptionPane.showOptionDialog(null,
+				"Are you sure you want to exit the game?\nProgress since last save will be lost.\nConnection to server will be closed.", 
+				"Exit Game", JOptionPane.CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
+		if (confirm == 0) {
+			System.exit(0);
+		}
+	}
 	
 	@Override
 	public void keyPressed(KeyEvent e) {
@@ -70,6 +82,7 @@ public class Listener implements KeyListener, ActionListener {
 		String ac = e.getActionCommand();
 		if (ac.equals("Save")){ UI.sendUIAction(Actions.SAVE.ordinal()); }
 		else if (ac.equals("Load")){ UI.sendUIAction(Actions.LOAD.ordinal()); }
+		if (ac.equals("Exit")){ exitGame(); }
 	}
 
 	@Override
