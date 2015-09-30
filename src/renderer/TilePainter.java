@@ -201,4 +201,57 @@ public class TilePainter {
 	    g2.setPaint(new Color(50, 50, 50));
 	    g2.drawPolygon(xPoints, yPoints, 4);
     }
+    
+    protected void drawBoulder(Graphics2D g2, int x, int y){   
+    	int third = tilesize / 3;
+    	
+    	g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+    	    	RenderingHints.VALUE_ANTIALIAS_ON);
+    	
+	    g2.setPaint(new Color(50, 50, 60));
+    	g2.fillOval(x - third, y - third, third * 2, third * 2);
+    	
+    	g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+    	    	RenderingHints.VALUE_ANTIALIAS_OFF);
+    }
+    
+    protected void drawSpikesUp(Graphics2D g2, int x, int y){
+		int eigth = tilesize / 8; 
+        g2.setPaint(new Color(255, 50, 50));
+
+		drawSpike(g2, x, y + eigth);
+		drawSpike(g2, x + (tilesize / 4), y + (tilesize / 4));
+		drawSpike(g2, x - (tilesize / 4), y + (tilesize / 4));
+		drawSpike(g2, x, y + ((tilesize / 4) + eigth));
+}
+
+protected void drawSpikesDown(Graphics2D g2, int x, int y){
+	int eigth = tilesize / 8; 
+	
+    g2.setPaint(new Color(120, 120, 120));
+
+	
+	drawSpikeDown(g2, x, y + eigth);
+	drawSpikeDown(g2, x + (tilesize / 4), y + (tilesize / 4));
+	drawSpikeDown(g2, x - (tilesize / 4), y + (tilesize / 4));
+	drawSpikeDown(g2, x, y + ((tilesize / 4) + eigth));
+}
+
+private void drawSpike(Graphics2D g2, int x, int y){
+	int sixteen = tilesize / 16; 
+	
+	int xrPoints[] = {x + sixteen, x, x - sixteen, x};
+    int yrPoints[] = {y, y - (tilesize / 8), y, y + (sixteen / 2)};
+
+    g2.fillPolygon(xrPoints, yrPoints, 4);
+}
+
+private void drawSpikeDown(Graphics2D g2, int x, int y){
+	int sixteen = tilesize / 16; 
+	
+	int xrPoints[] = {x + sixteen, x, x - sixteen, x};
+    int yrPoints[] = {y, y - (sixteen / 2), y, y + (sixteen / 2)};
+
+    g2.fillPolygon(xrPoints, yrPoints, 4);
+}
 }
