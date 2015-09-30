@@ -10,6 +10,7 @@ import tiles.Chest;
 import tiles.Door;
 import tiles.EmptyTile;
 import tiles.PressurePad;
+import tiles.Spikes;
 import tiles.Tile;
 import tiles.Wall;
 
@@ -26,7 +27,7 @@ public class Level {
 		this.height = height;
 		tiles = new Tile[width][height];
 		setupTiles(sc);
-		System.out.println(tiles.toString());
+		//System.out.println(tiles.toString());
 	}
 	
 	@SuppressWarnings("resource")
@@ -82,8 +83,11 @@ public class Level {
 						this.player = new Player(new Point(j, i));
 						tiles[i][j] = new PlayerTile(this.player);
 					}*/
-					else if(temp.equals("b")){
+					else if(temp.equals("z")){
 						tiles[i][j] = new PressurePad();
+					}
+					else if(temp.equals("s")){
+						tiles[i][j] = new Spikes();
 					}
 				}
 			}

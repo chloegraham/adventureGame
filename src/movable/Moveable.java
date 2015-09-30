@@ -5,7 +5,7 @@ import java.awt.Point;
 public abstract class Moveable {
 	
 	private Point location;
-	private String character;
+	protected String character;
 	
 	public Moveable(Point location, String character) {
 		this.location = location;
@@ -19,10 +19,6 @@ public abstract class Moveable {
 	public boolean setLocation(Point myLocation) {
 		this.location = myLocation;
 		return true;
-	}
-	
-	public void setCharacter(String character){
-		this.character = character;
 	}
 	
 	@Override

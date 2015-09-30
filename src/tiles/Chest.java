@@ -19,4 +19,8 @@ public class Chest extends Unmoveable implements Tile {
 		return key;
 	}
 	
+	public void setCharacter(){
+		this.character = "C";
+	}
+	
 }
