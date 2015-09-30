@@ -23,12 +23,18 @@ public class GameLogic {
 	private Tile[][] staticTiles;
 	private Player player;
 	private Level level;
+	private Tile[][] staticBoard = new Tile[5][5];
 	
 	public GameLogic() {
 	//	this.level = Level.parseLevel("board.txt");
 		this.level = new Level(5, 5);
 		this.tiles = level.getLevel();
-		System.out.println(Level.toStringss());
+		for (int i = 0; i < 5; i++){
+			for(int j = 0; j < 5; j++){
+				this.staticBoard[i][j] = this.tiles[i][j];
+			}
+		}
+		//System.out.println(Level.toStringss());
 		this.player = level.getPlayer();
 		makeLayer3();
 		makeLayer1();
@@ -86,20 +92,44 @@ public class GameLogic {
 	}
 
 	public void handleAction(int ordinal, int userID){
-		
+		String direction = this.player.getDirection();
 		Point current = this.player.getMyLocation();
-		if(Actions.NORTH.ordinal() == ordinal && player.getMyLocation().getY() > 0){ move(player, new Point(current.x, current.y-1)); }
-		else if (Actions.EAST.ordinal() == ordinal && player.getMyLocation().getX() < tiles.length){ move(player, new Point(current.x+1, current.y)); }
-		else if (Actions.SOUTH.ordinal() == ordinal && player.getMyLocation().getY() < tiles[0].length-1){ move(player, new Point(current.x, current.y+1)); }
-		else if (Actions.WEST.ordinal() == ordinal && player.getMyLocation().getX() > 0 ){ move(player, new Point(current.x-1, current.y)); }
-		else if (Actions.INTERACT.ordinal() == ordinal){ interact(player, current); }
+		if(Actions.NORTH.ordinal() == ordinal && player.getMyLocation().getY() > 0){
+			this.player.setDirection("North");	
+			move(player, new Point(current.x, current.y-1));
+		}
+		else if (Actions.EAST.ordinal() == ordinal && player.getMyLocation().getX() < tiles.length){
+			if(player.getDirection().equals("East")){
+				move(player, new Point(current.x+1, current.y));
+			} else {
+				this.player.setDirection("East");
+			}
+		}
+		else if (Actions.SOUTH.ordinal() == ordinal && player.getMyLocation().getY() < tiles[0].length-1){
+			if(player.getDirection().equals("South")){
+				move(player, new Point(current.x, current.y+1));
+			} else {
+				this.player.setDirection("South");
+			}
+		}
+		else if (Actions.WEST.ordinal() == ordinal && player.getMyLocation().getX() > 0 ){
+			if(player.getDirection().equals("West")){
+				move(player, new Point(current.x-1, current.y));
+			} else {
+				this.player.setDirection("West");
+		
+			}
+	   }
+		else if (Actions.INTERACT.ordinal() == ordinal){ 
+			interact(player, current);
+			}
+		if(ordinal != 99) {System.out.println(player.getDirection());}
 	}
 	
 	private boolean move(Player player, Point newLoc) {
-		//add String "direction" inside move parameters
-		//if player.direction() == direction then move otherwise make player turn to face said "direction"
+
 		Tile tile = tiles[newLoc.y][newLoc.x];
-		Tile lastTile = tiles[player.getMyLocation().y][player.getMyLocation().x];
+		Tile lastTile = staticBoard[player.getMyLocation().y][player.getMyLocation().x];
 		//if the last tile is a spike and is now active, kill the player lol
 		if(lastTile instanceof Spikes){
 			if(((Spikes) lastTile).isActive()){
@@ -180,10 +210,10 @@ public class GameLogic {
 		Point interactWith;
 		switch(direction){
 		case "North":
-			interactWith = new Point(now.x, now.y+1);
+			interactWith = new Point(now.x, now.y-1);
 			break;
 		case "South":
-			interactWith = new Point(now.x, now.y-1);
+			interactWith = new Point(now.x, now.y+1);
 			break;
 		case "East":
 			interactWith = new Point(now.x+1, now.y);

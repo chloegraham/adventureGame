@@ -10,6 +10,7 @@ import movable.Moveable;
 import tiles.Chest;
 import tiles.Door;
 import tiles.EmptyTile;
+import tiles.PressurePad;
 import movable.PlayerTile;
 import tiles.Tile;
 import tiles.Wall;
@@ -103,6 +104,9 @@ public class Level {
 					else if(temp.equals("p")){
 						this.player = new Player(new Point(j, i));
 						tiles[i][j] = new PlayerTile(this.player);
+					}
+					else if(temp.equals("b")){
+						tiles[i][j] = new PressurePad();
 					}
 				}
 			}

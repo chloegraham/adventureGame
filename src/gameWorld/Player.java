@@ -26,22 +26,9 @@ public class Player {
 	}
 	
 	public void setMyLocation(Point myLocation) {
-		int oldX = this.myLocation.x;
-		int oldY = this.myLocation.y;
-		int newX = myLocation.x;
-		int newY = myLocation.y;
-		if (oldX == newX && newY > oldY){
-			setDirection("North");
-		} else if (oldX == newX && newY < oldY){
-			setDirection("South");
-		} else if (oldX > newX && newY == oldY){
-			setDirection("West");
-		} else {
-			setDirection("East");
-		}
 		this.myLocation = myLocation;
 	}
-	
+
 	public String getDirection() {
 		return direction;
 	}
@@ -72,10 +59,8 @@ public class Player {
 	public void togglePressurePad(){
 		if(onPressurePad){
 			this.onPressurePad = false;
-			this.character = "p";
 		} else {
 			this.onPressurePad = true;
-			this.character = "Z";
 		}
 	}
 	
@@ -86,10 +71,8 @@ public class Player {
 	public void toggleOnSpikes() {
 		if(onSpikes){
 			this.onSpikes = false;
-			this.character = "p";
 		} else	{
 			this.onSpikes = true;
-			this.character = "x";
 		}
 	}
 	
