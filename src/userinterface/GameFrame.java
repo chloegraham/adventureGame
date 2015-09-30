@@ -15,6 +15,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLayeredPane;
+import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.JTextPane;
 
@@ -28,6 +29,7 @@ public class GameFrame extends JFrame {
 	private final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 	private final int frameWidth;
 	private final int frameHeight;
+	private final int menuHeight = 20;
 	private final int textHeight = 110;
 	private final int inventoryWidth = 100;
 	
@@ -39,6 +41,7 @@ public class GameFrame extends JFrame {
 	private final JTextPane messagePane = new JTextPane();
 	private final JLayeredPane layerPane = new JLayeredPane();
 	private final JPanel inventoryPane = new JPanel();
+	private final JMenuBar menuBar = new JMenuBar();
 	
 	private ArrayList<String> messages = new ArrayList<String>();
 	private final JButton[] inventory = new JButton[]{new JButton("0")};
@@ -49,6 +52,7 @@ public class GameFrame extends JFrame {
 	 */
 	public GameFrame(RenderPane graphics) {
 		super("Adventure Game");
+		
 		Dimension dim = graphics.getPreferredSize();
 		int renderWidth = (int) dim.getWidth();
 		int renderHeight = (int) dim.getHeight();
@@ -63,8 +67,9 @@ public class GameFrame extends JFrame {
 		this.setLocation(frameX, frameY);	// Position in centre of screen
 		
 		/* Position and size of panels */
-		graphics.setBounds(0, 0, renderWidth, renderHeight);
+		graphics.setBounds(0, 20, renderWidth, renderHeight);
 		messagePane.setBounds(0, renderHeight, renderWidth, textHeight);
+		menuBar.setBounds(0, 0, frameWidth, menuHeight);
 		buildInventoryPane(renderWidth);
 		
 		add(layerPane);
@@ -72,7 +77,8 @@ public class GameFrame extends JFrame {
 		/* Add panes from furthest to closest */
 		layerPane.add(graphics, new Integer(0));
 		layerPane.add(inventoryPane, new Integer(1));
-		layerPane.add(messagePane, new Integer(2));
+		layerPane.add(menuBar, new Integer(2));
+		layerPane.add(messagePane, new Integer(3));
 
 		/* Set decorations */
 		messagePane.setOpaque(false);
@@ -87,7 +93,7 @@ public class GameFrame extends JFrame {
 	 * @param xPos
 	 */
 	private void buildInventoryPane(int xPos){
-		inventoryPane.setBounds(xPos, 0, 100, 100);
+		inventoryPane.setBounds(xPos, 20, 100, 100);
 		inventoryPane.setLayout(new BoxLayout(inventoryPane, BoxLayout.Y_AXIS));
 		inventoryPane.setBorder(BorderFactory.createTitledBorder("Inventory"));
 		if (iconKey != null){ inventory[0].setIcon(iconKey); }
