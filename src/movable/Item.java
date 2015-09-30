@@ -1,13 +1,9 @@
 package movable;
 
-import tiles.Tile;
+import java.awt.Point;
 
-public abstract class Item implements Tile{
+public interface Item {
 
-	protected String id;
-	
-	public Item(String identifier){
-		this.id = identifier;
-	}
+	public String getDescription();
 	
 }

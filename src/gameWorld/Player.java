@@ -6,30 +6,26 @@ import java.util.List;
 
 import com.sun.xml.internal.ws.api.addressing.OneWayFeature;
 
+import movable.Boulder;
 import movable.Item;
 import movable.Key;
+import movable.Moveable;
 
-public class Player {
-	private Point myLocation;
+public class Player extends Moveable{
+
 	private String direction = "North"; //String representing which direction player is facing
 	private List<Item> inventory = new ArrayList<Item>();
-	private String character = "p";
 	private boolean onPressurePad = false;
 	private boolean onSpikes = false;
 	
-	public Player(Point loc){
-		this.myLocation = loc;
-	}
-
-	public Point getMyLocation() {
-		return this.myLocation;
+	public Player(Point location) {
+		this(location, "p");
 	}
 	
-	public boolean setMyLocation(Point myLocation) {
-		this.myLocation = myLocation;
-		return true;
+	public Player(Point location, String c) {
+		super(location, c);
 	}
-
+	
 	public String getDirection() {
 		return direction;
 	}
@@ -47,8 +43,20 @@ public class Player {
 		return null;
 	}
 	
+	public void removeBoulder(){
+		for(int i = 0; i < this.inventory.size()-1; i++){
+			if(this.inventory.get(i) instanceof Boulder){
+				this.inventory.remove(i);
+			}
+		}
+	}
+	
 	public void addToInventory(Item item){
 		inventory.add(item);
+	}
+	
+	public List<Item> getInventory(){
+		return inventory;
 	}
 	
 	public void testInventory(){
@@ -80,10 +88,4 @@ public class Player {
 	public boolean onSpikes(){
 		return onSpikes;
 	}
-	
-	@Override
-	public String toString() {
-		return character;
-	}
-	
 }

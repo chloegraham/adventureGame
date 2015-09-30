@@ -1,7 +1,11 @@
 package gameWorld;
 
 import java.awt.Point;
+import java.util.HashSet;
+import java.util.Set;
 
+import movable.Boulder;
+import movable.Item;
 import movable.Key;
 import userinterface.Action.Actions;
 import tiles.Chest;
@@ -20,12 +24,11 @@ public class GameLogic {
 	private Tile[][] staticTiles;
 	private Player player;
 	private Level level;
-	
+	private Set<Boulder> boulders = new HashSet<Boulder>();
 	private Tile[][] staticBoard = new Tile[5][5];
 	
 	public GameLogic() {
 		this.level = Level.parseLevel("board.txt");
-		//this.level = Level.parseLevel(filenam);
 		this.tiles = level.getLevel();
 		for (int i = 0; i < 5; i++){
 			for(int j = 0; j < 5; j++){
@@ -34,10 +37,11 @@ public class GameLogic {
 		}
 		//System.out.println(Level.toStringss());
 		this.player = level.getPlayer();
+		boulders.add(new Boulder(new Point(1,1), "hello i'm mr boul", "1"));
 		makeLayer3();
 		makeLayer1();
 		makeLayer2();
-		//System.out.println(toString(unmoveableTiles));
+		System.out.println(toString(tiles));
 	}
 	
 	private void makeLayer3() {
@@ -86,12 +90,12 @@ public class GameLogic {
 				}
 			}
 		}	
-		
 	}
 
 	public void handleAction(int ordinal, int userID){
+		
 		//needs to handle userID
-		Point current = this.player.getMyLocation();
+		Point current = this.player.getLocation();
 		if(Actions.NORTH.ordinal() == ordinal){
 			this.player.setDirection("North");	
 			move(player, new Point(current.x, current.y-1));
@@ -111,16 +115,22 @@ public class GameLogic {
 		else if (Actions.INTERACT.ordinal() == ordinal){ 
 			interact(player, current);
 			}
-		if(ordinal != 99) {System.out.println(player.getDirection());}
+		//if(ordinal != 99) {System.out.println(player.getDirection());}
 	}
 	
 	private boolean move(Player player, Point newLoc) {
-		if (newLoc.y < 0 || newLoc.y > tiles.length || newLoc.x < 0 || newLoc.x > tiles[0].length){
+//		System.out.println("x: " + player.getMyLocation().x + "y: " + player.getMyLocation().y);
+		//check for out bounds
+		if (newLoc.y < 0 || newLoc.y > tiles.length-1 || newLoc.x < 0 || newLoc.x > tiles[0].length-1){
 			return false;
-		}
-		
+		}	
 		Tile tile = tiles[newLoc.y][newLoc.x];
-		
+		for(Boulder b: this.boulders){
+			if(b.getLocation().equals(newLoc)){
+				System.out.println("OOPS DON't HIT MR BOUL");
+				return false;
+			}
+		}
 		if (tile instanceof Chest || tile instanceof Wall || tile instanceof Door && ((Door)tile).isLocked()){
 			return false;
 		}
@@ -128,13 +138,14 @@ public class GameLogic {
 			((PressurePad)tile).activate();
 		}
 		else if (tile instanceof Spikes){
-			//cyclespikes
+		  if(((Spikes)tile).isActive()){
+			  return false;
+		  } 
 		}
-		
-		return player.setMyLocation(newLoc);
-	}
+		return player.setLocation(newLoc);		
+	}	
 	
-	
+	@SuppressWarnings("unused")
 	private void violence(Player player2) {
 		
 		System.out.println("HHA U DIED");
@@ -183,9 +194,33 @@ public class GameLogic {
 				p.addToInventory(key);
 			}
 		} 
-		if (tile instanceof Door){
+		else if (tile instanceof Door){
 			((Door) tile).openDoor(p.getKey());
-		} 
+		} 	
+		//pick up boulder
+		for(Boulder b: this.boulders){
+			if(b.getLocation().equals(interactWith)){
+				System.out.println("picking up boulder");
+				player.addToInventory(b);
+				boulders.remove(b);
+				return true;
+			}
+		}
+		//TODO: dropping multiple boulders
+		//otherwise drop boulder
+		for(Item i: player.getInventory()){
+			if(i instanceof Boulder){
+				if(tiles[interactWith.y][interactWith.x] instanceof EmptyTile || tiles[interactWith.y][interactWith.x] instanceof PressurePad){
+					((Boulder) i).setLocation(interactWith);
+					boulders.add((Boulder) i);
+					player.removeBoulder();
+					System.out.println("dropped boulder");
+					return true;
+				}
+				System.out.println("can't drop here");
+			}
+		}
+		player.testInventory();
 		return false;
 	}
 	
@@ -197,13 +232,14 @@ public class GameLogic {
 				newArray[i][j] = tileArray[i][j].toString().charAt(0);
 			}
 		}	
-		Point myPoint = this.player.getMyLocation();
+		Point myPoint = this.player.getLocation();
+		//overwrite char in array with player
 		newArray[myPoint.y][myPoint.x] = this.player.toString().charAt(0);
 		return newArray;
 	}
 	
 	public char[][] getGameWorld(){
-		char[][] newArray = new char[5][5];
+		char[][] newArray = new char[tiles.length][tiles[0].length];
 		newArray = convertToChar(this.tiles);
 		return newArray;
 	}	

@@ -1,10 +1,17 @@
 package movable;
 
-public class Key extends Item implements Moveable {
+public class Key implements Item {
 	
+	private String description;
+	private String id;
 	
-	public Key(String identifier) {
-		super(identifier);
+	/*public Key(String description, int id) {
+		this.description = description;
+		this.id = id;
+	}*/
+	
+	public Key(String id) {
+		this.id = id;
 	}
 
 	public String toString(){
@@ -25,5 +32,10 @@ public class Key extends Item implements Moveable {
 		int n = 3;
 		n += n * id.hashCode();
 		return n;
+	}
+
+	@Override
+	public String getDescription() {
+		return this.description;
 	}
 }
