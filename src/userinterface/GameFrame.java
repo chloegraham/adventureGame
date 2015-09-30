@@ -119,10 +119,12 @@ public class GameFrame extends JFrame {
 	 */
 	private ImageIcon loadImage(String imageAddress){
 		Image img = null;
+		ImageIcon icon = null;
 		try {
 			img = ImageIO.read(new File(imageAddress));
+			new ImageIcon(img);
 		} catch (IOException e) { e.printStackTrace(); }
-		return new ImageIcon(img);
+		return icon;
 	}
 
 	private static final long serialVersionUID = 1L;
