@@ -25,8 +25,9 @@ public class Player {
 		return this.myLocation;
 	}
 	
-	public void setMyLocation(Point myLocation) {
+	public boolean setMyLocation(Point myLocation) {
 		this.myLocation = myLocation;
+		return true;
 	}
 
 	public String getDirection() {

@@ -3,14 +3,12 @@ package gameWorld;
 import java.awt.Point;
 
 import movable.Key;
-import movable.Moveable;
 import userinterface.Action.Actions;
 import tiles.Chest;
 import tiles.Door;
 import tiles.EmptyTile;
 import tiles.PressurePad;
 import tiles.Spikes;
-import movable.PlayerTile;
 import tiles.Tile;
 import tiles.Unmoveable;
 import tiles.Wall;
@@ -18,16 +16,16 @@ import tiles.Wall;
 public class GameLogic {
 
 	private Tile[][] tiles;
-	private Tile[][] moveableTiles;
 	private Tile[][] unmoveableTiles;
 	private Tile[][] staticTiles;
 	private Player player;
 	private Level level;
+	
 	private Tile[][] staticBoard = new Tile[5][5];
 	
 	public GameLogic() {
-	//	this.level = Level.parseLevel("board.txt");
-		this.level = new Level(5, 5);
+		this.level = Level.parseLevel("board.txt");
+		//this.level = Level.parseLevel(filenam);
 		this.tiles = level.getLevel();
 		for (int i = 0; i < 5; i++){
 			for(int j = 0; j < 5; j++){
@@ -39,23 +37,23 @@ public class GameLogic {
 		makeLayer3();
 		makeLayer1();
 		makeLayer2();
-		//System.out.println(toString(staticTiles));
+		//System.out.println(toString(unmoveableTiles));
 	}
 	
 	private void makeLayer3() {
 		
-		this.moveableTiles = new Tile[this.tiles.length][this.tiles[0].length];
-		for (int i = 0; i < tiles.length; i++) {
-			for (int j = 0; j < tiles[0].length; j++) {
-				Tile temp = this.tiles[i][j];
-				if(temp instanceof Moveable){
-					moveableTiles[i][j] = temp;
-				}
-				else{
-					moveableTiles[i][j] = null;
-				}
-			}
-		}	
+//		this.moveableTiles = new Tile[this.tiles.length][this.tiles[0].length];
+//		for (int i = 0; i < tiles.length; i++) {
+//			for (int j = 0; j < tiles[0].length; j++) {
+//				Tile temp = this.tiles[i][j];
+//				if(temp instanceof Moveable){
+//					moveableTiles[i][j] = temp;
+//				}
+//				else{
+//					moveableTiles[i][j] = null;
+//				}
+//			}
+//		}	
 	}
 	
 	private void makeLayer2() {
@@ -92,20 +90,21 @@ public class GameLogic {
 	}
 
 	public void handleAction(int ordinal, int userID){
+		//needs to handle userID
 		Point current = this.player.getMyLocation();
-		if(Actions.NORTH.ordinal() == ordinal && player.getMyLocation().getY() > 0){
+		if(Actions.NORTH.ordinal() == ordinal){
 			this.player.setDirection("North");	
 			move(player, new Point(current.x, current.y-1));
 		}
-		else if (Actions.EAST.ordinal() == ordinal && player.getMyLocation().getX() < tiles.length){
+		else if (Actions.EAST.ordinal() == ordinal){
 			this.player.setDirection("East");
 			move(player, new Point(current.x+1, current.y));
 		}
-		else if (Actions.SOUTH.ordinal() == ordinal && player.getMyLocation().getY() < tiles[0].length-1){
+		else if (Actions.SOUTH.ordinal() == ordinal){
 			this.player.setDirection("South");
 			move(player, new Point(current.x, current.y+1));
 		}
-		else if (Actions.WEST.ordinal() == ordinal && player.getMyLocation().getX() > 0 ){
+		else if (Actions.WEST.ordinal() == ordinal){
 			this.player.setDirection("West");
 			move(player, new Point(current.x-1, current.y));
 	   }
@@ -116,59 +115,23 @@ public class GameLogic {
 	}
 	
 	private boolean move(Player player, Point newLoc) {
-
+		if (newLoc.y < 0 || newLoc.y > tiles.length || newLoc.x < 0 || newLoc.x > tiles[0].length){
+			return false;
+		}
+		
 		Tile tile = tiles[newLoc.y][newLoc.x];
-		Tile lastTile = staticBoard[player.getMyLocation().y][player.getMyLocation().x];
-		//if the last tile is a spike and is now active, kill the player lol
-		if(lastTile instanceof Spikes){
-			if(((Spikes) lastTile).isActive()){
-				violence(player);
-			}
+		
+		if (tile instanceof Chest || tile instanceof Wall || tile instanceof Door && ((Door)tile).isLocked()){
+			return false;
 		}
-		if(tile instanceof EmptyTile || (tile instanceof Door && !((Door)tile).isLocked())) {
-			if(lastTile instanceof PressurePad){
-				tiles[player.getMyLocation().y][player.getMyLocation().x] = new PressurePad();
-				player.togglePressurePad();
-			}
-			else if(lastTile instanceof Spikes){
-				tiles[player.getMyLocation().y][player.getMyLocation().x] = new Spikes();
-			}
-			else{
-				tiles[player.getMyLocation().y][player.getMyLocation().x] = new EmptyTile();	
-			}
-			player.setMyLocation(newLoc);
-			tiles[newLoc.y][newLoc.x] = new PlayerTile(this.player);			
-			return true;
+		else if (tile instanceof PressurePad){
+			((PressurePad)tile).activate();
 		}
-		else if(tile instanceof PressurePad){
-			player.togglePressurePad();
-			if(lastTile instanceof Spikes){
-				tiles[player.getMyLocation().y][player.getMyLocation().x] = new Spikes();
-			} else {
-				tiles[player.getMyLocation().y][player.getMyLocation().x] = new EmptyTile();		
-			}
-			player.setMyLocation(newLoc);		
-			tiles[newLoc.y][newLoc.x] = new PlayerTile(this.player);			
-			return true;	
+		else if (tile instanceof Spikes){
+			//cyclespikes
 		}
-		else if(tile instanceof Spikes){
-			if(((Spikes) tiles[player.getMyLocation().y][player.getMyLocation().x]).isActive()){
-				System.out.println("can't walk onto active spike");
-				return false;
-			}
-			else{
-				if(lastTile instanceof PressurePad){
-					tiles[player.getMyLocation().y][player.getMyLocation().x] = new PressurePad();
-				} else {
-					tiles[player.getMyLocation().y][player.getMyLocation().x] = new EmptyTile();		
-				}
-				player.setMyLocation(newLoc);		
-				tiles[newLoc.y][newLoc.x] = new PlayerTile(this.player);
-				player.toggleOnSpikes();
-				return true;
-			}	
-		}
-		return false;
+		
+		return player.setMyLocation(newLoc);
 	}
 	
 	
@@ -207,9 +170,11 @@ public class GameLogic {
 		case "East":
 			interactWith = new Point(now.x+1, now.y);
 			break;
-		default:
+		case "West":
 			interactWith = new Point(now.x-1, now.y);
 			break;
+		default:
+			throw new RuntimeException();
 		}
 		Tile tile = tiles[interactWith.y][interactWith.x];
 		if (tile instanceof Chest){
@@ -232,6 +197,8 @@ public class GameLogic {
 				newArray[i][j] = tileArray[i][j].toString().charAt(0);
 			}
 		}	
+		Point myPoint = this.player.getMyLocation();
+		newArray[myPoint.y][myPoint.x] = this.player.toString().charAt(0);
 		return newArray;
 	}
 	
@@ -239,11 +206,5 @@ public class GameLogic {
 		char[][] newArray = new char[5][5];
 		newArray = convertToChar(this.tiles);
 		return newArray;
-	}
-	
-	
-	
-	
-	
-	
+	}	
 }

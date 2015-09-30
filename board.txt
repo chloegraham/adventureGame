@@ -1,6 +1,6 @@
 5 5
-w w d w w
-w e e b w
-w c e e e
-w e p e e
-w w w e e
+w w d w w 
+w e e b e 
+w c e e e 
+w e e e e 
+w e e e e

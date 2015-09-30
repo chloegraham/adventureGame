@@ -19,23 +19,17 @@ public class Level {
 	private int width;
 	private int height;
 	
-	private Tile[][] staticTiles;
-	private Moveable[][] items; //includes players and items (boulders, keys)
 	private Player player;
 	private static Tile[][] tiles;
 	
-	public Level(int width, int height) {
+	public Level(int width, int height, Scanner sc) {
 		this.width = width;
 		this.height = height;
 		tiles = new Tile[height][width];
-		parseLevel("board.txt");
-		//setupWalls();
-		//setupDoors();
-		//setupChests();
-		//setupPlayer();
+		setupTiles(sc);
 	}
 	
-	public void parseLevel(String filename) {
+	public static Level parseLevel(String filename) {
 		
 		Scanner sc;
 		//InputStream input = Board.class.getClassLoader().getResourceAsStream(filename);
@@ -55,33 +49,13 @@ public class Level {
 		} catch (RuntimeException e1){
 			throw new RuntimeErrorException(null, "Couldn't parse dimensions of board");
 		}
-		setupTiles(sc);
+		Level level = new Level(width, height, sc);
 		sc.close();	
+		return level;
 	}
 	
 	public Player getPlayer(){
 		return this.player;
-	}
-	
-	private void setupPlayer() {
-		Point p = new Point(2, 2);
-		this.player = new Player(p);
-	}
-	
-	private void setupDoors() {
-		tiles[0][3] = new Door();
-	}
-	
-	private void setupChests() {
-		tiles[3][3] = new Chest();
-	}
-
-	private void setupEmptyTiles() {
-		for (int x = 0; x < width; x++) {
-			for (int y = 0; y < height; y++) {
-				tiles[y][x] = new EmptyTile();
-			}
-		}
 	}
 	
 	private void setupTiles(Scanner sc) {
