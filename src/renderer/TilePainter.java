@@ -201,4 +201,17 @@ public class TilePainter {
 	    g2.setPaint(new Color(50, 50, 50));
 	    g2.drawPolygon(xPoints, yPoints, 4);
     }
+    
+    protected void drawBoulder(Graphics2D g2, int x, int y){   
+    	int third = tilesize / 3;
+    	
+    	g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+    	    	RenderingHints.VALUE_ANTIALIAS_ON);
+    	
+	    g2.setPaint(new Color(50, 50, 60));
+    	g2.fillOval(x - third, y - third, third * 2, third * 2);
+    	
+    	g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+    	    	RenderingHints.VALUE_ANTIALIAS_OFF);
+    }
 }

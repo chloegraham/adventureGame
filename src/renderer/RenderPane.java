@@ -138,32 +138,34 @@ public class RenderPane extends JPanel {
      */
     private void parseAndDrawTile(char tile, Point isoTile, Graphics2D g2 ){
     	switch(tile){
-        case 'e': tilePainter.drawFloorTile(g2, isoTile.x, isoTile.y);
-            break;
-
-        case 'w': tilePainter.drawCubeTile(g2, isoTile.x, isoTile.y);
-            break;
-
-        case 'p': tilePainter.drawCharachter(g2, isoTile.x, isoTile.y);
-            break;
-            
-        case 'c': tilePainter.drawChest(g2, isoTile.x, isoTile.y);
-        	break;
-        	
-        case 'l': tilePainter.drawOpenedChest(g2, isoTile.x, isoTile.y);
-    		break;
-    		
-        case 'd': tilePainter.drawDoor(g2, isoTile.x, isoTile.y);
-        	break;
-        	
-        case 'o': tilePainter.drawOpenDoor(g2, isoTile.x, isoTile.y);
-        	break;
-        	
-        case 'b' : tilePainter.drawPressurePad(g2, isoTile.x, isoTile.y);
-        	break;
-        	
-        case 'a' :tilePainter.drawPressurePadActive(g2, isoTile.x, isoTile.y);
-        	break;
+	    	case 'e': tilePainter.drawFloorTile(g2, isoTile.x, isoTile.y);
+		        break;
+		    case 'w': tilePainter.drawCubeTile(g2, isoTile.x, isoTile.y);
+		        break;
+		
+		    case 'p': tilePainter.drawCharachter(g2, isoTile.x, isoTile.y);
+		        break;
+		        
+		    case 'c': tilePainter.drawChest(g2, isoTile.x, isoTile.y);
+		    	break;
+		    	
+		    case 'C': tilePainter.drawOpenedChest(g2, isoTile.x, isoTile.y);
+				break;
+				
+		    case 'd': tilePainter.drawDoor(g2, isoTile.x, isoTile.y);
+		    	break;
+		    	
+		    case 'D': tilePainter.drawOpenDoor(g2, isoTile.x, isoTile.y);
+		    	break;
+		    	
+		    case 'z' : tilePainter.drawPressurePad(g2, isoTile.x, isoTile.y);
+		    	break;
+		    	
+		    case 'Z' :tilePainter.drawPressurePadActive(g2, isoTile.x, isoTile.y);
+		    	break;
+		    	
+		    case 'b' : tilePainter.drawBoulder(g2,  isoTile.x, isoTile.y);
+		    	break;
     	}
     }
 
