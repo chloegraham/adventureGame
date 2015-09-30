@@ -5,10 +5,10 @@ import java.awt.*;
 /**
  * Created by Eliot on 21/09/15.
  */
-public class TileDrawingMachine {
+public class TilePainter {
     private int tilesize;
 
-    public TileDrawingMachine(int tileSize){
+    public TilePainter(int tileSize){
         tilesize = tileSize;
     }
 

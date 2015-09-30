@@ -20,6 +20,7 @@ public class UserInterface {
 	private RenderPane graphics = new RenderPane();
 	private GameFrame frame = new GameFrame(graphics);
 	private int action = 99;
+	private int keys = 0;
 	
 	public UserInterface() {
 		addListeners();
@@ -85,13 +86,43 @@ public class UserInterface {
 	public void clearMessageHistory(){
 		frame.clearMessages();
 	}
+	
+	/**
+	 * Increments the number of keys displayed to the user
+	 */
+	public void addKey(){
+		keys++;
+		frame.updateInventory(keys);
+	}
+	
+	/**
+	 * Attempts to decrement the number of keys displayed to the user.
+	 * @return true if a key was removed, false otherwise.
+	 */
+	public boolean removeKey(){
+		if (keys >= 0){
+			keys--;
+			frame.updateInventory(keys);
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Directly set the number of keys that show up on UI.
+	 * @param keys
+	 */
+	public void setKeyCount(int keys){
+		this.keys = keys;
+		frame.updateInventory(keys);
+	}
 
 	/**
-	 * Set the level and redraw the pane
+	 * Set the level and redraw the pane.
 	 */
 	public void redraw(char[][] level){
 		 int numberOfRows = level.length;
-	        int numberOfColums = level[0].length;
+	     int numberOfColums = level[0].length;
 
 		
 		int camX = 0;
@@ -108,6 +139,35 @@ public class UserInterface {
 		
 		graphics.setCameraLocation(camX,camY);
 		graphics.setLevel(level);
+		frame.repaint();
+	}
+	
+	
+	/**
+	 * Same as redraw, but this time from 3 separate char layers not one.
+	 * @param level
+	 * @param objects
+	 * @param moveables
+	 */
+	public void redrawFromLayers(char[][]level, char[][]objects, char[][]moveables){
+    	
+    	int numberOfRows = level.length;
+	    int numberOfColums = level[0].length;
+    	
+		int camX = 0;
+		int camY = 0;
+		
+		 for (int i = 0; i < numberOfRows; i++) {
+	            for (int j = 0; j < numberOfColums; j++) {
+	            	if(moveables[i][j] == 'p'){
+	            		camX = j;
+	            		camY = i;
+	            	}
+	            }
+		 }
+		
+		graphics.setCameraLocation(camX,camY);
+		graphics.setLayers(level, objects, moveables);
 		frame.repaint();
 	}
 }

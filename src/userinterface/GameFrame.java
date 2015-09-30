@@ -4,8 +4,12 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.util.ArrayList;
 
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLayeredPane;
+import javax.swing.JPanel;
 import javax.swing.JTextPane;
 
 import renderer.RenderPane;
@@ -19,13 +23,17 @@ public class GameFrame extends JFrame {
 	private final int frameWidth;
 	private final int frameHeight;
 	private final int textHeight = 110;
+	private final int inventoryWidth = 100;
 	
 	private final Dimension frameSize;
+	private final Dimension buttonSize = new Dimension(inventoryWidth, 25);
 	
 	private final JTextPane messagePane = new JTextPane();
 	private final JLayeredPane layerPane = new JLayeredPane();
+	private final JPanel inventoryPane = new JPanel();
 	
 	private ArrayList<String> messages = new ArrayList<String>();
+	private final JButton[] inventory = new JButton[]{new JButton("Keys: 0")};
 	
 	/**
 	 * Sets up the window to display the game and all controls/menus.
@@ -37,12 +45,8 @@ public class GameFrame extends JFrame {
 		int renderWidth = (int) dim.getWidth();
 		int renderHeight = (int) dim.getHeight();
 		
-		/* Position and size of panels */
-		graphics.setBounds(0, 0, renderWidth, renderHeight);
-		messagePane.setBounds(0, renderHeight, renderWidth, textHeight);
-		
 		/* Position (centre) and size of frame */
-		frameWidth = (int) (dim.getWidth() + 16);		// Needs extra width for border
+		frameWidth = (int) (dim.getWidth() + inventoryWidth + 16);		// Needs extra width for border
 		frameHeight = (int) (dim.getHeight() + textHeight);
 		frameSize = new Dimension(frameWidth, frameHeight);
 		this.setPreferredSize(frameSize);
@@ -50,11 +54,17 @@ public class GameFrame extends JFrame {
 		int frameY = (int) ((screenSize.getHeight()/2)-(frameHeight/2));
 		this.setLocation(frameX, frameY);	// Position in centre of screen
 		
+		/* Position and size of panels */
+		graphics.setBounds(0, 0, renderWidth, renderHeight);
+		messagePane.setBounds(0, renderHeight, renderWidth, textHeight);
+		buildInventoryPane(renderWidth);
+		
 		add(layerPane);
 
 		/* Add panes from furthest to closest */
 		layerPane.add(graphics, new Integer(0));
-		layerPane.add(messagePane, new Integer(1));
+		layerPane.add(inventoryPane, new Integer(1));
+		layerPane.add(messagePane, new Integer(2));
 
 		/* Set decorations */
 		messagePane.setOpaque(false);
@@ -62,6 +72,17 @@ public class GameFrame extends JFrame {
 		
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		this.pack();
+	}
+	
+	private void buildInventoryPane(int xPos){
+		inventoryPane.setBounds(xPos, 0, 100, 100);
+		inventoryPane.setLayout(new BoxLayout(inventoryPane, BoxLayout.Y_AXIS));
+		inventoryPane.setBorder(BorderFactory.createTitledBorder("Inventory"));
+		inventory[0].setMaximumSize(buttonSize);
+		inventory[0].setBorderPainted(false);
+		inventory[0].setContentAreaFilled(false);
+		inventoryPane.add(inventory[0]);
+		inventoryPane.setOpaque(false);
 	}
 	
 	/**
@@ -78,6 +99,10 @@ public class GameFrame extends JFrame {
 	
 	public void clearMessages(){
 		messages = new ArrayList<String>();
+	}
+	
+	public void updateInventory(int keys){
+		inventory[0].setText("Keys: " + keys);
 	}
 
 	private static final long serialVersionUID = 1L;
