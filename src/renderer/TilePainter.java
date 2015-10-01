@@ -240,8 +240,6 @@ protected void drawSpikesDown(Graphics2D g2, int x, int y){
 
 
 protected void drawCharachterNorth(Graphics2D g2, int x, int y){
-    // First draw a floor tile
-    drawFloorTile(g2, x, y);
 
 
     int xrPoints[] = {x, x + (tilesize / 4), x};
@@ -259,9 +257,7 @@ protected void drawCharachterNorth(Graphics2D g2, int x, int y){
 }
 
 protected void drawCharachterEast(Graphics2D g2, int x, int y){
-    // First draw a floor tile
-    drawFloorTile(g2, x, y);
-
+  
 
     int xrPoints[] = {x, x + (tilesize / 4), x};
     int yrPoints[] = {y + ((tilesize / 2) - (tilesize / 8)), y + (tilesize / 4), y - (tilesize / 4)};
@@ -278,9 +274,7 @@ protected void drawCharachterEast(Graphics2D g2, int x, int y){
 }
 
 protected void drawCharachterWest(Graphics2D g2, int x, int y){
-    // First draw a floor tile
-    drawFloorTile(g2, x, y);
-
+    
 
     int xrPoints[] = {x, x + (tilesize / 4), x};
     int yrPoints[] = {y + ((tilesize / 2) - (tilesize / 8)), y + (tilesize / 4), y - (tilesize / 4)};
@@ -297,9 +291,7 @@ protected void drawCharachterWest(Graphics2D g2, int x, int y){
 }
 
 protected void drawCharachterSouth(Graphics2D g2, int x, int y){
-    // First draw a floor tile
-    drawFloorTile(g2, x, y);
-
+   
 
     int xrPoints[] = {x, x + (tilesize / 4), x};
     int yrPoints[] = {y + ((tilesize / 2) - (tilesize / 8)), y + (tilesize / 4), y - (tilesize / 4)};
