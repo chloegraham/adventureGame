@@ -24,17 +24,15 @@ public class GameLogic {
 	private Player player;
 	private Level level;
 	private Set<Boulder> boulders = new HashSet<Boulder>();
-	//private Tile[][] staticBoard = new Tile[5][5];
 	
 	public GameLogic() {
 		this.level = Level.parseLevel("board.txt");
 		this.tiles = level.getLevel();
 		this.player = level.getPlayer();
-		boulders.add(new Boulder(new Point(0,3), "i'm mr boul", "extra special"));
 		boulders.add(new Boulder(new Point(2,4), "i'm mr boul", "not so special"));
-		makeLayer3();
-		makeLayer1();
-		makeLayer2();
+		//makeLayer3();
+		//makeLayer1();
+		//makeLayer2();
 		//System.out.println(toString(tiles));
 	}
 	
@@ -131,8 +129,8 @@ public class GameLogic {
 			((PressurePad)tile).activate();
 		}
 		else if (tile instanceof Spikes){
+		//player can't walk onto spikes if active
 		  if(((Spikes)tile).isActive()){
-			  //player can't walk onto spikes if active
 			  return false;
 		  } 
 		}
@@ -212,19 +210,14 @@ public class GameLogic {
 					return true;
 				}
 			}
-		}
-		
-		//otherwise try to drop a boulder
-		
+		}	
 		player.testInventory();
 		return false;
 	}
 	
 	@SuppressWarnings("unused")
 	private void violence(Player player2) {
-		
-		System.out.println("HHA U DIED");
-		
+		System.out.println("HHA U DIED");		
 	}
 
 	public String toString(Tile[][] tile) {
