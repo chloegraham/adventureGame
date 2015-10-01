@@ -10,6 +10,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import renderer.RenderPane;
+import serverclient.Client;
 import userinterface.Action.Actions;
 
 /**
@@ -17,13 +18,15 @@ import userinterface.Action.Actions;
  * @author Kirsty
  */
 public class UserInterface {
+	private Client client;
 	private RenderPane graphics = new RenderPane();
 	private Listener listener = new Listener(this);
 	private GameFrame frame = new GameFrame(graphics, listener);
 	private int action = 99;
 	private int keys = 0;
 	
-	public UserInterface() {
+	public UserInterface(Client client) {
+		this.client = client;
 		addListeners();
 		frame.setVisible(true);
 	}
@@ -35,7 +38,7 @@ public class UserInterface {
 	}
 	
 	public void sendUIAction(int action) {
-		this.action = action;
+		client.passClientAction(action);
 	}
 	
 	/**
