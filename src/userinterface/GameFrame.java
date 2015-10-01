@@ -7,15 +7,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -39,21 +38,21 @@ public class GameFrame extends JFrame {
 	private final int renderWidth;
 	private final int renderHeight;
 	private final int menuHeight = 20;
-	private final int textHeight = 70;
-	private final int inventoryWidth = 100;
+	private final int textHeight = 80;
+	private final int inventoryWidth = 70;
+	private final int inventoryHeight = textHeight;
 	
 	private final Icon iconKey = loadImage("icon-key.png");
 	
 	private final Dimension frameSize;
-	private final Dimension buttonSize = new Dimension(inventoryWidth, 25);
+	private final Dimension labelSize = new Dimension(inventoryWidth, 25);
 	
 	private final JTextArea messagePane = new JTextArea();
-	private final JLayeredPane layerPane = new JLayeredPane();
+	private final JLayeredPane contentPane = new JLayeredPane();
 	private final JPanel inventoryPane = new JPanel();
 	private final JMenuBar menuBar = new JMenuBar();
 	
-	private ArrayList<String> messages = new ArrayList<String>();
-	private final JButton[] inventory = new JButton[]{new JButton("0")};
+	private final JLabel keys = new JLabel("0");
 	
 	/**
 	 * Sets up the window to display the game and all controls/menus.
@@ -61,10 +60,12 @@ public class GameFrame extends JFrame {
 	 */
 	public GameFrame(RenderPane graphics, Listener listener) {
 		super("Adventure Game");
-		
+
+		/* Position and size of Render Pane */
 		Dimension dim = graphics.getPreferredSize();
 		renderWidth = (int) dim.getWidth();
 		renderHeight = (int) dim.getHeight();
+		graphics.setBounds(0, menuHeight, renderWidth, renderHeight);
 		
 		/* Position (centre) and size of frame */
 		frameWidth = (int) (dim.getWidth() + inventoryWidth + 16);		// Needs extra width for border
@@ -74,58 +75,34 @@ public class GameFrame extends JFrame {
 		int frameX = (int) ((screenSize.getWidth()/2)-(frameWidth/2));
 		int frameY = (int) ((screenSize.getHeight()/2)-(frameHeight/2));
 		this.setLocation(frameX, frameY);	// Position in centre of screen
+		this.add(contentPane);
 		
-		/* Position and size of panels */
-		graphics.setBounds(0, 20, renderWidth, renderHeight);
-		menuBar.setBounds(0, 0, frameWidth, menuHeight);
-		
-		buildInventoryPane(renderWidth);
+		/* Build panels */
+		buildInventoryPane();
 		buildMenuBar(listener);
 		JScrollPane scrollPane = buildMessagePane();
-		
-		add(layerPane);
 
-		/* Add panes from furthest to closest */
-		layerPane.add(graphics, new Integer(0));
-		layerPane.add(inventoryPane, new Integer(1));
-		layerPane.add(menuBar, new Integer(2));
-		layerPane.add(scrollPane, new Integer(3));
+		/* Add panes to content pane with z coordinate */
+		contentPane.add(graphics, new Integer(0));
+		contentPane.add(menuBar, new Integer(1));
+		contentPane.add(scrollPane, new Integer(2));
+		contentPane.add(inventoryPane, new Integer(3));
 		
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		this.pack();
-		
-		/*
-		addMessage("Test message Old");
-		addMessage("Test message B");
-		addMessage("Test message C");
-		addMessage("Test message D");
-		addMessage("Test message E");
-		addMessage("Test message A");
-		addMessage("Test message B");
-		addMessage("Test message C");
-		addMessage("Test message D");
-		addMessage("Test message E");
-		addMessage("Test message A");
-		addMessage("Test message B");
-		addMessage("Test message C");
-		addMessage("Test message D");
-		addMessage("Test message New");*/
 	}
 	
 	/**
 	 * Create the inventory panel to display number of keys the player is carrying.
-	 * @param xPos
 	 */
-	private void buildInventoryPane(int xPos){
-		inventoryPane.setBounds(xPos, 20, 100, 100);
+	private void buildInventoryPane(){
 		inventoryPane.setLayout(new BoxLayout(inventoryPane, BoxLayout.Y_AXIS));
 		inventoryPane.setBorder(BorderFactory.createTitledBorder("Inventory"));
-		if (iconKey != null){ inventory[0].setIcon(iconKey); }
-		inventory[0].setMaximumSize(buttonSize);
-		inventory[0].setBorderPainted(false);
-		inventory[0].setContentAreaFilled(false);
-		inventoryPane.add(inventory[0]);
+		if (iconKey != null){ keys.setIcon(iconKey); }
+		keys.setMaximumSize(labelSize);
+		inventoryPane.add(keys);
 		inventoryPane.setOpaque(false);
+		inventoryPane.setBounds(renderWidth, 20, inventoryWidth, inventoryHeight);
 	}
 	
 	/**
@@ -139,19 +116,21 @@ public class GameFrame extends JFrame {
 		file.add(menuItemHelper(listener, "Load", KeyEvent.VK_L));
 		file.addSeparator();
 		file.add(menuItemHelper(listener, "Exit", KeyEvent.VK_X));
+		
+		menuBar.setBounds(0, 0, frameWidth, menuHeight);
 	}
 	
 	/**
 	 * Build the pane to display messages to the player
 	 */
 	private JScrollPane buildMessagePane(){
-		JScrollPane scrollPane = new JScrollPane(messagePane, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		JScrollPane scrollPane = new JScrollPane(messagePane,
+				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		scrollPane.setBounds(0, renderHeight, renderWidth, textHeight);
 		messagePane.setOpaque(false);
 		messagePane.setEditable(false);
 		
-		DefaultCaret caret = (DefaultCaret)messagePane.getCaret();
-		 caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+		((DefaultCaret)messagePane.getCaret()).setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 		
 		return scrollPane;
 	}
@@ -170,7 +149,6 @@ public class GameFrame extends JFrame {
 	 * Stores and displays a message to the user. Will display at most the 4 most recent messages.
 	 */
 	public void addMessage(String message){
-		messages.add(message);
 		messagePane.append(message + "\n");
 	}
 	
@@ -178,7 +156,7 @@ public class GameFrame extends JFrame {
 	 * Erase message history
 	 */
 	public void clearMessages(){
-		messages = new ArrayList<String>();
+		messagePane.setText("");
 	}
 	
 	/**
@@ -186,7 +164,7 @@ public class GameFrame extends JFrame {
 	 * @param keys
 	 */
 	public void updateInventory(int keys){
-		inventory[0].setText(Integer.toString(keys));
+		this.keys.setText(Integer.toString(keys));
 	}
 	
 	/**
