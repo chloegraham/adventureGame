@@ -182,7 +182,7 @@ public class GameLogic {
 	
 	public GameState getGameWorld2(){
 		
-		return new GameState(getNumberOfKeys(), getMessage(), level.getStaticLevel(), level.getStateLevel(), level.getMoveableLevel());
+		return new GameState(level.getStaticLevel(), level.getStateLevel(), level.getMoveableLevel());
 		
 	}
 	
