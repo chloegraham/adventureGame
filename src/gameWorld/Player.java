@@ -14,11 +14,10 @@ public class Player extends Moveable{
 	private Direction direction = Direction.NORTH; //String representing which direction player is facing
 	private List<Item> inventory = new ArrayList<Item>();
 	private boolean onPressurePad = false;
-	private boolean onSpikes = false;
 	private boolean hasBoulder = false;
 	
 	public Player(Point location) {
-		this(location, "p");
+		this(location, "i");
 	}
 	
 	public Player(Point location, String c) {
@@ -29,17 +28,17 @@ public class Player extends Moveable{
 	public String toString() {
 		switch (this.direction) {
 		case NORTH:
-			if(hasBoulder) return "1";
-			else return "2";
+			if(hasBoulder) return "I";
+			else return "i";
 		case SOUTH:
-			if(hasBoulder) return "3";
-			else return "4";
+			if(hasBoulder) return "K";
+			else return "k";
 		case EAST:
-			if(hasBoulder) return "5";
-			else return "6";
+			if(hasBoulder) return "L";
+			else return "l";
 		default:
-			if(hasBoulder) return "7";
-			else return "8";
+			if(hasBoulder) return "J";
+			else return "j";
 		}
 	}
 	
@@ -72,6 +71,15 @@ public class Player extends Moveable{
 		this.hasBoulder = false;
 	}
 	
+	public boolean containsBoulder(){
+		for(Item i: this.inventory){
+			if(i instanceof Boulder){
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	public void addToInventory(Item item){
 		inventory.add(item);
 		if(item instanceof Boulder) this.hasBoulder = true;
@@ -97,17 +105,5 @@ public class Player extends Moveable{
 	
 	public boolean onPressurePad(){
 		return onPressurePad;
-	}
-
-	public void toggleOnSpikes() {
-		if(onSpikes){
-			this.onSpikes = false;
-		} else	{
-			this.onSpikes = true;
-		}
-	}
-	
-	public boolean onSpikes(){
-		return onSpikes;
 	}
 }

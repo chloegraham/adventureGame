@@ -29,15 +29,9 @@ public class GameLogic {
 	public GameLogic() {
 		this.level = Level.parseLevel("board.txt");
 		this.tiles = level.getLevel();
-		/*for (int i = 0; i < 5; i++){
-			for(int j = 0; j < 5; j++){
-				this.staticBoard[i][j] = this.tiles[i][j];
-			}
-		}*/
-		//System.out.println(Level.toStringss());
 		this.player = level.getPlayer();
 		boulders.add(new Boulder(new Point(0,3), "i'm mr boul", "extra special"));
-		//boulders.add(new Boulder(new Point(2,4), "i'm mr boul", "not so special"));
+		boulders.add(new Boulder(new Point(2,4), "i'm mr boul", "not so special"));
 		makeLayer3();
 		makeLayer1();
 		makeLayer2();
@@ -179,33 +173,49 @@ public class GameLogic {
 		} 
 		else if (tile instanceof Door){
 			((Door) tile).openDoor(p.getKey());
-		} 	
-		//pick up boulder if one is in front of player
-		for(Boulder b: this.boulders){
-			if(b.getLocation().equals(interactWith)){
-				System.out.println("picking up boulder, id = " + b.getId());
-				player.addToInventory(b);
-				//now remove the boulder from the list so that it can't be redrawn/picked up again
-				boulders.remove(b);
-				return true;
-			}
 		}
-		//otherwise try to drop a boulder
-		if(tile instanceof EmptyTile || tile instanceof PressurePad){
-			System.out.println("Trying to drop a boulder on an empty tile or pressure pad..");
-			for(Item i: player.getInventory()){
-				if(i instanceof Boulder){
-					if(tiles[interactWith.y][interactWith.x] instanceof EmptyTile || tiles[interactWith.y][interactWith.x] instanceof PressurePad){
-						((Boulder) i).setLocation(interactWith);
-						boulders.add((Boulder) i);
-						player.removeBoulder();
-						System.out.println("dropped boulder");
-						return true;
+		
+		if (p.containsBoulder()){
+			if(tile instanceof EmptyTile || tile instanceof PressurePad){
+				System.out.println("Trying to drop a boulder on an empty tile or pressure pad..");
+				for(Item i: player.getInventory()){
+					if(i instanceof Boulder){
+						if(tiles[interactWith.y][interactWith.x] instanceof EmptyTile || tiles[interactWith.y][interactWith.x] instanceof PressurePad){
+							for (Boulder j : this.boulders){
+								if (j.getLocation().equals(interactWith)){
+									System.out.println("Boulders don't do incest");
+									return false;
+								}
+							}
+							((Boulder) i).setLocation(interactWith);
+							boulders.add((Boulder) i);
+							player.removeBoulder();
+							System.out.println("dropped boulder");
+							return true;
+						}
 					}
 				}
+				System.out.println("shame you aint got no boulder bitch");
 			}
-			System.out.println("shame you aint got no boulder bitch");
 		}
+		
+		if (p.containsBoulder()){
+			return false;
+		} else {
+			//pick up boulder if one is in front of player
+			for(Boulder b: this.boulders){
+				if(b.getLocation().equals(interactWith)){
+					System.out.println("picking up boulder, id = " + b.getId());
+					player.addToInventory(b);
+					//now remove the boulder from the list so that it can't be redrawn/picked up again
+					boulders.remove(b);
+					return true;
+				}
+			}
+		}
+		
+		//otherwise try to drop a boulder
+		
 		player.testInventory();
 		return false;
 	}
