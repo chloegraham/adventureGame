@@ -172,7 +172,15 @@ public class UserInterface {
 		
 		 for (int i = 0; i < numberOfRows; i++) {
 	            for (int j = 0; j < numberOfColums; j++) {
-	            	if(moveables[i][j] == 'p'){
+	            	if(moveables[i][j] == 'i' || 
+            			moveables[i][j] == 'j' || 
+            			moveables[i][j] == 'k' || 
+            			moveables[i][j] == 'l' ||
+            			moveables[i][j] == 'I' || 
+            			moveables[i][j] == 'J' || 
+            			moveables[i][j] == 'K' || 
+            			moveables[i][j] == 'L'){
+	            		
 	            		camX = j;
 	            		camY = i;
 	            	}
