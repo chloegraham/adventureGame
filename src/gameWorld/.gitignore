@@ -2,3 +2,6 @@
 /Location.class
 /Moveable.class
 /Player.class
+/Direction.class
+/GameLogic.class
+/Level.class

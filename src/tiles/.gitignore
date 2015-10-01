@@ -1,3 +1,8 @@
 /Tile.class
 /EmptyTile.class
 /Wall.class
+/Chest.class
+/Door.class
+/PressurePad.class
+/Spikes.class
+/Unmoveable.class
