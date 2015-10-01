@@ -132,7 +132,7 @@ public class UserInterface {
 								{'e','e','J','e','L' },
 								{'e','e','e','K','e' }};
 		
-		level = testLevel;
+		//level = testLevel;
 		
 		 int numberOfRows = level.length;
 	     int numberOfColums = level[0].length;
