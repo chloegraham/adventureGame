@@ -20,11 +20,11 @@ import serverclient.GameState;
 public class XML {
 	
 	//private static String row1 = "5 7";
-	private static String row2 = "w w w w d w w";
-	private static String row3 = "w e e s e e e";
-	private static String row4 = "w e e e e e e";
-	private static String row5 = "w e e e e e e";
-	private static String row6 = "w e e e c e z";
+	private static String row2 = "wwwwdww";
+	private static String row3 = "weeseee";
+	private static String row4 = "weeeeee";
+	private static String row5 = "weeeeee";
+	private static String row6 = "weeecez";
 	
 	private static ArrayList<String> rolev;
 	private GameState happyCLAM;
