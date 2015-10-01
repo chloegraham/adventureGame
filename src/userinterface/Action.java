@@ -21,6 +21,7 @@ public class Action {
 	 */
 	public enum Actions {
 		// Add extra events here...
+		INSPECT (KeyEvent.VK_R),
 		INTERACT (KeyEvent.VK_E),
 		SAVE (KeyEvent.VK_Q),
 		LOAD (KeyEvent.VK_L),
