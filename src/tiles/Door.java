@@ -7,7 +7,7 @@ public class Door extends Unmoveable implements Tile {
 	private boolean locked = true;
 	private String character = "d";
 	private Key key = new Key("1234", "I'm the key to your heart");
-	
+
 	public String toString() {
 		return character;
 	}
@@ -18,8 +18,13 @@ public class Door extends Unmoveable implements Tile {
 			this.character = "o";
 		}
 	}
-	
+
 	public boolean isLocked(){
 		return locked;
+	}
+
+	public void openWithPad() {
+		this.locked = false;
+		this.character = "o";		
 	}
 }

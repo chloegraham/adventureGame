@@ -72,6 +72,9 @@ public class GameLogic {
 		} //activate pressure pad if moved onto one
 		else if (tile instanceof PressurePad){
 			((PressurePad)tile).activate();
+			if(((PressurePad)tile).getDoor()!=null){
+				((PressurePad)tile).getDoor().openWithPad();
+			}
 		}
 		else if (tile instanceof Spikes){
 		//player can't walk onto spikes if active
@@ -131,6 +134,9 @@ public class GameLogic {
 									return false;
 								}
 							}
+							if(tile instanceof PressurePad){
+								((PressurePad) tile).activate();
+							}
 							((Boulder) i).setLocation(interactWith);
 							level.getBoulders().add((Boulder) i);
 							level.getPlayer().removeBoulder();
@@ -161,6 +167,14 @@ public class GameLogic {
 		return false;
 	}
 	
+	public int getNumberOfKeys(){
+		return level.getNumKeys();
+	}
+	
+	public String getMessage(){
+		return "MUMBLEWORLD";
+	}
+	
 	@SuppressWarnings("unused")
 	private void violence(Player player2) {
 		System.out.println("HHA U DIED");		
@@ -168,7 +182,7 @@ public class GameLogic {
 	
 	public GameState getGameWorld2(){
 		
-		return new GameState(level.getStaticLevel(), level.getStateLevel(), level.getMoveableLevel());
+		return new GameState(getNumberOfKeys(), getMessage(), level.getStaticLevel(), level.getStateLevel(), level.getMoveableLevel());
 		
 	}
 	

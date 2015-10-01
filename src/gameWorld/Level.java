@@ -2,13 +2,17 @@ package gameWorld;
 
 import java.awt.Point;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
 
 import javax.management.RuntimeErrorException;
 
 import movable.Boulder;
+import movable.Item;
+import movable.Key;
 import movable.Moveable;
 import movable.Player;
 import tiles.Chest;
@@ -36,7 +40,29 @@ public class Level {
 		this.boulders = new HashSet<Boulder>();
 		setupTiles(sc);
 		setupMovables();
+		joinObjects();
 		//System.out.println(tiles.toString());
+	}
+
+	private void joinObjects() {
+		List<PressurePad> pads = new ArrayList<PressurePad>();
+		List<Door> doors = new ArrayList<Door>();
+		// Link pressure pads to their doors
+		for(int i = 0; i < tiles.length; i++) {
+			for(int j = 0; j < tiles[0].length; j++) {
+				Tile tile = tiles[i][j];
+				if (tile instanceof PressurePad) {
+					pads.add((PressurePad) tile);
+				} else if(tile instanceof Door){
+					doors.add((Door)tile);
+				}
+			}
+		}
+		for(PressurePad p: pads){
+			if(doors.size() > 0){
+				p.setDoor(doors.remove(doors.size()-1));
+			}
+		}
 	}
 
 	@SuppressWarnings("resource")
@@ -68,6 +94,7 @@ public class Level {
 	}
 	
 	private void setupTiles(Scanner sc) {
+		
 		for (int i = 0; i < this.width; i++){
 			for(int j = 0; j < this.height; j++){
 				if(sc.hasNext()){
@@ -85,7 +112,7 @@ public class Level {
 						tiles[i][j] = new Chest();
 					}
 					else if(temp.equals("z")){
-						tiles[i][j] = new PressurePad();
+						tiles[i][j] = new PressurePad(); 
 					}
 					else if(temp.equals("s")){
 						tiles[i][j] = new Spikes();
@@ -192,5 +219,13 @@ public class Level {
 		Point p = player.getLocation();
 		moveableTiles[p.y][p.x] = player.toString().charAt(0);
 		return moveableTiles;
+	}
+
+	public int getNumKeys() {
+		int amount = 0;
+		for(Item i: player.getInventory()){
+			if(i instanceof Key){ amount++;	}
+		}
+		return amount;
 	}
 }
