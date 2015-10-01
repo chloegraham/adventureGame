@@ -2,10 +2,13 @@ package gameWorld;
 
 import java.awt.Point;
 import java.io.File;
+import java.util.HashSet;
 import java.util.Scanner;
+import java.util.Set;
 
 import javax.management.RuntimeErrorException;
 
+import movable.Boulder;
 import tiles.Chest;
 import tiles.Door;
 import tiles.EmptyTile;
@@ -15,21 +18,24 @@ import tiles.Tile;
 import tiles.Wall;
 
 public class Level {
-	private int width;
-	private int height;
 	
+	private int width;
+	private int height;	
 	private Player player;
-	private static Tile[][] tiles;
+	private Tile[][] tiles;
+	private Set<Boulder> boulders;
 	
 	public Level(int height, int width, Scanner sc) {
-		this.player = new Player(new Point (2, 2));
+		
 		this.width = width;
 		this.height = height;
-		tiles = new Tile[width][height];
+		this.tiles = new Tile[width][height];
+		this.boulders = new HashSet<Boulder>();
 		setupTiles(sc);
+		setupMovables();
 		//System.out.println(tiles.toString());
 	}
-	
+
 	@SuppressWarnings("resource")
 	public static Level parseLevel(String filename) {
 		
@@ -56,10 +62,6 @@ public class Level {
 		Level level = new Level(width, height, sc);
 		sc.close();	
 		return level;
-	}
-	
-	public Player getPlayer(){
-		return this.player;
 	}
 	
 	private void setupTiles(Scanner sc) {
@@ -94,6 +96,12 @@ public class Level {
 		}
 	}
 	
+	private void setupMovables() {
+		this.player = new Player(new Point (2, 2));
+		this.boulders.add(new Boulder(new Point(2,4), "i'm mr boul", "not so special"));
+		//this.boulders.add(new Boulder(new Point(0,3), "i'm mr boul", "i'm a very special lady"));
+	}
+	
 	public String toStringss() {
 		String rtn = "";
 		for (int i = 0; i < tiles.length; i++) {
@@ -108,17 +116,32 @@ public class Level {
 		return rtn;
 	}
 	
-	@SuppressWarnings("static-access")
-	public Tile[][] getLevel() {
-		/*char[][] array = new char[HEIGHT][WIDTH];
-		for (int x = 0; x < WIDTH; x++)
-			for (int y = 0; y < HEIGHT; y++) 
-				array[y][x] = tiles[y][x].toString().charAt(0);
-
-		Point loc = this.player.getMyLocation();
-		array[loc.y][loc.x] = this.player.toString().charAt(0);
-		return array;*/
+	public Player getPlayer(){
+		return this.player;
+	}
+	
+	public Tile[][] getTiles(){
 		return this.tiles;
 	}
-
+	
+	public Set<Boulder> getBoulders(){
+		return this.boulders;
+	}
+	
+	public char[][] getCharArray() {
+		char[][] newArray = new char[tiles.length][tiles[0].length];
+		for (int i = 0; i < tiles.length; i++) {
+			for (int j = 0; j < tiles[0].length; j++) {
+				newArray[i][j] = tiles[i][j].toString().charAt(0);
+			}
+		}		
+		//overwrite char in array with boulder
+		for(Boulder b: this.boulders){
+			Point boulderPoint = b.getLocation();
+			newArray[boulderPoint.y][boulderPoint.x] = b.toString().charAt(0);
+		}
+		Point loc = this.player.getLocation();
+		newArray[loc.y][loc.x] = this.player.toString().charAt(0);
+		return newArray;
+	}
 }
