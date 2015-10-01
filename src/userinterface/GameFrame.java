@@ -21,6 +21,8 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextPane;
 import javax.swing.KeyStroke;
 
@@ -35,7 +37,7 @@ public class GameFrame extends JFrame {
 	private final int frameWidth;
 	private final int frameHeight;
 	private final int menuHeight = 20;
-	private final int textHeight = 110;
+	private final int textHeight = 70;
 	private final int inventoryWidth = 100;
 	
 	private final Icon iconKey = loadImage("icon-key.png");
@@ -43,7 +45,7 @@ public class GameFrame extends JFrame {
 	private final Dimension frameSize;
 	private final Dimension buttonSize = new Dimension(inventoryWidth, 25);
 	
-	private final JTextPane messagePane = new JTextPane();
+	private final JTextArea messagePane = new JTextArea();
 	private final JLayeredPane layerPane = new JLayeredPane();
 	private final JPanel inventoryPane = new JPanel();
 	private final JMenuBar menuBar = new JMenuBar();
@@ -64,7 +66,7 @@ public class GameFrame extends JFrame {
 		
 		/* Position (centre) and size of frame */
 		frameWidth = (int) (dim.getWidth() + inventoryWidth + 16);		// Needs extra width for border
-		frameHeight = (int) (dim.getHeight() + textHeight);
+		frameHeight = (int) (dim.getHeight() + textHeight + menuHeight + 16);
 		frameSize = new Dimension(frameWidth, frameHeight);
 		this.setPreferredSize(frameSize);
 		int frameX = (int) ((screenSize.getWidth()/2)-(frameWidth/2));
@@ -73,11 +75,16 @@ public class GameFrame extends JFrame {
 		
 		/* Position and size of panels */
 		graphics.setBounds(0, 20, renderWidth, renderHeight);
-		messagePane.setBounds(0, renderHeight, renderWidth, textHeight);
+		//messagePane.setBounds(0, renderHeight, renderWidth, textHeight);
 		menuBar.setBounds(0, 0, frameWidth, menuHeight);
 		
 		buildInventoryPane(renderWidth);
 		buildMenuBar(listener);
+		JScrollPane scrollPane = buildMessagePane();
+		scrollPane.setBounds(0, renderHeight, renderWidth, textHeight);
+		scrollPane.setPreferredSize(new Dimension(renderWidth, textHeight));
+		scrollPane.setMaximumSize(new Dimension(renderWidth, textHeight));
+		scrollPane.setMinimumSize(new Dimension(renderWidth, textHeight));
 		
 		add(layerPane);
 
@@ -85,11 +92,7 @@ public class GameFrame extends JFrame {
 		layerPane.add(graphics, new Integer(0));
 		layerPane.add(inventoryPane, new Integer(1));
 		layerPane.add(menuBar, new Integer(2));
-		layerPane.add(messagePane, new Integer(3));
-
-		/* Set decorations */
-		messagePane.setOpaque(false);
-		messagePane.setEditable(false);
+		layerPane.add(scrollPane, new Integer(3));
 		
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		this.pack();
@@ -123,6 +126,35 @@ public class GameFrame extends JFrame {
 		file.addSeparator();
 		file.add(menuItemHelper(listener, "Exit", KeyEvent.VK_X));
 	}
+	
+	/**
+	 * Build the pane to display messages to the player
+	 */
+	private JScrollPane buildMessagePane(){
+		JScrollPane scrollPane = new JScrollPane(messagePane, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		messagePane.setOpaque(false);
+		messagePane.setEditable(false);
+		
+		/*
+		addMessage("Test message A");
+		addMessage("Test message B");
+		addMessage("Test message C");
+		addMessage("Test message D");
+		addMessage("Test message E");
+		addMessage("Test message A");
+		addMessage("Test message B");
+		addMessage("Test message C");
+		addMessage("Test message D");
+		addMessage("Test message E");
+		addMessage("Test message A");
+		addMessage("Test message B");
+		addMessage("Test message C");
+		addMessage("Test message D");
+		addMessage("Test message E");
+		*/
+		
+		return scrollPane;
+	}
 
 	/**
 	 * Create a menu item with a listener, and a Ctrl+KeyEvent accelerator
@@ -140,9 +172,12 @@ public class GameFrame extends JFrame {
 	public void addMessage(String message){
 		messages.add(message);
 		String msg = "";
-		for (int pos=messages.size()-1, max=0; pos>=0 && max < 4; pos--, max++){
+		//for (int pos=messages.size()-1, max=0; pos>=0 && max < 4; pos--, max++){
+		//	msg = msg + messages.get(pos) + "\n";
+		//}
+		for (int pos=messages.size()-1; pos>=0; pos--){
 			msg = msg + messages.get(pos) + "\n";
-		}
+		}	
 		messagePane.setText(msg);
 	}
 	
