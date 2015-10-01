@@ -9,12 +9,15 @@ import java.util.Set;
 import javax.management.RuntimeErrorException;
 
 import movable.Boulder;
+import movable.Moveable;
+import movable.Player;
 import tiles.Chest;
 import tiles.Door;
 import tiles.EmptyTile;
 import tiles.PressurePad;
 import tiles.Spikes;
 import tiles.Tile;
+import tiles.Unmoveable;
 import tiles.Wall;
 
 public class Level {
@@ -81,10 +84,6 @@ public class Level {
 					else if(temp.equals("c")){
 						tiles[i][j] = new Chest();
 					}
-					/*else if(temp.equals("p")){
-						this.player = new Player(new Point(j, i));
-						tiles[i][j] = new PlayerTile(this.player);
-					}*/
 					else if(temp.equals("z")){
 						tiles[i][j] = new PressurePad();
 					}
@@ -143,5 +142,55 @@ public class Level {
 		Point loc = this.player.getLocation();
 		newArray[loc.y][loc.x] = this.player.toString().charAt(0);
 		return newArray;
+	}
+
+	public char[][] getStaticLevel() {
+		char[][] staticTiles = new char[this.tiles.length][this.tiles[0].length];
+		for (int i = 0; i < tiles.length; i++) {
+			for (int j = 0; j < tiles[0].length; j++) {
+				Tile temp = this.tiles[i][j];
+				if(temp instanceof EmptyTile || temp instanceof Wall){
+					staticTiles[i][j] = temp.toString().charAt(0);
+				}
+				else{
+					staticTiles[i][j] = 'e';
+				}
+			}
+		}
+		return staticTiles;
+	}
+
+	public char[][] getStateLevel() {
+		
+		char[][] unmoveableTiles = new char[this.tiles.length][this.tiles[0].length];
+		for (int i = 0; i < tiles.length; i++) {
+			for (int j = 0; j < tiles[0].length; j++) {
+				Tile temp = this.tiles[i][j];
+				if(temp instanceof Unmoveable){
+					unmoveableTiles[i][j] = temp.toString().charAt(0);
+				}
+				else{
+					unmoveableTiles[i][j] = 'n';
+				}
+			}
+		}	
+		return unmoveableTiles;
+	}
+
+	public char[][] getMoveableLevel() {
+		
+		char[][] moveableTiles = new char[this.tiles.length][this.tiles[0].length];
+		for (int i = 0; i < tiles.length; i++) {
+			for (int j = 0; j < tiles[0].length; j++) {
+				Tile temp = this.tiles[i][j];
+				if(temp instanceof Moveable){
+					moveableTiles[i][j] = temp.toString().charAt(0);
+				}
+				else{
+					moveableTiles[i][j] = 'n';
+				}
+			}
+		}	
+		return moveableTiles;
 	}
 }

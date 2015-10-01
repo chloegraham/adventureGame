@@ -10,8 +10,9 @@ public class Key implements Item {
 		this.id = id;
 	}*/
 	
-	public Key(String id) {
+	public Key(String id, String description) {
 		this.id = id;
+		this.description = description;
 	}
 
 	public String toString(){

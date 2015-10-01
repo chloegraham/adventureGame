@@ -1,20 +1,20 @@
 package gameWorld;
 
 import java.awt.Point;
-import java.util.HashSet;
-import java.util.Set;
+
 import movable.Boulder;
 import movable.Item;
 import movable.Key;
-import userinterface.Action.Actions;
+import movable.Player;
+import serverclient.GameState;
 import tiles.Chest;
 import tiles.Door;
 import tiles.EmptyTile;
 import tiles.PressurePad;
 import tiles.Spikes;
 import tiles.Tile;
-import tiles.Unmoveable;
 import tiles.Wall;
+import userinterface.Action.Actions;
 
 public class GameLogic {
 
@@ -22,60 +22,8 @@ public class GameLogic {
 	
 	public GameLogic() {
 		this.level = Level.parseLevel("level1.txt");
-		//makeLayer3();
-		//makeLayer1();
-		//makeLayer2();
-		//System.out.println(toString(tiles));
 	}
 	
-	private void makeLayer3() {
-		
-//		this.moveableTiles = new Tile[this.tiles.length][this.tiles[0].length];
-//		for (int i = 0; i < tiles.length; i++) {
-//			for (int j = 0; j < tiles[0].length; j++) {
-//				Tile temp = this.tiles[i][j];
-//				if(temp instanceof Moveable){
-//					moveableTiles[i][j] = temp;
-//				}
-//				else{
-//					moveableTiles[i][j] = null;
-//				}
-//			}
-//		}	
-	}
-	
-/*	private void makeLayer2() {
-		
-		this.unmoveableTiles = new Tile[this.tiles.length][this.tiles[0].length];
-		for (int i = 0; i < tiles.length; i++) {
-			for (int j = 0; j < tiles[0].length; j++) {
-				Tile temp = this.tiles[i][j];
-				if(temp instanceof Unmoveable){
-					unmoveableTiles[i][j] = temp;
-				}
-				else{
-					unmoveableTiles[i][j] = null;
-				}
-			}
-		}	
-	}
-*/
-/*	private void makeLayer1() {
-		
-		this.staticTiles = new Tile[this.tiles.length][this.tiles[0].length];
-		for (int i = 0; i < tiles.length; i++) {
-			for (int j = 0; j < tiles[0].length; j++) {
-				Tile temp = this.tiles[i][j];
-				if(temp instanceof EmptyTile || temp instanceof Wall){
-					staticTiles[i][j] = temp;
-				}
-				else{
-					staticTiles[i][j] = new EmptyTile();
-				}
-			}
-		}	
-	}*/
-
 	public void handleAction(int ordinal, int userID){
 		
 		//needs to handle userID
@@ -99,6 +47,11 @@ public class GameLogic {
 		else if (Actions.INTERACT.ordinal() == ordinal){ 
 			interact(level.getPlayer(), current);
 			}
+		/*else if (Actions.INSPECT.ordinal() == ordinal){ 
+			inspect(level.getPlayer(), current);
+			}*/
+		
+		//key for messages, find what's in front of player and return description
 	}
 	
 	private boolean move(Player player, Point newLoc) {
@@ -204,13 +157,19 @@ public class GameLogic {
 				}
 			}
 		}	
-		level.getPlayer().testInventory();
+		//level.getPlayer().testInventory();
 		return false;
 	}
 	
 	@SuppressWarnings("unused")
 	private void violence(Player player2) {
 		System.out.println("HHA U DIED");		
+	}
+	
+	public GameState getGameWorld2(){
+		
+		return new GameState(level.getStaticLevel(), level.getStateLevel(), level.getMoveableLevel());
+		
 	}
 	
 	public char[][] getGameWorld(){
