@@ -42,7 +42,9 @@ public class Client implements Runnable {
 	    	System.out.println("CLIENT: Waiting for initial GameState from Server");
 			String s = input.readUTF();
 			GameState gs = new GameState(s);
-			ui.redraw(gs.getLayerStatic());
+//			ui.redraw(gs.getLayerStatic());
+			
+			ui.redrawFromLayers(gs.getLayerStatic(), gs.getLayerStaticWithStates(), gs.getLayerDynamic());
 			System.out.println("CLIENT: I should have printed the initial GameState by now.");
 	    	
 	   } catch (IOException f) {
@@ -61,7 +63,9 @@ public class Client implements Runnable {
 			System.out.println("CLIENT: Waiting for Game State from the Server");
 			String s = input.readUTF();
 			GameState gs = new GameState(s);
-			ui.redraw(gs.getLayerStatic());
+//			ui.redraw(gs.getLayerStatic());
+			
+			ui.redrawFromLayers(gs.getLayerStatic(), gs.getLayerStaticWithStates(), gs.getLayerDynamic());
 			System.out.println("CLIENT: ------------ Here is the Game State from the Server (" + s + ") thoughts?");
 		
 		} catch (IOException f) {
@@ -69,42 +73,3 @@ public class Client implements Runnable {
 		}
 	}
 }
-
-	
-	
-	
-	
-	
-//	// TEMP
-//	private int uid = 0;
-//	// TEMP
-//	public int getUID() {
-//		return uid;
-//	}
-//	
-//	public int getAction() {
-//		return  ui.getAction();
-//	}
-//	
-//	public void updateClient(char[][] gameWorld) {
-//		ui.redraw(gameWorld);
-//		
-//		char[][] testLevel =   {{'w','w','w','w'},
-//                {'w','e','e','e'},
-//                {'w','e','e','e'},
-//                {'w','e','e','e'}};
-//    	
-//    	char[][] testObjects =   {{'n','n','n','n'},
-//    			{'n','n','n','n'},
-//    			{'n','c','n','n'}, // Notice i'm using 'n' for nothing
-//    			{'n','n','n','n'}};
-//    	
-//    	char[][] testMoveables =  {{'n','n','n','n'},
-//    			{'n','n','n','p'},
-//    			{'n','n','n','n'},
-//    			{'n','n','n','n'}};
-//    	
-//		// This method will do same shit as redraw, but from multiple layers
-//		//ui.redrawFromLayers(testLevel, testObjects, testMoveables);
-//	}
-//}
