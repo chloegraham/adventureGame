@@ -35,11 +35,16 @@ public final class Iso {
         tempPoint.y = ((twoDee.x + twoDee.y) / 2) + 300; // Half the screen height
         return tempPoint;
     }
-
-    static int[][] rotateCW(int[][] mat) {
+    
+    /**
+     * Helper to rotate the 2d arrays
+     * @param mat
+     * @return
+     */
+    static char[][] rotateCW(char[][] mat) {
         final int M = mat.length;
         final int N = mat[0].length;
-        int[][] ret = new int[N][M];
+        char[][] ret = new char[N][M];
         for (int r = 0; r < M; r++) {
             for (int c = 0; c < N; c++) {
                 ret[c][M-1-r] = mat[r][c];
@@ -47,5 +52,13 @@ public final class Iso {
         }
         return ret;
     }
+    
+    static char[][] rotateCCW(char[][] mat) {
+       return rotateCW(rotateCW(rotateCW(mat)));
+    }
+    
+    static char[][] rotate180(char[][] mat) {
+        return rotateCW(rotateCW(mat));
+     }
 
 }

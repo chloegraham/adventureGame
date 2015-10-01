@@ -237,6 +237,100 @@ protected void drawSpikesDown(Graphics2D g2, int x, int y){
 	drawSpikeDown(g2, x, y + ((tilesize / 4) + eigth));
 }
 
+
+
+protected void drawCharachterNorth(Graphics2D g2, int x, int y){
+
+
+    int xrPoints[] = {x, x + (tilesize / 4), x};
+    int yrPoints[] = {y + ((tilesize / 2) - (tilesize / 8)), y + (tilesize / 4), y - (tilesize / 4)};
+
+    int xlPoints[] = {x, x - (tilesize / 4), x};
+    int ylPoints[] = {y + ((tilesize / 2) - (tilesize / 8)), y + (tilesize / 4), y - (tilesize / 4)};
+
+
+    g2.setPaint(new Color(70, 142, 255));
+    g2.fillPolygon(xrPoints, yrPoints, 3);
+
+    g2.setPaint(new Color(63, 113, 213));
+    g2.fillPolygon(xlPoints, ylPoints, 3);
+}
+
+protected void drawCharachterEast(Graphics2D g2, int x, int y){
+  
+
+    int xrPoints[] = {x, x + (tilesize / 4), x};
+    int yrPoints[] = {y + ((tilesize / 2) - (tilesize / 8)), y + (tilesize / 4), y - (tilesize / 4)};
+
+    int xlPoints[] = {x, x - (tilesize / 4), x};
+    int ylPoints[] = {y + ((tilesize / 2) - (tilesize / 8)), y + (tilesize / 4), y - (tilesize / 4)};
+
+
+    g2.setPaint(new Color(255, 120, 120));
+    g2.fillPolygon(xrPoints, yrPoints, 3);
+
+    g2.setPaint(new Color(63, 113, 213));
+    g2.fillPolygon(xlPoints, ylPoints, 3);
+}
+
+protected void drawCharachterWest(Graphics2D g2, int x, int y){
+    
+
+    int xrPoints[] = {x, x + (tilesize / 4), x};
+    int yrPoints[] = {y + ((tilesize / 2) - (tilesize / 8)), y + (tilesize / 4), y - (tilesize / 4)};
+
+    int xlPoints[] = {x, x - (tilesize / 4), x};
+    int ylPoints[] = {y + ((tilesize / 2) - (tilesize / 8)), y + (tilesize / 4), y - (tilesize / 4)};
+
+
+    g2.setPaint(new Color(70, 142, 255));
+    g2.fillPolygon(xrPoints, yrPoints, 3);
+
+    g2.setPaint(new Color(63, 113, 213));
+    g2.fillPolygon(xlPoints, ylPoints, 3);
+}
+
+protected void drawCharachterSouth(Graphics2D g2, int x, int y){
+   
+
+    int xrPoints[] = {x, x + (tilesize / 4), x};
+    int yrPoints[] = {y + ((tilesize / 2) - (tilesize / 8)), y + (tilesize / 4), y - (tilesize / 4)};
+
+    int xlPoints[] = {x, x - (tilesize / 4), x};
+    int ylPoints[] = {y + ((tilesize / 2) - (tilesize / 8)), y + (tilesize / 4), y - (tilesize / 4)};
+
+
+    g2.setPaint(new Color(70, 142, 255));
+    g2.fillPolygon(xrPoints, yrPoints, 3);
+
+    g2.setPaint(new Color(255, 100, 100));
+    g2.fillPolygon(xlPoints, ylPoints, 3);
+}
+
+protected void drawCharachterSouthWithBoulder(Graphics2D g2, int x, int y){
+	drawCharachterSouth(g2, x, y);
+	drawTinyBoulder(g2, x, y - tilesize / 8);
+}
+
+protected void drawCharachterNorthWithBoulder(Graphics2D g2, int x, int y){
+	drawCharachterNorth(g2, x, y);
+	drawTinyBoulder(g2, x, y - tilesize / 8);
+}
+
+
+protected void drawCharachterWestWithBoulder(Graphics2D g2, int x, int y){
+	drawCharachterWest(g2, x, y);
+	drawTinyBoulder(g2, x, y - tilesize / 8);
+}
+
+
+protected void drawCharachterEastWithBoulder(Graphics2D g2, int x, int y){
+	drawCharachterEast(g2, x, y);
+	drawTinyBoulder(g2, x, y - tilesize / 8);
+}
+
+
+
 private void drawSpike(Graphics2D g2, int x, int y){
 	int sixteen = tilesize / 16; 
 	
@@ -254,4 +348,18 @@ private void drawSpikeDown(Graphics2D g2, int x, int y){
 
     g2.fillPolygon(xrPoints, yrPoints, 4);
 }
+
+private void drawTinyBoulder(Graphics2D g2, int x, int y){
+	int sixth = tilesize / 8;
+	
+	g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+	    	RenderingHints.VALUE_ANTIALIAS_ON);
+	
+    g2.setPaint(new Color(50, 50, 60));
+	g2.fillOval(x - sixth, y - sixth, sixth * 2, sixth * 2);
+	
+	g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+	    	RenderingHints.VALUE_ANTIALIAS_OFF);
+}
+
 }

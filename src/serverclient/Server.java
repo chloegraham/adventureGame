@@ -36,10 +36,14 @@ public class Server implements Runnable {
 	          output = new DataOutputStream(connection.getOutputStream());
 		         
 	          System.out.println("SERVER: Sending Client initial GameState");
-	          char[][] gs1 = logic.getGameWorld();
-	          GameState gs2 = new GameState(gs1, gs1, gs1);
-	          String gs3 = gs2.getGameStateString();
-	          output.writeUTF(gs3);
+	         
+//	          char[][] gs1 = logic.getGameWorld();
+//	          GameState gs2 = new GameState(gs1, gs1, gs1);
+//	          String gs3 = gs2.getGameStateString();
+	         
+	          GameState version2a = logic.getGameWorld2();
+	          String s1 = version2a.getGameStateString();
+	          output.writeUTF(s1);
 	          System.out.println("SERVER: I've sent the INITIAL GameState.");
 		          
 	          // Every 5 seconds check for an Action from Client and then send Client the GameState  
@@ -56,10 +60,14 @@ public class Server implements Runnable {
 		      
 		          // Send Client the GameState
 		          System.out.println("SERVER: Sending Client the GameState");
-		          char[][] gsArray = logic.getGameWorld();
-		          GameState gs = new GameState(gsArray, gsArray, gsArray);
-		          String gameState = gs.getGameStateString();
-		          output.writeUTF(gameState);
+		          
+//		          char[][] gsArray = logic.getGameWorld();
+//		          GameState gs = new GameState(gsArray, gsArray, gsArray);
+//		          String gameState = gs.getGameStateString();
+		          
+		          GameState version2b = logic.getGameWorld2();
+		          String s2 = version2b.getGameStateString();
+		          output.writeUTF(s2);
 		          System.out.println("SERVER: I've sent the GameState. Lets see if Client gets it");
 	          }
 		          
@@ -69,20 +77,3 @@ public class Server implements Runnable {
 		        } catch (IOException e) {}
     }
 }
-
-//public Server(GameLogic logic) {
-//	this.client = new Client();
-//	this.logic = logic;
-//}
-//
-//public void runaa() {
-//	while (true) {
-//		// Get int.action from Client and tell GameLogic
-//		int action = client.getAction();
-//		int uid = client.getUID();
-//		logic.handleAction(action, uid);
-//		// Get char[][].gameWorld and send it to the Client/Renderer
-//		char[][] gameWorld = logic.getGameWorld();
-//		client.updateClient(gameWorld);
-//	}
-//}

@@ -27,8 +27,8 @@ public class Action {
 		LOAD (KeyEvent.VK_L),
 		/* Adding new events below this line will increase the number of unnecessary checks.
 		 * Better to place above instead. */
-		COUNTERCLOCKWISE (KeyEvent.VK_NUMPAD7),		// Graphics rotation
-		CLOCKWISE (KeyEvent.VK_NUMPAD9),
+		COUNTERCLOCKWISE (KeyEvent.VK_O),		// Graphics rotation
+		CLOCKWISE (KeyEvent.VK_P),
 		NORTH (KeyEvent.VK_W),
 		EAST (KeyEvent.VK_D),
 		SOUTH (KeyEvent.VK_S),

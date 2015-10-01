@@ -1,7 +1,11 @@
 package renderer;
 
 import javax.swing.*;
+
+import gameWorld.Direction;
+
 import java.awt.*;
+import java.util.Arrays;
 
 /**
  * Created by Eliot on 15/09/2015.
@@ -18,6 +22,8 @@ public class RenderPane extends JPanel {
     private char[][] objects;
     private char[][] moveables;
     private Point CameraLocation = new Point(0,0);
+    private Point rotatedCameraLocation = new Point(0,0);
+    private Direction viewDir = Direction.NORTH;
 
 
     public RenderPane() {
@@ -58,18 +64,11 @@ public class RenderPane extends JPanel {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
 
-        if(level == null){
-            System.out.println("Set the level before painting");
-            return;
-        }
-        
-        if(level != null && this.objects == null){
-            paintLayer(g2, 0, level);
-            return;
-        }
-        
         if(this.level != null && this.objects != null && this.moveables != null ){
-        	paintFromCharLayers(g2);
+            	paintFromCharLayers(g2);        	
+        }else{
+        	System.out.println("Set the layers before painting");
+            return;
         }
     }
 
@@ -107,10 +106,43 @@ public class RenderPane extends JPanel {
      */
     private void paintFromCharLayers(Graphics2D g2){
 
-        int numberOfRows = level.length;
-        int numberOfColums = level[0].length;
+       
+        
+        char[][] rotatedLevel = null;
+        char[][] rotatedObjects = null;
+        char[][] rotatedMoveables = null;
+        
+        if(this.viewDir == Direction.NORTH){
+        	rotatedLevel = this.level;
+        	rotatedObjects = this.objects;
+        	rotatedMoveables = this.moveables;
+        }
+        
+        if(this.viewDir == Direction.EAST){
+        	rotatedLevel = Iso.rotateCW(this.level);
+        	rotatedObjects = Iso.rotateCW(this.objects);
+        	rotatedMoveables = Iso.rotateCW(this.moveables);
+        }
+        
+        if(this.viewDir == Direction.WEST){
+        	rotatedLevel = Iso.rotateCCW(this.level);
+        	rotatedObjects = Iso.rotateCCW(this.objects);
+        	rotatedMoveables = Iso.rotateCCW(this.moveables);
+        }
+        
+        if(this.viewDir == Direction.SOUTH){
+        	rotatedLevel = Iso.rotate180(this.level);
+        	rotatedObjects = Iso.rotate180(this.objects);
+        	rotatedMoveables = Iso.rotate180(this.moveables);
+        }
+        
+        int numberOfRows = rotatedLevel.length;
+        int numberOfColums = rotatedLevel[0].length;
+        
       
         g2.setStroke(new BasicStroke(1));
+        System.out.println(Arrays.deepToString(rotatedLevel));
+
 
         for (int i = 0; i < numberOfRows; i++) {
             for (int j = 0; j < numberOfColums; j++) {
@@ -119,9 +151,9 @@ public class RenderPane extends JPanel {
                 Point tile = new Point(x, y);
                 Point isoTile = Iso.twoDToIso(tile);
                 
-                parseAndDrawTile(this.level[i][j], isoTile, g2);
-                parseAndDrawTile(this.objects[i][j], isoTile, g2);
-                parseAndDrawTile(this.moveables[i][j], isoTile, g2);
+                parseAndDrawTile(rotatedLevel[i][j], isoTile, g2);
+                parseAndDrawTile(rotatedObjects[i][j], isoTile, g2);
+                parseAndDrawTile(rotatedMoveables[i][j], isoTile, g2);
              
             }
         }
@@ -172,6 +204,31 @@ public class RenderPane extends JPanel {
 	    		
 	        case 's' : tilePainter.drawSpikesDown(g2,  isoTile.x, isoTile.y);
 				break;
+				
+	        case 'i' : tilePainter.drawCharachterNorth(g2, isoTile.x, isoTile.y);
+	        	break;
+	        
+	        case 'j' : tilePainter.drawCharachterWest(g2, isoTile.x, isoTile.y);
+        		break;
+        		
+	        case 'l' : tilePainter.drawCharachterEast(g2, isoTile.x, isoTile.y);
+        		break;
+        		
+	        case 'k' : tilePainter.drawCharachterSouth(g2, isoTile.x, isoTile.y);
+        		break;
+        	
+	        case 'I' : tilePainter.drawCharachterNorthWithBoulder(g2, isoTile.x, isoTile.y);
+        		break;
+        	
+	        case 'J' : tilePainter.drawCharachterWestWithBoulder(g2, isoTile.x, isoTile.y);
+        		break;
+        		
+	        case 'L' : tilePainter.drawCharachterEastWithBoulder(g2, isoTile.x, isoTile.y);
+        		break;
+        		
+	        case 'K' : tilePainter.drawCharachterSouthWithBoulder(g2, isoTile.x, isoTile.y);
+	        	break;
+	        
     	}
     }
 

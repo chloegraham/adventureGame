@@ -209,15 +209,15 @@ public class Level {
 		char[][] moveableTiles = new char[this.tiles.length][this.tiles[0].length];
 		for (int i = 0; i < tiles.length; i++) {
 			for (int j = 0; j < tiles[0].length; j++) {
-				Tile temp = this.tiles[i][j];
-				if(temp instanceof Moveable){
-					moveableTiles[i][j] = temp.toString().charAt(0);
-				}
-				else{
-					moveableTiles[i][j] = 'n';
-				}
+				moveableTiles[i][j] = 'n';
 			}
 		}	
+		for (Boulder b : boulders) {
+			Point p = b.getLocation();
+			moveableTiles[p.y][p.x] = b.toString().charAt(0);
+		}
+		Point p = player.getLocation();
+		moveableTiles[p.y][p.x] = player.toString().charAt(0);
 		return moveableTiles;
 	}
 
