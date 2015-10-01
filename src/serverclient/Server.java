@@ -45,8 +45,8 @@ public class Server implements Runnable {
 	          // Every 5 seconds check for an Action from Client and then send Client the GameState  
 	          while (true) {
 	        	  
-	        	  // 5 second timer
-	        	  try {	Thread.sleep(5000);	} catch (Exception e) {}
+//	        	  // 5 second timer
+//	        	  try {	Thread.sleep(5000);	} catch (Exception e) {}
 	        	  
 	        	  // Check for an Action
 	        	  System.out.println("SERVER: Checking for an action");
