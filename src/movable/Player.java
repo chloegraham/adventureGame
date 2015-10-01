@@ -1,13 +1,10 @@
-package gameWorld;
+package movable;
+
+import gameWorld.Direction;
 
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
-
-import movable.Boulder;
-import movable.Item;
-import movable.Key;
-import movable.Moveable;
 
 public class Player extends Moveable{
 
