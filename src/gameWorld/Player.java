@@ -17,14 +17,14 @@ public class Player extends Moveable{
 	private boolean hasBoulder = false;
 	
 	public Player(Point location) {
-		this(location, "i");
+		this(location, "p");
 	}
 	
 	public Player(Point location, String c) {
 		super(location, c);
 	}
 	
-	@Override
+	/*@Override
 	public String toString() {
 		switch (this.direction) {
 		case NORTH:
@@ -39,6 +39,23 @@ public class Player extends Moveable{
 		default:
 			if(hasBoulder) return "J";
 			else return "j";
+		}
+	}*/
+	@Override
+	public String toString() {
+		switch (this.direction) {
+		case NORTH:
+			if(hasBoulder) return "p";
+			else return "p";
+		case SOUTH:
+			if(hasBoulder) return "p";
+			else return "p";
+		case EAST:
+			if(hasBoulder) return "p";
+			else return "p";
+		default:
+			if(hasBoulder) return "p";
+			else return "p";
 		}
 	}
 	
