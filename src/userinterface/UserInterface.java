@@ -125,6 +125,15 @@ public class UserInterface {
 	 * Set the level and redraw the pane.
 	 */
 	public void redraw(char[][] level){
+		char[][] testLevel =   	{{'e','i','e','e','e' },
+								{'j','e','l','e','e' },
+								{'e','k','e','e','e' },
+								{'e','e','p','I','e' },
+								{'e','e','J','e','L' },
+								{'e','e','e','K','e' }};
+		
+		//level = testLevel;
+		
 		 int numberOfRows = level.length;
 	     int numberOfColums = level[0].length;
 

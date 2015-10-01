@@ -15,27 +15,41 @@ import javax.xml.transform.stream.*;
 import org.xml.sax.*;
 import org.w3c.dom.*;
 
+import serverclient.GameState;
+
 public class XML {
 	
-	private static String row1 = "5 7";
-	private static String row2 = "w w w w d w w";
-	private static String row3 = "w e e s e e e";
-	private static String row4 = "w e e e e e e";
-	private static String row5 = "w e e e e e e";
-	private static String row6 = "w e e e c e z";
+	//private static String row1 = "5 7";
+	private static String row2 = "wwwwdww";
+	private static String row3 = "weeseee";
+	private static String row4 = "weeeeee";
+	private static String row5 = "weeeeee";
+	private static String row6 = "weeecez";
 	
 	private static ArrayList<String> rolev;
+	private GameState happyCLAM;
+	private static String happyClam;
 	
 	public static void main(String[] args){
 		BufferedWriter output = null;
-		String happyClam = "";
+		happyClam = "";
 		saveToXML("xml.xml");
 		if (readXML("xml.xml") == true){
 			for (String s : rolev){
 				happyClam += s;
-				happyClam += System.lineSeparator();
-				System.out.println(s);    
+				happyClam += "%";    
 			}
+			happyClam += "@";
+			for (String s : rolev){
+				happyClam += s;
+				happyClam += "%";    
+			}
+			happyClam += "@";
+			for (String s : rolev){
+				happyClam += s;
+				happyClam += "%";
+			}
+			happyClam += "@";
 		}
 		try {
 			File file = new File("Level1HappyClam.txt");
@@ -66,11 +80,11 @@ public class XML {
 
             Element doc = dom.getDocumentElement();
 
-            row1 = getTextValue(row1, doc, "row1");
-            if (row1 != null) {
-                if (!row1.isEmpty())
-                    rolev.add(row1);
-            }
+//            row1 = getTextValue(row1, doc, "row1");
+//            if (row1 != null) {
+//                if (!row1.isEmpty())
+//                    rolev.add(row1);
+//            }
             row2 = getTextValue(row2, doc, "row2");
             if (row2 != null) {
                 if (!row2.isEmpty())
@@ -125,9 +139,9 @@ public class XML {
 	        Element rootEle = dom.createElement("Level_1");
 
 	        // create data elements and place them under root
-	        e = dom.createElement("row1");
-	        e.appendChild(dom.createTextNode(row1));
-	        rootEle.appendChild(e);
+//	        e = dom.createElement("row1");
+//	        e.appendChild(dom.createTextNode(row1));
+//	        rootEle.appendChild(e);
 
 	        e = dom.createElement("row2");
 	        e.appendChild(dom.createTextNode(row2));
@@ -181,5 +195,10 @@ public class XML {
 	        value = nl.item(0).getFirstChild().getNodeValue();
 	    }
 	    return value;
+	}
+	
+	public GameState getGameState(){
+		happyCLAM = new GameState(happyClam);
+		return happyCLAM;
 	}
 }
