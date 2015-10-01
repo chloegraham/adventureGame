@@ -172,6 +172,31 @@ public class RenderPane extends JPanel {
 	    		
 	        case 's' : tilePainter.drawSpikesDown(g2,  isoTile.x, isoTile.y);
 				break;
+				
+	        case 'i' : tilePainter.drawCharachterNorth(g2, isoTile.x, isoTile.y);
+	        	break;
+	        
+	        case 'j' : tilePainter.drawCharachterWest(g2, isoTile.x, isoTile.y);
+        		break;
+        		
+	        case 'l' : tilePainter.drawCharachterEast(g2, isoTile.x, isoTile.y);
+        		break;
+        		
+	        case 'k' : tilePainter.drawCharachterSouth(g2, isoTile.x, isoTile.y);
+        		break;
+        	
+	        case 'I' : tilePainter.drawCharachterNorthWithBoulder(g2, isoTile.x, isoTile.y);
+        		break;
+        	
+	        case 'J' : tilePainter.drawCharachterWestWithBoulder(g2, isoTile.x, isoTile.y);
+        		break;
+        		
+	        case 'L' : tilePainter.drawCharachterEastWithBoulder(g2, isoTile.x, isoTile.y);
+        		break;
+        		
+	        case 'K' : tilePainter.drawCharachterSouthWithBoulder(g2, isoTile.x, isoTile.y);
+	        	break;
+	        
     	}
     }
 
