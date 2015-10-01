@@ -23,8 +23,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.JTextPane;
 import javax.swing.KeyStroke;
+import javax.swing.text.DefaultCaret;
 
 import renderer.RenderPane;
 
@@ -36,6 +36,8 @@ public class GameFrame extends JFrame {
 	private final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 	private final int frameWidth;
 	private final int frameHeight;
+	private final int renderWidth;
+	private final int renderHeight;
 	private final int menuHeight = 20;
 	private final int textHeight = 70;
 	private final int inventoryWidth = 100;
@@ -61,8 +63,8 @@ public class GameFrame extends JFrame {
 		super("Adventure Game");
 		
 		Dimension dim = graphics.getPreferredSize();
-		int renderWidth = (int) dim.getWidth();
-		int renderHeight = (int) dim.getHeight();
+		renderWidth = (int) dim.getWidth();
+		renderHeight = (int) dim.getHeight();
 		
 		/* Position (centre) and size of frame */
 		frameWidth = (int) (dim.getWidth() + inventoryWidth + 16);		// Needs extra width for border
@@ -75,16 +77,11 @@ public class GameFrame extends JFrame {
 		
 		/* Position and size of panels */
 		graphics.setBounds(0, 20, renderWidth, renderHeight);
-		//messagePane.setBounds(0, renderHeight, renderWidth, textHeight);
 		menuBar.setBounds(0, 0, frameWidth, menuHeight);
 		
 		buildInventoryPane(renderWidth);
 		buildMenuBar(listener);
 		JScrollPane scrollPane = buildMessagePane();
-		scrollPane.setBounds(0, renderHeight, renderWidth, textHeight);
-		scrollPane.setPreferredSize(new Dimension(renderWidth, textHeight));
-		scrollPane.setMaximumSize(new Dimension(renderWidth, textHeight));
-		scrollPane.setMinimumSize(new Dimension(renderWidth, textHeight));
 		
 		add(layerPane);
 
@@ -96,6 +93,23 @@ public class GameFrame extends JFrame {
 		
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		this.pack();
+		
+		/*
+		addMessage("Test message Old");
+		addMessage("Test message B");
+		addMessage("Test message C");
+		addMessage("Test message D");
+		addMessage("Test message E");
+		addMessage("Test message A");
+		addMessage("Test message B");
+		addMessage("Test message C");
+		addMessage("Test message D");
+		addMessage("Test message E");
+		addMessage("Test message A");
+		addMessage("Test message B");
+		addMessage("Test message C");
+		addMessage("Test message D");
+		addMessage("Test message New");*/
 	}
 	
 	/**
@@ -132,26 +146,12 @@ public class GameFrame extends JFrame {
 	 */
 	private JScrollPane buildMessagePane(){
 		JScrollPane scrollPane = new JScrollPane(messagePane, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		scrollPane.setBounds(0, renderHeight, renderWidth, textHeight);
 		messagePane.setOpaque(false);
 		messagePane.setEditable(false);
 		
-		/*
-		addMessage("Test message A");
-		addMessage("Test message B");
-		addMessage("Test message C");
-		addMessage("Test message D");
-		addMessage("Test message E");
-		addMessage("Test message A");
-		addMessage("Test message B");
-		addMessage("Test message C");
-		addMessage("Test message D");
-		addMessage("Test message E");
-		addMessage("Test message A");
-		addMessage("Test message B");
-		addMessage("Test message C");
-		addMessage("Test message D");
-		addMessage("Test message E");
-		*/
+		DefaultCaret caret = (DefaultCaret)messagePane.getCaret();
+		 caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 		
 		return scrollPane;
 	}
@@ -171,14 +171,7 @@ public class GameFrame extends JFrame {
 	 */
 	public void addMessage(String message){
 		messages.add(message);
-		String msg = "";
-		//for (int pos=messages.size()-1, max=0; pos>=0 && max < 4; pos--, max++){
-		//	msg = msg + messages.get(pos) + "\n";
-		//}
-		for (int pos=messages.size()-1; pos>=0; pos--){
-			msg = msg + messages.get(pos) + "\n";
-		}	
-		messagePane.setText(msg);
+		messagePane.append(message + "\n");
 	}
 	
 	/**
