@@ -45,7 +45,7 @@ public class Server implements Runnable {
 	          gameWorld = new GameWorld(newGameEncodedString);
 	          logic = gameWorld.getLogic();
 	          
-	          String gameWorldEncoded = gameWorld.getGameWorld();
+	          String gameWorldEncoded = gameWorld.touchSelf();
 	          output.writeUTF(gameWorldEncoded);
 	          System.out.println("SERVER: I've sent the INITIAL GameState.");
 		          

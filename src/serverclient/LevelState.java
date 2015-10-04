@@ -44,6 +44,7 @@ public class LevelState {
 	public char[][] getMovables() { return movables; }
 	public String getEncodedLayers() { return encodedLayers; }
 	public String getEncodedPlayers() { return encodedPlayers; }
+	public String getEncodedPlayersAndLayers() { return encodedPlayers + "!" + encodedLayers; }
 	
 	private void convertCharsToEncodedString() {
 		StringBuilder sb = new StringBuilder();
