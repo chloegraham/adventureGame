@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import saveload.XML;
 import gameWorld.GameLogic;
 
 public class Server implements Runnable {
@@ -76,4 +77,19 @@ public class Server implements Runnable {
 		      		connection.close();
 		        } catch (IOException e) {}
     }
+	
+	private String load(){
+		//TODO: call load() inside run at some point, if return == null issue loading
+		return XML.load();
+	}
+	
+	private boolean save(String gameState){
+		//TODO: call save(String representing the gameState) inside run at some point
+		return XML.save(gameState);
+	}
+	
+	private String newGame(){
+		//TODO: call newGame() inside run at some point, ATM XML.newGame() hardcoded
+		return XML.newGame();
+	}
 }

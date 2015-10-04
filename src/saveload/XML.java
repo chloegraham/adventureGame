@@ -1,12 +1,7 @@
 package saveload;
 
-import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-
 import javax.xml.parsers.*;
 import javax.xml.transform.*;
 import javax.xml.transform.dom.*;
@@ -15,14 +10,12 @@ import javax.xml.transform.stream.*;
 import org.xml.sax.*;
 import org.w3c.dom.*;
 
-import serverclient.GameState;
-
 public class XML {
 	
-	private final String fileName = "continue.xml";
-	private final String tag = "Game State";
+	private final static String fileName = "continue.xml";
+	private final static String tag = "Game State";
 	
-	public String load() {
+	public static String load() {
         Document dom;
         // Make an  instance of the DocumentBuilderFactory
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -53,7 +46,7 @@ public class XML {
         return null;
     }
 	
-	public boolean save(String gameState) {
+	public static boolean save(String gameState) {
 	    Document dom;
 	    Element e = null;
 
@@ -95,7 +88,7 @@ public class XML {
 	    return false;
 	}
 	
-	public String newGame(){
+	public static String newGame(){
 		String testLevel = "wwwweww%weeeeee%weeeeee%weeeeee%weeeeee%@nnnndnn%nnnsnnn%nnnnnnn%nnnnnnn%nnnncnz%@nnnnnnn%nnnnnnn%nnnlnnn%nnnnnnn%nnbnnnn%@";
 		return testLevel;
 	}
