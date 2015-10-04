@@ -11,16 +11,12 @@ public class Chest extends Unmoveable implements Tile {
 	public String toString() {
 		return character;
 	}
-
-	public Key getKey() {
+	
+	public Key openChest(){
 		this.character = "l";
 		Key key = myKey;
 		myKey = null;
 		return key;
-	}
-	
-	public void setCharacter(){
-		this.character = "C";
 	}
 	
 }

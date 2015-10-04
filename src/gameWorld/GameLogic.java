@@ -7,6 +7,7 @@ import movable.Item;
 import movable.Key;
 import movable.Player;
 import serverclient.GameState;
+import testconvert.ConvertAction;
 import tiles.Chest;
 import tiles.Door;
 import tiles.EmptyTile;
@@ -24,34 +25,40 @@ public class GameLogic {
 		this.level = Level.parseLevel("level1.txt");
 	}
 	
-	public void handleAction(int ordinal, int userID){
+	public String handleAction(int ordinal, int userID){
 		
+		String message = "";
 		//needs to handle userID
 		Point current = level.getPlayer().getLocation();
 		if(Actions.NORTH.ordinal() == ordinal){
 			level.getPlayer().setDirection(Direction.NORTH);	
-			move(level.getPlayer(), new Point(current.x, current.y-1));
+			boolean success = move(level.getPlayer(), new Point(current.x, current.y-1));
+			message = ConvertAction.moveMsg(level.getPlayer().getDirection(), success, 1);
 		}
 		else if (Actions.EAST.ordinal() == ordinal){
 			level.getPlayer().setDirection(Direction.EAST);
-			move(level.getPlayer(), new Point(current.x+1, current.y));
+			boolean success = move(level.getPlayer(), new Point(current.x+1, current.y));
+			message = ConvertAction.moveMsg(level.getPlayer().getDirection(), success, 1);
 		}
 		else if (Actions.SOUTH.ordinal() == ordinal){
 			level.getPlayer().setDirection(Direction.SOUTH);
-			move(level.getPlayer(), new Point(current.x, current.y+1));
+			boolean success = move(level.getPlayer(), new Point(current.x, current.y+1));
 		}
 		else if (Actions.WEST.ordinal() == ordinal){
 			level.getPlayer().setDirection(Direction.WEST);
-			move(level.getPlayer(), new Point(current.x-1, current.y));
+			boolean success = move(level.getPlayer(), new Point(current.x-1, current.y));
+			message = ConvertAction.moveMsg(level.getPlayer().getDirection(), success, 1);
 	   }
 		else if (Actions.INTERACT.ordinal() == ordinal){ 
-			interact(level.getPlayer(), current);
-			}
+		  message = interact(level.getPlayer(), current);
+		}
+		
 		/*else if (Actions.INSPECT.ordinal() == ordinal){ 
 			inspect(level.getPlayer(), current);
 			}*/
 		
 		//key for messages, find what's in front of player and return description
+		return message;
 	}
 	
 	private boolean move(Player player, Point newLoc) {
@@ -86,7 +93,7 @@ public class GameLogic {
 		return player.setLocation(newLoc);		
 	}	
 	
-	private boolean interact(Player p, Point now) {
+	private String interact(Player p, Point now) {
 		
 		Direction direction = p.getDirection();
 		Point interactWith;
@@ -108,18 +115,20 @@ public class GameLogic {
 		}
 		if (interactWith.y < 0 || interactWith.y > level.getTiles().length-1 || interactWith.x < 0 || interactWith.x > level.getTiles()[0].length-1){
 			System.out.println("Stay inside bounds pls");
-			return false;
+			return "Stay inside bounds";
 		}	
 		Tile tile = level.getTiles()[interactWith.y][interactWith.x];
 		if (tile instanceof Chest){
-			Key key = ((Chest)tile).getKey();
-			((Chest)tile).setCharacter();
+			Key key = ((Chest)tile).openChest();
 			if(key != null){
 				p.addToInventory(key);
+				return ConvertAction.keyMsg();
 			}
+			return ConvertAction.openMsg(true, true); //did open, is a chest 
 		} 
 		else if (tile instanceof Door){
-			((Door) tile).openDoor(p.getKey());
+			((Door) tile).openDoor(p.getKey());//boolean success =
+			return ConvertAction.openMsg(true, false); //did open(success), is a door
 		}
 		
 		if (p.containsBoulder()){
@@ -131,7 +140,7 @@ public class GameLogic {
 							for (Boulder j : level.getBoulders()){
 								if (j.getLocation().equals(interactWith)){
 									System.out.println("Boulders don't do incest");
-									return false;
+									return "boulder";
 								}
 							}
 							if(tile instanceof PressurePad){
@@ -141,7 +150,7 @@ public class GameLogic {
 							level.getBoulders().add((Boulder) i);
 							level.getPlayer().removeBoulder();
 							System.out.println("dropped boulder");
-							return true;
+							return "boulder";
 						}
 					}
 				}
@@ -150,7 +159,7 @@ public class GameLogic {
 		}
 		
 		if (p.containsBoulder()){
-			return false;
+			return "boulder";
 		} else {
 			//pick up boulder if one is in front of player
 			for(Boulder b: level.getBoulders()){
@@ -159,12 +168,12 @@ public class GameLogic {
 					level.getPlayer().addToInventory(b);
 					//now remove the boulder from the list so that it can't be redrawn/picked up again
 					level.getBoulders().remove(b);
-					return true;
+					return "drop boulder";
 				}
 			}
 		}	
 		//level.getPlayer().testInventory();
-		return false;
+		return "false interact";
 	}
 	
 	public int getNumberOfKeys(){
@@ -182,8 +191,8 @@ public class GameLogic {
 	
 	public GameState getGameWorld2(){
 		
-		return new GameState(getNumberOfKeys(), getMessage(), level.getStaticLevel(), level.getStateLevel(), level.getMoveableLevel());
-		
+		//return new GameState(getNumberOfKeys(), getMessage(), level.getStaticLevel(), level.getStateLevel(), level.getMoveableLevel());
+		return new GameState(level.getStaticLevel(), level.getStateLevel(), level.getMoveableLevel());
 	}
 	
 	public char[][] getGameWorld(){
