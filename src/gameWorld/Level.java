@@ -11,9 +11,6 @@ import java.util.Set;
 import javax.management.RuntimeErrorException;
 
 import movable.Boulder;
-import movable.Item;
-import movable.Key;
-import movable.Moveable;
 import movable.Player;
 import tiles.Chest;
 import tiles.Door;
