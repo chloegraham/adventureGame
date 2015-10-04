@@ -172,6 +172,14 @@ public class GameFrame extends JFrame {
 	}
 	
 	/**
+	 * Locks Key input and shows Player Death splash screen
+	 */
+	public void setPlayerDeath(boolean toggle){
+		if (toggle){ splash.setVisible(splash.DEATH_SCREEN); }
+		else { splash.setVisible(splash.NO_SCREEN); }
+	}
+	
+	/**
 	 * Loads the image given by the String name. If failed, will return null.
 	 */
 	private ImageIcon loadImage(String imageAddress){
