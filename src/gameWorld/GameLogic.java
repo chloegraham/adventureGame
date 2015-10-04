@@ -20,9 +20,13 @@ import userinterface.Action.Actions;
 public class GameLogic {
 
 	private Level level;
+	private Level222 level2;
 	
 	public GameLogic() {
 		this.level = Level.parseLevel("level1.txt");
+	}
+	public GameLogic(Level222 level2){
+		this.level2 = level2;
 	}
 	
 	public String handleAction(int ordinal, int userID){
@@ -185,8 +189,7 @@ public class GameLogic {
 		System.out.println("HHA U DIED");		
 	}
 	
-	public GameState getGameWorld2(){
-		
+	public GameState getGameWorld2(){	
 		//return new GameState(getNumberOfKeys(), getMessage(), level.getStaticLevel(), level.getStateLevel(), level.getMoveableLevel());
 		return new GameState(level.getStaticLevel(), level.getStateLevel(), level.getMoveableLevel());
 	}
