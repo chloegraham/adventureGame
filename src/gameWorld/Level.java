@@ -220,12 +220,4 @@ public class Level {
 		moveableTiles[p.y][p.x] = player.toString().charAt(0);
 		return moveableTiles;
 	}
-
-	public int getNumKeys() {
-		int amount = 0;
-		for(Item i: player.getInventory()){
-			if(i instanceof Key){ amount++;	}
-		}
-		return amount;
-	}
 }

@@ -5,7 +5,6 @@ import gameWorld.Direction;
 import java.awt.Point;
 
 import movable.Player;
-import testenums.MsgDirection;
 
 public class ConvertPlayer {
 	

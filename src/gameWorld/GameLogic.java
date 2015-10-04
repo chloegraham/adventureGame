@@ -176,10 +176,6 @@ public class GameLogic {
 		return "false interact";
 	}
 	
-	public int getNumberOfKeys(){
-		return level.getNumKeys();
-	}
-	
 	public String getMessage(){
 		return "MUMBLEWORLD";
 	}
