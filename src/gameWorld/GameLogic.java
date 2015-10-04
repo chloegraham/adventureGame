@@ -47,6 +47,7 @@ public class GameLogic {
 		else if (Actions.SOUTH.ordinal() == ordinal){
 			level.getPlayer().setDirection(Direction.SOUTH);
 			boolean success = move(level.getPlayer(), new Point(current.x, current.y+1));
+			message = ConvertAction.moveMsg(level.getPlayer().getDirection(), success, 1);
 		}
 		else if (Actions.WEST.ordinal() == ordinal){
 			level.getPlayer().setDirection(Direction.WEST);
@@ -189,12 +190,11 @@ public class GameLogic {
 		System.out.println("HHA U DIED");		
 	}
 	
-	public GameState getGameWorld2(){	
-		//return new GameState(getNumberOfKeys(), getMessage(), level.getStaticLevel(), level.getStateLevel(), level.getMoveableLevel());
+	public GameState getGameWorld() {	
 		return new GameState(level.getStaticLevel(), level.getStateLevel(), level.getMoveableLevel());
 	}
 	
-	public char[][] getGameWorld(){
-		return level.getCharArray();
-	}	
+//	public char[][] getGameWorld(){
+//		return level.getCharArray();
+//	}	
 }

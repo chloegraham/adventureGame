@@ -6,17 +6,16 @@ import testenums.MsgAction;
 import testenums.MsgLocation;
 import testenums.MsgObject;
 
+
+
 public class ConvertAction {
-	public static void main(String[] args) {
-		System.out.println(moveMsg(Direction.EAST, true, 2));
-		System.out.println(fromServer(moveMsg(Direction.EAST, true, 2)));
-	}
+	private static final String DELIM = "<Msg>";
 	
 	public static String inspectMsg(int object) {
 		String str = "#Msg";
 		str += MsgAction.INSPECT.toString() + "%";
 		str += MsgObject.getMsg(object).toString() + "%";
-		str += "@";
+		str += DELIM;
 		return str;
 	}
 	
@@ -24,7 +23,7 @@ public class ConvertAction {
 		String str = "#Msg";
 		str += MsgAction.PICK.toString() + "%";
 		str += MsgObject.KEY.toString() + "%";
-		str += "@";
+		str += DELIM;
 		return str;
 	}
 	
@@ -33,7 +32,7 @@ public class ConvertAction {
 		if (pickup) str += MsgAction.PICK.toString() + "%";
 		else        str += MsgAction.DOWN.toString() + "%";
 		str += MsgObject.BOULDER.toString() + "%";
-		str += "@";
+		str += DELIM;
 		return str;
 	}
 	
@@ -44,7 +43,7 @@ public class ConvertAction {
 		
 		if (chest) str += MsgObject.CHEST.toString() + "%";	// chest true = chest
 		else       str += MsgObject.DOOR.toString() + "%";  // chest false = door
-		str += "@";
+		str += DELIM;
 		return str;
 	}
 	
@@ -56,7 +55,7 @@ public class ConvertAction {
 		else      str += MsgAction.NOMOVE.toString();
 		
 		str += MsgLocation.getMsg(location).toString() + "%";
-		str += "@";
+		str += DELIM;
 		return str;
 	}
 	
@@ -68,7 +67,7 @@ public class ConvertAction {
 		else      str += MsgAction.NOMOVE.toString() + dir.toString();
 		
 		str += MsgAction.LOCATION.toString() + MsgLocation.getMsg(location).toString() + "%";
-		str += "@";
+		str += DELIM;
 		return str;
 	}
 	

@@ -37,7 +37,7 @@ public class Server implements Runnable {
 		         
 	          System.out.println("SERVER: Sending Client initial GameState");
 	         
-	          String newGameEncodedString = XML.newGame();
+	          String newGameEncodedString = newGame();
 	          gameWorld = new GameWorld(newGameEncodedString);
 	          logic = gameWorld.getLogic();
 	          
@@ -48,26 +48,7 @@ public class Server implements Runnable {
 	          // Every 5 seconds check for an Action from Client and then send Client the GameState  
 	          while (true) {
 	        	  
-//	        	  // 5 second timer
-//	        	  try {	Thread.sleep(5000);	} catch (Exception e) {}
-	        	  
-	        	  // Check for an Action
-	        	  System.out.println("SERVER: Checking for an action");
-		          int action = input.readInt();
-		          logic.handleAction(action, 999);
-		          System.out.println("SERVER: I sent action: - " + action + " to the Client.");
-		      
-		          // Send Client the GameState
-		          System.out.println("SERVER: Sending Client the GameState");
-		          
-//		          char[][] gsArray = logic.getGameWorld();
-//		          GameState gs = new GameState(gsArray, gsArray, gsArray);
-//		          String gameState = gs.getGameStateString();
-		          
-		          GameState version2b = logic.getGameWorld2();
-		          String s2 = version2b.getGameStateString();
-		          output.writeUTF(s2);
-		          System.out.println("SERVER: I've sent the GameState. Lets see if Client gets it");
+	        	  handleActions();
 	          }
 		          
 	      } catch (IOException e) {}
@@ -75,6 +56,33 @@ public class Server implements Runnable {
 		      		connection.close();
 		        } catch (IOException e) {}
     }
+	
+	private void handleActions() {
+		try {
+			// Listen for Client/User action & ask GameLogic to handle it
+			System.out.println("SERVER: Checking for an action");
+	        int action = input.readInt();
+	        String actionResponse = logic.handleAction(action, 999);
+	        System.out.println("SERVER: I sent action: - " + action + " to the Client.");
+	    
+	        
+	        // Send Client the updated GameState
+	        System.out.println("SERVER: Sending Client the GameState");
+	        
+	        // Need to send the GameState for the Renderer & a Message for UI
+	        
+	        GameState gameWorld = logic.getGameWorld();
+	        gameWorld.addMessage(actionResponse);
+	        String gameWorldRenderAndMessageEncoded = gameWorld.getEncodedLayers();
+	        output.writeUTF(gameWorldRenderAndMessageEncoded);
+	        
+	        System.out.println("SERVER: I've sent the GameState. Lets see if Client gets it");
+        
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	
 	private String load(){
 		//TODO: call load() inside run at some point, if return == null issue loading

@@ -95,7 +95,7 @@ public class Level222 {
 			for (int x = 0; x < width; x++) {
 				String temp = Character.toString((movables[y][x]));
 				if(temp.equals("b"))
-					boulders.add(new Boulder(new Point(x, y), "lizard"));
+					boulders.add(new Boulder(new Point(x, y), "b"));
 			}
 		}
 	}
