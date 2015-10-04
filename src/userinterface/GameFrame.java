@@ -51,6 +51,7 @@ public class GameFrame extends JFrame {
 	private final JLayeredPane contentPane = new JLayeredPane();
 	private final JPanel inventoryPane = new JPanel();
 	private final JMenuBar menuBar = new JMenuBar();
+	private final SplashScreen splash;
 	
 	private final JLabel keys = new JLabel("0");
 	
@@ -81,12 +82,15 @@ public class GameFrame extends JFrame {
 		buildInventoryPane();
 		buildMenuBar(listener);
 		JScrollPane scrollPane = buildMessagePane();
+		splash = new SplashScreen(listener);
+		splash.setBounds(0, 0, frameWidth, frameHeight);
 
 		/* Add panes to content pane with z coordinate */
 		contentPane.add(graphics, new Integer(0));
 		contentPane.add(menuBar, new Integer(1));
 		contentPane.add(scrollPane, new Integer(2));
 		contentPane.add(inventoryPane, new Integer(3));
+		contentPane.add(splash, new Integer(4));
 		
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		this.pack();
