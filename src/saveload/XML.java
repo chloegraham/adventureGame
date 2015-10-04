@@ -19,55 +19,10 @@ import serverclient.GameState;
 
 public class XML {
 	
-	//private static String row1 = "5 7";
-	private static String row2 = "wwwwdww";
-	private static String row3 = "weeseee";
-	private static String row4 = "weeeeee";
-	private static String row5 = "weeeeee";
-	private static String row6 = "weeecez";
+	private final String fileName = "continue.xml";
+	private final String tag = "Game State";
 	
-	private static ArrayList<String> rolev;
-	private GameState happyCLAM;
-	private static String happyClam;
-	
-	public static void main(String[] args){
-		BufferedWriter output = null;
-		happyClam = "";
-		saveToXML("xml.xml");
-		if (readXML("xml.xml") == true){
-			for (String s : rolev){
-				happyClam += s;
-				happyClam += "%";    
-			}
-			happyClam += "@";
-			for (String s : rolev){
-				happyClam += s;
-				happyClam += "%";    
-			}
-			happyClam += "@";
-			for (String s : rolev){
-				happyClam += s;
-				happyClam += "%";
-			}
-			happyClam += "@";
-		}
-		try {
-			File file = new File("Level1HappyClam.txt");
-			output = new BufferedWriter(new FileWriter(file));
-			output.write(happyClam);
-		} catch ( IOException e ) {
-			e.printStackTrace();
-		}  
-		if ( output != null )
-			try {
-				output.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-	}
-	
-	public static boolean readXML(String xml) {
-        rolev = new ArrayList<String>();
+	public String load() {
         Document dom;
         // Make an  instance of the DocumentBuilderFactory
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -76,41 +31,17 @@ public class XML {
             DocumentBuilder db = dbf.newDocumentBuilder();
             // parse using the builder to get the DOM mapping of the    
             // XML file
-            dom = db.parse(xml);
+            dom = db.parse(fileName);
 
             Element doc = dom.getDocumentElement();
-
-//            row1 = getTextValue(row1, doc, "row1");
-//            if (row1 != null) {
-//                if (!row1.isEmpty())
-//                    rolev.add(row1);
-//            }
-            row2 = getTextValue(row2, doc, "row2");
-            if (row2 != null) {
-                if (!row2.isEmpty())
-                    rolev.add(row2);
+            
+            String gameState = null;
+            gameState = getTextValue(gameState, doc, tag);
+            if (gameState != null) {
+                if (!gameState.isEmpty()){
+                	return gameState;
+                }
             }
-            row3 = getTextValue(row3, doc, "row3");
-            if (row3 != null) {
-                if (!row3.isEmpty())
-                    rolev.add(row3);
-            }
-            row4 = getTextValue(row4, doc, "role4");
-            if ( row4 != null) {
-                if (!row4.isEmpty())
-                    rolev.add(row4);
-            }
-            row5 = getTextValue(row5, doc, "role4");
-            if ( row5 != null) {
-                if (!row5.isEmpty())
-                    rolev.add(row5);
-            }
-            row6 = getTextValue(row6, doc, "role4");
-            if ( row6 != null) {
-                if (!row6.isEmpty())
-                    rolev.add(row6);
-            }
-            return true;
 
         } catch (ParserConfigurationException pce) {
             System.out.println(pce.getMessage());
@@ -119,11 +50,10 @@ public class XML {
         } catch (IOException ioe) {
             System.err.println(ioe.getMessage());
         }
-
-        return false;
+        return null;
     }
 	
-	public static void saveToXML(String xml) {
+	public boolean save(String gameState) {
 	    Document dom;
 	    Element e = null;
 
@@ -136,31 +66,11 @@ public class XML {
 	        dom = db.newDocument();
 
 	        // create the root element
-	        Element rootEle = dom.createElement("Level_1");
+	        Element rootEle = dom.createElement("Continue");
 
-	        // create data elements and place them under root
-//	        e = dom.createElement("row1");
-//	        e.appendChild(dom.createTextNode(row1));
-//	        rootEle.appendChild(e);
-
-	        e = dom.createElement("row2");
-	        e.appendChild(dom.createTextNode(row2));
-	        rootEle.appendChild(e);
-
-	        e = dom.createElement("row3");
-	        e.appendChild(dom.createTextNode(row3));
-	        rootEle.appendChild(e);
-
-	        e = dom.createElement("row4");
-	        e.appendChild(dom.createTextNode(row4));
-	        rootEle.appendChild(e);
-	        
-	        e = dom.createElement("row5");
-	        e.appendChild(dom.createTextNode(row5));
-	        rootEle.appendChild(e);
-	        
-	        e = dom.createElement("row6");
-	        e.appendChild(dom.createTextNode(row6));
+//	         create data elements and place them under root
+	        e = dom.createElement(tag);
+	        e.appendChild(dom.createTextNode(gameState));
 	        rootEle.appendChild(e);
 
 	        dom.appendChild(rootEle);
@@ -168,23 +78,26 @@ public class XML {
 	        try {
 	            Transformer tr = TransformerFactory.newInstance().newTransformer();
 	            tr.setOutputProperty(OutputKeys.INDENT, "yes");
-	            //tr.setOutputProperty(OutputKeys.METHOD, "xml");
-	            //tr.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-	            //tr.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, "roles.dtd");
-	            //tr.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
 
 	            // send DOM to file
 	            tr.transform(new DOMSource(dom), 
-	            new StreamResult(new FileOutputStream(xml)));
+	            new StreamResult(new FileOutputStream(fileName)));
+	            return true;
 
 	        } catch (TransformerException te) {
 	            System.out.println(te.getMessage());
 	        } catch (IOException ioe) {
-	            System.out.println(ioe.getMessage());
+	            System.err.println(ioe.getMessage());
 	        }
 	    } catch (ParserConfigurationException pce) {
 	        System.out.println("UsersXML: Error trying to instantiate DocumentBuilder " + pce);
 	    }
+	    return false;
+	}
+	
+	public String newGame(){
+		String testLevel = "wwwweww%weeeeee%weeeeee%weeeeee%weeeeee%@nnnndnn%nnnsnnn%nnnnnnn%nnnnnnn%nnnncnz%@nnnnnnn%nnnnnnn%nnnlnnn%nnnnnnn%nnbnnnn%@";
+		return testLevel;
 	}
 	
 	private static String getTextValue(String def, Element doc, String tag) {
@@ -195,10 +108,5 @@ public class XML {
 	        value = nl.item(0).getFirstChild().getNodeValue();
 	    }
 	    return value;
-	}
-	
-	public GameState getGameState(){
-		happyCLAM = new GameState(happyClam);
-		return happyCLAM;
 	}
 }
