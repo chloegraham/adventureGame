@@ -120,6 +120,13 @@ public class UserInterface {
 		this.keys = keys;
 		frame.updateInventory(keys);
 	}
+	
+	/**
+	 * Set whether the splash screen for player death is displayed.
+	 */
+	public void setPlayerDeath(boolean toggle){
+		frame.setPlayerDeath(toggle);
+	}
 
 	/**
 	 * Set the level and redraw the pane.
