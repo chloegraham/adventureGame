@@ -1,5 +1,8 @@
 package serverclient;
 
+import gameWorld.GameLogic;
+import gameWorld.GameWorld;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -7,9 +10,9 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 import saveload.XML;
-import gameWorld.GameLogic;
 
 public class Server implements Runnable {
+	private GameWorld gameWorld;
 	private GameLogic logic;
 	
 	private static ServerSocket socket1;
@@ -39,10 +42,10 @@ public class Server implements Runnable {
 	          System.out.println("SERVER: Sending Client initial GameState");
 	         
 	          String newGameEncodedString = XML.newGame();
-	          GameWorld gameWorld = new GameWorld(newGameEncodedString);
+	          gameWorld = new GameWorld(newGameEncodedString);
 	          logic = gameWorld.getLogic();
 	          
-	          String gameWorldEncoded = logic.getGameWorld2();
+	          String gameWorldEncoded = gameWorld.getGameWorld();
 	          output.writeUTF(gameWorldEncoded);
 	          System.out.println("SERVER: I've sent the INITIAL GameState.");
 		          
