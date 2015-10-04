@@ -38,13 +38,12 @@ public class Server implements Runnable {
 		         
 	          System.out.println("SERVER: Sending Client initial GameState");
 	         
-//	          char[][] gs1 = logic.getGameWorld();
-//	          GameState gs2 = new GameState(gs1, gs1, gs1);
-//	          String gs3 = gs2.getGameStateString();
-	         
-	          GameState version2a = logic.getGameWorld2();
-	          String s1 = version2a.getGameStateString();
-	          output.writeUTF(s1);
+	          String newGameEncodedString = XML.newGame();
+	          GameWorld gameWorld = new GameWorld(newGameEncodedString);
+	          logic = gameWorld.getLogic();
+	          
+	          String gameWorldEncoded = logic.getGameWorld2();
+	          output.writeUTF(gameWorldEncoded);
 	          System.out.println("SERVER: I've sent the INITIAL GameState.");
 		          
 	          // Every 5 seconds check for an Action from Client and then send Client the GameState  
