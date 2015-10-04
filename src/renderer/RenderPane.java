@@ -117,24 +117,23 @@ public class RenderPane extends JPanel {
         	rotatedObjects = this.objects;
         	rotatedMoveables = this.moveables;
         }
-        
-        if(this.viewDir == Direction.EAST){
+        else if(this.viewDir == Direction.EAST){
         	rotatedLevel = Iso.rotateCW(this.level);
         	rotatedObjects = Iso.rotateCW(this.objects);
         	rotatedMoveables = Iso.rotateCW(this.moveables);
         }
-        
-        if(this.viewDir == Direction.WEST){
+        else if(this.viewDir == Direction.WEST){
         	rotatedLevel = Iso.rotateCCW(this.level);
         	rotatedObjects = Iso.rotateCCW(this.objects);
         	rotatedMoveables = Iso.rotateCCW(this.moveables);
         }
-        
-        if(this.viewDir == Direction.SOUTH){
+        else if(this.viewDir == Direction.SOUTH){
         	rotatedLevel = Iso.rotate180(this.level);
         	rotatedObjects = Iso.rotate180(this.objects);
         	rotatedMoveables = Iso.rotate180(this.moveables);
         }
+        else
+        	throw new RuntimeException("Should have received a direction but got something else");
         
         int numberOfRows = rotatedLevel.length;
         int numberOfColums = rotatedLevel[0].length;
