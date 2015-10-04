@@ -7,8 +7,7 @@ import serverclient.Server;
 
 public class Main {
 	public static void main(String[] args) throws InterruptedException {
-		GameLogic logic = new GameLogic();
-		Server server = new Server(logic);
+		Server server = new Server();
 		Client client = new Client();
 		
 		Thread tServer = new Thread(server);

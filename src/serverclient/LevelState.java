@@ -65,7 +65,7 @@ public class LevelState {
 			sb.append('%');
 		}
 		sb.append('@');
-		encodedLayers = sb.toString();
+		encodedLayers = sb.toString() + "<Split>";
 	}
 	
 	private void convertEncodedStringToChars() {

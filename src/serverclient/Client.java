@@ -41,10 +41,9 @@ public class Client implements Runnable {
 	    	// Get initial GameState from Server
 	    	System.out.println("CLIENT: Waiting for initial GameState from Server");
 			String s = input.readUTF();
-			GameState gs = new GameState(s);
-//			ui.redraw(gs.getLayerStatic());
+			LevelState gs = new LevelState(s);
 			
-			ui.redrawFromLayers(gs.getLayerStatic(), gs.getLayerStaticWithStates(), gs.getLayerDynamic());
+			ui.redrawFromLayers(gs.getLevel(), gs.getObjects(), gs.getMovables());
 			System.out.println("CLIENT: I should have printed the initial GameState by now.");
 	    	
 	   } catch (IOException f) {

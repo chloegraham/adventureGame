@@ -22,10 +22,6 @@ public class Server implements Runnable {
 	private DataOutputStream output;
 	private DataInputStream input;
 	
-	public Server(GameLogic logic) {
-		this.logic = logic;
-	}
-	
 	public void run() {
 	    try{
 	      socket1 = new ServerSocket(port);

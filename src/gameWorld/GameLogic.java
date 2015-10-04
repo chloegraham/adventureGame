@@ -18,15 +18,15 @@ import tiles.Wall;
 import userinterface.Action.Actions;
 
 public class GameLogic {
-
-	private Level level;
-	private Level222 level2;
+//	private Level level;
+//	public GameLogic() {
+//		this.level = Level.parseLevel("level1.txt");
+//	}
 	
-	public GameLogic() {
-		this.level = Level.parseLevel("level1.txt");
-	}
-	public GameLogic(Level222 level2){
-		this.level2 = level2;
+	private Level222 level;
+	
+	public GameLogic(Level222 level){
+		this.level = level;
 	}
 	
 	public String handleAction(int ordinal, int userID){

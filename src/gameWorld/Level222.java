@@ -11,11 +11,11 @@ import testconvert.ConvertPlayer;
 import tiles.Chest;
 import tiles.Door;
 import tiles.EmptyTile;
+import tiles.PressurePad;
+import tiles.Spikes;
 import tiles.Tile;
 import tiles.Unmoveable;
 import tiles.Wall;
-
-
 
 public class Level222 {
 	
@@ -35,7 +35,7 @@ public class Level222 {
 		buildPlayers(game.getEncodedPlayers());
 	}
 
-	public Player getPlayers(){	return this.player; }
+	public Player getPlayer(){	return this.player; }
 	public Tile[][] getTiles(){ return this.tiles; }
 	public Set<Boulder> getBoulders(){ return this.boulders;}
 	
@@ -57,7 +57,7 @@ public class Level222 {
 					tiles[y][x] = new Wall();
 				}
 				else if(temp.equals("n")) {
-					throw new RuntimeException("Found 'n' while building a level.");
+					
 				}
 				else
 					throw new RuntimeException();
@@ -69,20 +69,20 @@ public class Level222 {
 		for (int y = 0; y < height; y++) {
 			for (int x = 0; x < width; x++) {
 				String temp = Character.toString((objects[y][x]));
-				if(temp.equals("d")){
+				if (temp.equals("d")){
 					tiles[y][x] = new Door();
 				}
-				else if(temp.equals("c")) {
+				else if (temp.equals("c")) {
 					tiles[y][x] = new Chest();
 				}
-				else if(temp.equals("p")){
-					tiles[y][x] = new Door();
+				else if (temp.equals("z")){
+					tiles[y][x] = new PressurePad();
 				}
-				else if(temp.equals("s")) {
-					tiles[y][x] = new Chest();
+				else if (temp.equals("s")) {
+					tiles[y][x] = new Spikes();
 				}
-				else if(temp.equals("n")) {
-					throw new RuntimeException("Found 'n' while building objects of a level.");
+				else if (temp.equals("n")) {
+//					throw new RuntimeException("Found 'n' while building objects of a level.");
 				}
 				else
 					throw new RuntimeException();
@@ -96,8 +96,6 @@ public class Level222 {
 				String temp = Character.toString((movables[y][x]));
 				if(temp.equals("b"))
 					boulders.add(new Boulder(new Point(x, y), "lizard"));
-				else
-					System.out.println(temp);
 			}
 		}
 	}
