@@ -6,7 +6,6 @@ import movable.Boulder;
 import movable.Item;
 import movable.Key;
 import movable.Player;
-import serverclient.GameState;
 import testconvert.ConvertAction;
 import tiles.Chest;
 import tiles.Door;
@@ -18,52 +17,74 @@ import tiles.Wall;
 import userinterface.Action.Actions;
 
 public class GameLogic {
+	private Level[] levels;
+	private Player[] players;
 	
-	private Level222 level;
-	
-	public GameLogic(Level222 level){
-		this.level = level;
+	public GameLogic(Level[] levels, Player[] players){
+		this.levels = levels;
+		this.players = players;
 	}
 	
 	
-	
 	public String handleAction(int ordinal, int userID){
+		Player player = null;
+		Level level = null;
+		
+		
+		if (userID == 101)
+			player = players[0];
+		else if (userID == 202)
+			player = players[1];
+		else
+			throw new IllegalArgumentException();
+		
+		
+		for (Level l : levels)
+			if (l.getLevelID() == player.getLevelID())
+				level = l;
+		
+		
+		if (level == null)
+			throw new IllegalArgumentException();
+		
 		
 		String message = "";
-		//needs to handle userID
-		Point current = level.getPlayer().getLocation();
+		Point current = player.getLocation();
+		Point newLocation = null;
+		
 		if(Actions.NORTH.ordinal() == ordinal){
-			level.getPlayer().setDirection(Direction.NORTH);	
-			boolean success = move(level.getPlayer(), new Point(current.x, current.y-1));
-			message = ConvertAction.moveMsg(level.getPlayer().getDirection(), success);
+			player.setDirection(Direction.NORTH);
+			newLocation = new Point(current.x, current.y-1);
 		}
 		else if (Actions.EAST.ordinal() == ordinal){
-			level.getPlayer().setDirection(Direction.EAST);
-			boolean success = move(level.getPlayer(), new Point(current.x+1, current.y));
-			message = ConvertAction.moveMsg(level.getPlayer().getDirection(), success);
+			player.setDirection(Direction.EAST);
+			newLocation = new Point(current.x+1, current.y);
 		}
 		else if (Actions.SOUTH.ordinal() == ordinal){
-			level.getPlayer().setDirection(Direction.SOUTH);
-			boolean success = move(level.getPlayer(), new Point(current.x, current.y+1));
-			message = ConvertAction.moveMsg(level.getPlayer().getDirection(), success);
+			player.setDirection(Direction.SOUTH);
+			newLocation = new Point(current.x, current.y+1);
 		}
 		else if (Actions.WEST.ordinal() == ordinal){
-			level.getPlayer().setDirection(Direction.WEST);
-			boolean success = move(level.getPlayer(), new Point(current.x-1, current.y));
-			message = ConvertAction.moveMsg(level.getPlayer().getDirection(), success);
+			player.setDirection(Direction.WEST);
+			newLocation = new Point(current.x-1, current.y);
 	   }
 		else if (Actions.INTERACT.ordinal() == ordinal){ 
-		  message = interact(level.getPlayer(), current);
+			message = interact(player, level, current);
 		}
 		
-		//key for messages, find what's in front of player and return description
+		// Only for Move not Interact
+		if (ordinal >= 6 && ordinal <= 9) {
+			boolean success = move(player, level, newLocation);
+			message = ConvertAction.moveMsg(player.getDirection(), success);
+		}
+		
 		return message;
 	}
 	
 	
 	
 	
-	private boolean move(Player player, Point newLoc) {
+	private boolean move(Player player, Level level, Point newLoc) {
 		//check for out of bounds
 		if (newLoc.y < 0 || newLoc.y > level.getTiles().length-1 || newLoc.x < 0 || newLoc.x > level.getTiles()[0].length-1){
 			return false;
@@ -99,25 +120,26 @@ public class GameLogic {
 	
 	
 	
-	private String interact(Player p, Point now) {
+	private String interact(Player player, Level level, Point now) {
 		
-		Direction direction = p.getDirection();
+		Direction direction = player.getDirection();
 		Point interactWith;
+		
 		switch(direction){
-		case NORTH:
-			interactWith = new Point(now.x, now.y-1);
-			break;
-		case SOUTH:
-			interactWith = new Point(now.x, now.y+1);
-			break;
-		case EAST:
-			interactWith = new Point(now.x+1, now.y);
-			break;
-		case WEST:
-			interactWith = new Point(now.x-1, now.y);
-			break;
-		default:
-			throw new RuntimeException();
+			case NORTH:
+				interactWith = new Point(now.x, now.y-1);
+				break;
+			case SOUTH:
+				interactWith = new Point(now.x, now.y+1);
+				break;
+			case EAST:
+				interactWith = new Point(now.x+1, now.y);
+				break;
+			case WEST:
+				interactWith = new Point(now.x-1, now.y);
+				break;
+			default:
+				throw new IllegalArgumentException();
 		}
 		
 		if (interactWith.y < 0 || interactWith.y > level.getTiles().length-1 || interactWith.x < 0 || interactWith.x > level.getTiles()[0].length-1){
@@ -130,26 +152,26 @@ public class GameLogic {
 		if (tile instanceof Chest){
 			Key key = ((Chest)tile).openChest();
 			if(key != null){
-				p.addToInventory(key);
-				return ConvertAction.openChestMsg(false, true, level.getPlayer().numberOfKeys());
+				player.addToInventory(key);
+				return ConvertAction.openChestMsg(false, true, player.numberOfKeys());
 			}
-			return ConvertAction.openChestMsg(false, false, level.getPlayer().numberOfKeys());
+			return ConvertAction.openChestMsg(false, false, player.numberOfKeys());
 		} 
 		else if (tile instanceof Door){
-			((Door) tile).openDoor(p.getKey());
-			return ConvertAction.openDoorMsg(false, true, level.getPlayer().numberOfKeys());
+			((Door) tile).openDoor(player.getKey());
+			return ConvertAction.openDoorMsg(false, true, player.numberOfKeys());
 		}
 		
-		if (p.containsBoulder()){
+		if (player.containsBoulder()){
 			if(tile instanceof EmptyTile || tile instanceof PressurePad){
 				System.out.println("Trying to drop a boulder on an empty tile or pressure pad..");
-				for(Item i: level.getPlayer().getInventory()){
+				for(Item i: player.getInventory()){
 					if(i instanceof Boulder){
 						if(level.getTiles()[interactWith.y][interactWith.x] instanceof EmptyTile || level.getTiles()[interactWith.y][interactWith.x] instanceof PressurePad){
 							for (Boulder j : level.getBoulders()){
 								if (j.getLocation().equals(interactWith)){
 									System.out.println("Boulders don't do incest");
-									return ConvertAction.boulderMsg(false, level.getPlayer().containsBoulder());
+									return ConvertAction.boulderMsg(false, player.containsBoulder());
 								}
 							}
 							if(tile instanceof PressurePad){
@@ -157,9 +179,9 @@ public class GameLogic {
 							}
 							((Boulder) i).setLocation(interactWith);
 							level.getBoulders().add((Boulder) i);
-							level.getPlayer().removeBoulder();
+							player.removeBoulder();
 							System.out.println("dropped boulder");
-							return ConvertAction.boulderMsg(false, level.getPlayer().containsBoulder());
+							return ConvertAction.boulderMsg(false, player.containsBoulder());
 						}
 					}
 				}
@@ -167,24 +189,20 @@ public class GameLogic {
 			}
 		}
 		
-		if (p.containsBoulder()){
+		if (player.containsBoulder()){
 			return "boulder";
 		} else {
 			//pick up boulder if one is in front of player
 			for(Boulder b: level.getBoulders()){
 				if(b.getLocation().equals(interactWith)){
 					System.out.println("picking up boulder, id = " + b.getId());
-					level.getPlayer().addToInventory(b);
+					player.addToInventory(b);
 					//now remove the boulder from the list so that it can't be redrawn/picked up again
 					level.getBoulders().remove(b);
-					return ConvertAction.boulderMsg(true, level.getPlayer().containsBoulder());
+					return ConvertAction.boulderMsg(true, player.containsBoulder());
 				}
 			}
 		}	
 		return ConvertAction.inspectMsg();
-	}
-	
-	public GameState getGameWorld() {	
-		return new GameState(level.getStaticLevel(), level.getStateLevel(), level.getMoveableLevel());
 	}
 }

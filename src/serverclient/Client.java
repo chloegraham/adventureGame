@@ -27,12 +27,12 @@ public class Client implements Runnable {
 	
 	public void run() {
 	    host = "localhost";  // Define a host server
-	    port = 19999;	// Define a port
+	    port = 19999;		 // Define a port
 	 
 	    try {
-	    	System.out.println("CLIENT: SocketClient initialized");	// Try and connect to the Server
-	        address = InetAddress.getByName(host);	// Obtain an address object of the server
-	        connection = new Socket(address, port); // Establish a socket connection 
+	    	System.out.println("CLIENT: SocketClient initialized");			// Try and connect to the Server
+	        address = InetAddress.getByName(host);							// Obtain an address object of the server
+	        connection = new Socket(address, port); 						// Establish a socket connection 
 	        System.out.println("CLIENT: I've connected to the Server :)"); 
 	        
 	    	output = new DataOutputStream(connection.getOutputStream());

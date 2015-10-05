@@ -1,6 +1,7 @@
 package movable;
 
 import gameWorld.Direction;
+import gameWorld.Level;
 
 import java.awt.Point;
 import java.util.ArrayList;
@@ -14,7 +15,8 @@ public class Player extends Moveable{
 	private List<Item> inventory = new ArrayList<Item>();
 	private boolean onPressurePad = false;
 	private boolean hasBoulder = false;
-	private int UID;
+	private int userID;
+	private int levelID;
 	
 	public Player(Point location) {
 		this(location, "i");
@@ -25,10 +27,11 @@ public class Player extends Moveable{
 	}
 	
 	//open a saved game
-	public Player(int uid, int keyAmount, boolean boulder,
+	public Player(int userID, int levelID, int keyAmount, boolean boulder,
 			Direction direction2, Point point) {
 		super(point, "i");
-		this.UID = uid;
+		this.userID = userID;
+		this.levelID = levelID;
 		createKeys(keyAmount);
 		this.hasBoulder = boulder;
 		this.direction = direction2;
@@ -66,8 +69,8 @@ public class Player extends Moveable{
 		this.direction = direction;
 	}
 	
-	public int getUID() {
-		return this.UID;
+	public int getUserID() {
+		return this.userID;
 	}
 
 	public Key getKey(){
@@ -133,5 +136,14 @@ public class Player extends Moveable{
 			if(i instanceof Key){ amount++;	}
 		}
 		return amount;
+	}
+
+	public int getLevelID() {
+		return levelID;
+	}
+
+	public String getEncodedPlayer() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

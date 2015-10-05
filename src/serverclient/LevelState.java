@@ -1,21 +1,19 @@
 package serverclient;
 
-import movable.Player;
-import testconvert.ConvertPlayer;
+import testconvert.Messages;
+
 
 public class LevelState {
+	private int levelID;
 	private char[][] level;
 	private char[][] objects;
 	private char[][] movables;
 	private String encodedLayers;
-	private Player players;
-	private String encodedPlayers;
 	
 	public LevelState(char[][] level, char[][] objects, char[][] movables) {
 		this.level = level;
 		this.objects = objects;
 		this.movables = movables;
-		convertCharsToEncodedString();
 	}
 	
 	public LevelState(String encodedLayers) {
@@ -23,30 +21,12 @@ public class LevelState {
 		convertEncodedStringToChars();
 	}
 	
-	public LevelState(Player players, char[][] level, char[][] objects, char[][] movables) {
-		this.players = players;
-		convertPlayersToEncodedString();
-		this.level = level;
-		this.objects = objects;
-		this.movables = movables;
-		convertCharsToEncodedString();
-	}
-	
-	public LevelState(String encodedPlayers, String encodedLayers) {
-		this.encodedPlayers = encodedPlayers;
-		convertEncodedStringToPlayers();
-		this.encodedLayers = encodedLayers;
-		convertEncodedStringToChars();
-	}
-	
+	public int getLevelID() { return levelID; }
 	public char[][] getLevel() { return level; }
 	public char[][] getObjects() { return objects; }
 	public char[][] getMovables() { return movables; }
-	public String getEncodedLayers() { return encodedLayers; }
-	public String getEncodedPlayers() { return encodedPlayers; }
-	public String getEncodedPlayersAndLayers() { return encodedPlayers + "!" + encodedLayers; }
 	
-	private void convertCharsToEncodedString() {
+	public String getEncodedLevel() {
 		StringBuilder sb = new StringBuilder();
 		for (int x = 0; x < level.length; x++) {
 			sb.append(level[x]);
@@ -65,7 +45,7 @@ public class LevelState {
 			sb.append('%');
 		}
 		sb.append('@');
-		encodedLayers = sb.toString() + "<Split>";
+		return sb.toString() + Messages.DELIM_SPLIT;
 	}
 	
 	private void convertEncodedStringToChars() {
@@ -89,13 +69,5 @@ public class LevelState {
 		movables = new char[subLayers3.length][];
 		for (int x = 0; x < movables.length; x++)
 			movables[x] = subLayers3[x].toCharArray();
-	}
-	
-	private void convertPlayersToEncodedString() {
-		encodedPlayers = ConvertPlayer.fromPlayer(players);
-	}
-	
-	private void convertEncodedStringToPlayers() {
-		players = ConvertPlayer.toPlayer(encodedPlayers);
 	}
 }
