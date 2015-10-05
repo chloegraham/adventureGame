@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
 
-import testconvert.Keys;
 import testconvert.Layers;
 import testconvert.Messages;
 import userinterface.UserInterface;
@@ -87,7 +86,6 @@ public class Client implements Runnable {
 			
 			Layers layers;
 			Messages msgs;
-			Keys keys;
 			
 			layers = new Layers();
 			layers.decode(encodedLayers);
@@ -102,9 +100,7 @@ public class Client implements Runnable {
 			
 			if (encodedSplit.length == 3) {
 				encodedKeys = encodedSplit[2];
-				keys = new Keys();
-				keys.decode(encodedKeys);
-				ui.setKeyCount(keys.getDecoded());
+				ui.setKeyCount(Integer.parseInt(encodedKeys));
 			}			
 		} catch (IOException e) {
 			e.printStackTrace();
