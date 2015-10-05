@@ -5,13 +5,10 @@ import gameWorld.Direction;
 import java.awt.Point;
 
 import movable.Player;
-import testenums.MsgDirection;
 
 public class ConvertPlayer {
 	
 	public static Player toPlayer(String stmt) {
-		stmt = gobble(stmt, "#Play");
-		
 		String[] parts = stmt.split("%");
 		
 		int uid = Integer.parseInt(parts[0]);
@@ -30,7 +27,7 @@ public class ConvertPlayer {
 	}
 	
 	public static String fromPlayer(Player player) {
-		String str = "#Play";
+		String str = "";
 		
 		int uid = player.getUID();
 		str += uid + "%";
@@ -51,7 +48,7 @@ public class ConvertPlayer {
 		int y = point.y;
 		str += y + "%";
 		
-		str += "@";
+		str += "<Play>";
 		return str;
 	}
 	

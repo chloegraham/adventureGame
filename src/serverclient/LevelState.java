@@ -3,7 +3,7 @@ package serverclient;
 import movable.Player;
 import testconvert.ConvertPlayer;
 
-public class GameState {
+public class LevelState {
 	private char[][] level;
 	private char[][] objects;
 	private char[][] movables;
@@ -11,19 +11,19 @@ public class GameState {
 	private Player players;
 	private String encodedPlayers;
 	
-	public GameState(char[][] level, char[][] objects, char[][] movables) {
+	public LevelState(char[][] level, char[][] objects, char[][] movables) {
 		this.level = level;
 		this.objects = objects;
 		this.movables = movables;
 		convertCharsToEncodedString();
 	}
 	
-	public GameState(String encodedLayers) {
+	public LevelState(String encodedLayers) {
 		this.encodedLayers = encodedLayers;
 		convertEncodedStringToChars();
 	}
 	
-	public GameState(Player players, char[][] level, char[][] objects, char[][] movables) {
+	public LevelState(Player players, char[][] level, char[][] objects, char[][] movables) {
 		this.players = players;
 		convertPlayersToEncodedString();
 		this.level = level;
@@ -32,7 +32,7 @@ public class GameState {
 		convertCharsToEncodedString();
 	}
 	
-	public GameState(String encodedPlayers, String encodedLayers) {
+	public LevelState(String encodedPlayers, String encodedLayers) {
 		this.encodedPlayers = encodedPlayers;
 		convertEncodedStringToPlayers();
 		this.encodedLayers = encodedLayers;
@@ -45,10 +45,6 @@ public class GameState {
 	public String getEncodedLayers() { return encodedLayers; }
 	public String getEncodedPlayers() { return encodedPlayers; }
 	public String getEncodedPlayersAndLayers() { return encodedPlayers + "!" + encodedLayers; }
-	
-	public void addMessage(String message) {
-		encodedLayers += message;
-	}
 	
 	private void convertCharsToEncodedString() {
 		StringBuilder sb = new StringBuilder();
