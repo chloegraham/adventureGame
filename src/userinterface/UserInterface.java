@@ -51,7 +51,7 @@ public class UserInterface {
 		graphics.addKeyListener(listener);
 		graphics.addFocusListener(new FocusAdapter() {		// Reclaim focus when lost
 	          public void focusLost(FocusEvent ev) {
-	        	  graphics.requestFocus();
+	        	  graphics.requestFocusInWindow();
 	          }
 	        });
 
