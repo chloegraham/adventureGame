@@ -97,16 +97,6 @@ public class Server implements Runnable {
 		}
 	}
 	
-	private void twoConnections() {
-		try {
-			while () 
-			connection = socket1.accept();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
 	private String load(){
 		//TODO: call load() inside run at some point, if return == null issue loading
 		return XML.load();
