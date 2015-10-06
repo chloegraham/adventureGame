@@ -2,14 +2,20 @@ package userinterface;
 
 import java.awt.CardLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+
+import userinterface.Action.Actions;
 
 /**
  * Displays one splash screen at a time.
@@ -28,7 +34,7 @@ public class SplashScreen extends JPanel {
 	
 	private static UserInterface ui;
 	
-	private static int openPane = STARTUP_SCREEN;
+	private static int openPane = MENU_SCREEN;
 	
 	public SplashScreen(UserInterface ui){
 		SplashScreen.ui = ui;
@@ -41,11 +47,13 @@ public class SplashScreen extends JPanel {
 		
 		/* Build individual panes */
 		buildStartUpScreen();
+		buildMenuScreen();
 		buildDeathScreen();
 		
 		/* Add panes to the panel */
 		this.add(allPanels[NO_SCREEN]);
 		this.add(allPanels[STARTUP_SCREEN]);
+		this.add(allPanels[MENU_SCREEN]);
 		this.add(allPanels[DEATH_SCREEN]);
 		
 		allPanels[openPane].setVisible(true);
@@ -76,6 +84,39 @@ public class SplashScreen extends JPanel {
 		allPanels[STARTUP_SCREEN].add(Box.createVerticalGlue());
 		
 		ui.setContentEnabled(false);
+	}
+	
+	/**
+	 * Builds the screen that allows the player to start a new game
+	 * Creates buttons and adds a new ActionListener to them.
+	 */
+	private static void buildMenuScreen(){
+		Dimension btnSize = new Dimension(100, 25);
+		ActionListener menuListener = new ActionListener(){		// Send user's actions to the UI.
+			public void actionPerformed(ActionEvent e) {
+				String ac = e.getActionCommand();
+				if (ac.equals("New Game")){ ui.sendUIAction(Actions.NEWGAME.ordinal()); }	// TODO Should we send through this method?
+				else if (ac.equals("Load Game")){ ui.sendUIAction(Actions.LOAD.ordinal()); }
+				else if (ac.equals("Join Game")){ ui.sendUIAction(Actions.JOINGAME.ordinal()); }
+			}			
+		};
+		allPanels[MENU_SCREEN] = new JPanel();
+		allPanels[MENU_SCREEN].setFocusable(true);				// Locks Listener input while the menu is open
+		allPanels[MENU_SCREEN].setBackground(new Color(200, 200, 200));		// No game behind the menu, don't make transparent
+		allPanels[MENU_SCREEN].setLayout(new BoxLayout(allPanels[MENU_SCREEN], BoxLayout.Y_AXIS));
+		
+		JLabel message = new JLabel("CHICKEN LITTLE");
+		message.setFont(new Font("Serif", Font.BOLD, 35));
+		message.setAlignmentX(CENTER_ALIGNMENT);
+		
+		allPanels[MENU_SCREEN].add(Box.createVerticalGlue());
+		allPanels[MENU_SCREEN].add(message);
+		allPanels[MENU_SCREEN].add(Box.createVerticalGlue());
+		allPanels[MENU_SCREEN].add(makeButton(menuListener, "New Game", btnSize));
+		allPanels[MENU_SCREEN].add(makeButton(menuListener, "Join Game", btnSize));
+		allPanels[MENU_SCREEN].add(makeButton(menuListener, "Load Game", btnSize));
+		allPanels[MENU_SCREEN].add(Box.createVerticalGlue());
+		
 	}
 	
 	/**
@@ -114,24 +155,24 @@ public class SplashScreen extends JPanel {
 	
 	/**
 	 * Builds a new button with the given listener and Action command, and an x alignment in the centre
-	 *
-	private JButton makeButton(Listener listener, String action){
+	 */
+	private static JButton makeButton(ActionListener listener, String action, Dimension size){
 		JButton btn = new JButton(action);
-		btn.setMaximumSize(buttonSize);
+		btn.setMaximumSize(size);
 		btn.setActionCommand(action);
 		btn.addActionListener(listener);
 		btn.setAlignmentX(CENTER_ALIGNMENT);
 		return btn;
-	}*/
+	}
 	
 	/**
 	 * Hide the originally open pane and display the passed in pane instead.
 	 */
 	public static void setVisible(int newPane){
+		if (newPane == NO_SCREEN){ ui.setContentEnabled(true); }
 		allPanels[openPane].setVisible(false);
 		openPane = newPane;
 		allPanels[openPane].setVisible(true);
-		if (openPane == NO_SCREEN){ ui.setContentEnabled(true); }
 	}
 	
 	/**
@@ -139,6 +180,7 @@ public class SplashScreen extends JPanel {
 	 */
 	public static void setMenuScreenVisible(){
 		allPanels[openPane].setVisible(false);
+		ui.setContentEnabled(false);
 		allPanels[MENU_SCREEN].setVisible(true);
 	}
 

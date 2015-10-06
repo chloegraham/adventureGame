@@ -26,6 +26,7 @@ public class Action {
 		SAVE (KeyEvent.VK_Q),
 		LOAD (KeyEvent.VK_L),
 		NEWGAME (-1),
+		JOINGAME (-1),
 		/* Adding new events below this line will increase the number of unnecessary checks.
 		 * Better to place above instead. */
 		COUNTERCLOCKWISE (KeyEvent.VK_O),		// Graphics rotation
