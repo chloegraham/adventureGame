@@ -7,6 +7,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
 import javax.swing.JFrame;
+import javax.swing.JMenu;
 import javax.swing.JOptionPane;
 
 import renderer.RenderPane;
@@ -21,13 +22,19 @@ public class UserInterface {
 	private Client client;
 	private RenderPane graphics = new RenderPane();
 	private Listener listener = new Listener(this);
-	private GameFrame frame = new GameFrame(graphics, listener);
+	
+	/* Frame objects */
+	private final JMenu file = new JMenu("File");
+	private final SplashScreen splash = new SplashScreen(this);
+	private GameFrame frame = new GameFrame(graphics, listener, file, splash);
+	
 	private int action = 99;
-	private int keys = 0;
+	private int keys = 0;		// Number of keys player is holding
 	
 	public UserInterface(Client client) {
 		this.client = client;
 		addListeners();
+		splash.addKeyListener(listener);		// TODO For testing frame
 		frame.setVisible(true);
 	}
 	
@@ -41,42 +48,9 @@ public class UserInterface {
 		client.passClientAction(action);
 	}
 	
-	/**
-	 * Require rendering window to maintain focus, and assign all listeners to it.
-	 * Requests confirmation and closes the system if player tries to close the window.
-	 */
-	private void addListeners() {
-		graphics.setFocusable(true);
-		
-		graphics.addKeyListener(listener);
-		graphics.addFocusListener(new FocusAdapter() {		// Reclaim focus when lost
-	          public void focusLost(FocusEvent ev) {
-	        	  graphics.requestFocusInWindow();
-	          }
-	        });
-
-		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);		// Use a window listener to close the game
-		WindowListener exitListener = new WindowAdapter() {
-		    @Override
-		    public void windowClosing(WindowEvent e) {				// Override closing event. If OK is not selected, don't do anything.
-		        int confirm = JOptionPane.showOptionDialog(null,
-		        	"Are you sure you want to exit the game?\nProgress since last save will be lost.\nConnection to server will be closed.", 
-		        	"Exit Game", JOptionPane.CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
-		        if (confirm == 0) {
-		           System.exit(0);
-		        }
-		    }
-		};
-		frame.addWindowListener(exitListener);
-	}
-	
-	/**
-	 * Rotates the graphics pane either clockwise or counterclockwise
-	 */
-	public void rotation(Actions direction){
-		if (direction == Actions.CLOCKWISE){ }
-		else if (direction == Actions.COUNTERCLOCKWISE){ }
-	}
+	/* ========================================================
+	 * Methods to modify the contents of the frame.
+	 * ======================================================== */
 	
 	/**
 	 * Stores and displays a message to the user. Will display up to the 3 most recent messages.
@@ -122,12 +96,63 @@ public class UserInterface {
 	}
 	
 	/**
-	 * Set whether the splash screen for player death is displayed.
+	 * Enable or disable frame content. Used to lock content while a SplashScreen is open.
+	 * @param enabled true to enable content, false to disable content
 	 */
-	public void setPlayerDeath(boolean toggle){
-		frame.setPlayerDeath(toggle);
+	public void setContentEnabled(boolean enabled){
+		file.setEnabled(enabled);
 	}
-
+	
+	/* ========================================================
+	 * Methods to change the splash screen currently displayed.
+	 * ======================================================== */
+	
+	public void setConnectionOpen(){
+		SplashScreen.setMenuVisible();
+	}
+	
+	/**
+	 * Set the splash screen to wait for a second player to join.
+	 */
+	public void setWaitForPlayer(){
+		SplashScreen.setVisible(SplashScreen.WAIT_SCREEN);
+	}
+	
+	/**
+	 * Allow the player to begin the game when ready
+	 */
+	public void setReadyToPlay(){
+		SplashScreen.setBeginGame();
+		frame.repaint();
+	}
+	
+	/**
+	 * Show the screen for player death.
+	 * Player will be able to turn off the screen on their own choice.
+	 */
+	public void setPlayerDeath(){
+		SplashScreen.setVisible(SplashScreen.DEATH_SCREEN);
+	}
+	
+	/**
+	 * TEST METHOD FOR SPLASH.
+	 */
+	public void TESTMETHOD(){
+		SplashScreen.setVisible(SplashScreen.STARTUP_SCREEN);
+	}
+	
+	
+	/* ========================================================
+	 * Methods for the renderer.
+	 * ======================================================== */
+	/**
+	 * Rotates the graphics pane either clockwise or counterclockwise
+	 */
+	public void rotation(Actions direction){
+		if (direction == Actions.CLOCKWISE){ }
+		else if (direction == Actions.COUNTERCLOCKWISE){ }
+	}
+	
 	/**
 	 * Set the level and redraw the pane.
 	 */
@@ -197,5 +222,48 @@ public class UserInterface {
 		graphics.setCameraLocation(camX,camY);
 		graphics.setLayers(level, objects, moveables);
 		frame.repaint();
+	}
+	
+	/* ========================================================
+	 * Helper methods to build the user interface.
+	 * ======================================================== */
+	
+	/**
+	 * Require rendering window to maintain focus, and assign all listeners to it.
+	 * Requests confirmation and closes the system if player tries to close the window.
+	 */
+	private void addListeners() {
+		graphics.setFocusable(true);
+		
+		graphics.addKeyListener(listener);
+		graphics.addFocusListener(new FocusAdapter() {		// Reclaim focus when lost
+	          public void focusLost(FocusEvent ev) {
+	        	  if (!SplashScreen.getSplashOpen()){		// Only reclaim focus if Splash Screen is not up.
+	        		  graphics.requestFocusInWindow();
+	        	  }
+	          }
+	        });
+		
+		splash.addFocusListener(new FocusAdapter() {		// Reclaim focus when lost
+	          public void focusLost(FocusEvent ev) {
+	        	  if (SplashScreen.getSplashOpen()){		// Only reclaim focus if Splash Screen is up.
+	        		  graphics.requestFocusInWindow();
+	        	  }
+	          }
+	        });
+
+		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);		// Use a window listener to close the game
+		WindowListener exitListener = new WindowAdapter() {
+		    @Override
+		    public void windowClosing(WindowEvent e) {				// Override closing event. If OK is not selected, don't do anything.
+		        int confirm = JOptionPane.showOptionDialog(null,
+		        	"Are you sure you want to exit the game?\nProgress since last save will be lost.\nConnection to server will be closed.", 
+		        	"Exit Game", JOptionPane.CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
+		        if (confirm == 0) {
+		           System.exit(0);
+		        }
+		    }
+		};
+		frame.addWindowListener(exitListener);
 	}
 }
