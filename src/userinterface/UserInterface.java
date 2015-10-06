@@ -21,7 +21,7 @@ public class UserInterface {
 	private Client client;
 	private RenderPane graphics = new RenderPane();
 	private Listener listener = new Listener(this);
-	private GameFrame frame = new GameFrame(graphics, listener);
+	private GameFrame frame = new GameFrame(graphics, listener, this);
 	private int action = 99;
 	private int keys = 0;
 	

@@ -58,8 +58,9 @@ public class GameFrame extends JFrame {
 	/**
 	 * Sets up the window to display the game and all controls/menus.
 	 * Adds Action, Key & Mouse listeners.
+	 * Pass the UserInterface to the SplashScreen
 	 */
-	public GameFrame(RenderPane graphics, Listener listener) {
+	public GameFrame(RenderPane graphics, Listener listener, UserInterface ui) {
 		super("Adventure Game");
 
 		/* Position and size of Render Pane */
@@ -82,7 +83,7 @@ public class GameFrame extends JFrame {
 		buildInventoryPane();
 		buildMenuBar(listener);
 		JScrollPane scrollPane = buildMessagePane();
-		splash = new SplashScreen(listener);
+		splash = new SplashScreen(ui);
 		splash.setBounds(0, 0, frameWidth, frameHeight);
 
 		/* Add panes to content pane with z coordinate */
