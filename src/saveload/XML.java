@@ -89,6 +89,12 @@ public class XML {
 	}
 	
 	public static String newGame(){
+		// Level looks like = (row = 'char', rowspacer = '%', layer spacer = '@', 1234 + @ = levelID, level tag = <Level>)
+		//                    www%eee%@www%eee%@1234@<Level>
+		// Player looks like = (userID, levelID, keyAmount, boulder, directionfacing, x, y, <Player>)
+		//					   101 % 1234 % 2 % 1 % 2 % 3 % 3 %@<Player>
+		
+		
 		String testLevel = "wwwweww%weeeeee%weeeeee%weeeeee%weeeeee%@nnnndnn%nnnsnnn%nnnnnnn%nnnnnnn%nnnncnz%@nnnnnnn%nnnnnnn%nnnlnnn%nnnnnnn%nnbnnnn%@1234@<Level><Split>101%1234%2%1%2%3%3%@<Player><Split>";
 		return testLevel;
 	}
