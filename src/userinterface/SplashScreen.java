@@ -25,18 +25,19 @@ public class SplashScreen extends JPanel {
 	public static final int NO_SCREEN = 0;
 	public static final int STARTUP_SCREEN = 1;			// Shows during loading.
 	public static final int MENU_SCREEN = 2;
-	public static final int WAITFORPLAYER_SCREEN = 3;
+	public static final int WAIT_SCREEN = 3;
 	public static final int DEATH_SCREEN = 4;
 	public static final int COMPLETED_SCREEN = 5;
 	public static final int GENERIC_SCREEN = 6;			// Use for save/load
 	
 	private static final JPanel[] allPanels = new JPanel[7];
+	private static final JLabel waitForPlayer = new JLabel("Waiting for Player 2 ...");
 	
 	private static UserInterface ui;
 	
-	private static int openPane = MENU_SCREEN;
+	private static int openPane = NO_SCREEN;
 	
-	public SplashScreen(UserInterface ui){
+	public SplashScreen(UserInterface ui){		// TODO listener for testing
 		SplashScreen.ui = ui;
 		this.setLayout(new CardLayout());
 		this.setOpaque(false);
@@ -48,12 +49,14 @@ public class SplashScreen extends JPanel {
 		/* Build individual panes */
 		buildStartUpScreen();
 		buildMenuScreen();
+		buildWaitForPlayerScreen();
 		buildDeathScreen();
 		
 		/* Add panes to the panel */
 		this.add(allPanels[NO_SCREEN]);
 		this.add(allPanels[STARTUP_SCREEN]);
 		this.add(allPanels[MENU_SCREEN]);
+		this.add(allPanels[WAIT_SCREEN]);
 		this.add(allPanels[DEATH_SCREEN]);
 		
 		allPanels[openPane].setVisible(true);
@@ -83,7 +86,7 @@ public class SplashScreen extends JPanel {
 		allPanels[STARTUP_SCREEN].add(message);
 		allPanels[STARTUP_SCREEN].add(Box.createVerticalGlue());
 		
-		ui.setContentEnabled(false);
+		//ui.setContentEnabled(false);
 	}
 	
 	/**
@@ -117,6 +120,26 @@ public class SplashScreen extends JPanel {
 		allPanels[MENU_SCREEN].add(makeButton(menuListener, "Load Game", btnSize));
 		allPanels[MENU_SCREEN].add(Box.createVerticalGlue());
 		
+	}
+	
+	/**
+	 * Builds the screen that displays the Key movements while waiting for the second player to join.
+	 */
+	private static void buildWaitForPlayerScreen(){
+		allPanels[WAIT_SCREEN] = new JPanel();
+		allPanels[WAIT_SCREEN].setFocusable(true);				// ???
+		allPanels[WAIT_SCREEN].setBackground(new Color(200, 200, 200, 200));		// Game available behind the menu, make transparent
+		allPanels[WAIT_SCREEN].setLayout(new BoxLayout(allPanels[WAIT_SCREEN], BoxLayout.Y_AXIS));
+		
+		JLabel message = new JLabel("Key bindings will go here ...");
+		message.setAlignmentX(CENTER_ALIGNMENT);
+		waitForPlayer.setAlignmentX(CENTER_ALIGNMENT);
+		
+		allPanels[WAIT_SCREEN].add(Box.createVerticalGlue());
+		allPanels[WAIT_SCREEN].add(message);
+		allPanels[WAIT_SCREEN].add(Box.createVerticalGlue());
+		allPanels[WAIT_SCREEN].add(waitForPlayer);
+		allPanels[WAIT_SCREEN].add(Box.createVerticalGlue());
 	}
 	
 	/**
@@ -162,6 +185,7 @@ public class SplashScreen extends JPanel {
 		btn.setActionCommand(action);
 		btn.addActionListener(listener);
 		btn.setAlignmentX(CENTER_ALIGNMENT);
+		btn.setFocusable(false);
 		return btn;
 	}
 	
@@ -170,18 +194,41 @@ public class SplashScreen extends JPanel {
 	 */
 	public static void setVisible(int newPane){
 		if (newPane == NO_SCREEN){ ui.setContentEnabled(true); }
+		else { ui.setContentEnabled(false); }		// Disable menus while splash screen is open
 		allPanels[openPane].setVisible(false);
 		openPane = newPane;
 		allPanels[openPane].setVisible(true);
+		allPanels[openPane].grabFocus();
 	}
 	
 	/**
 	 * Close the current pane and show the menu screen instead.
 	 */
-	public static void setMenuScreenVisible(){
+	public static void setMenuVisible(){
 		allPanels[openPane].setVisible(false);
 		ui.setContentEnabled(false);
+		openPane = MENU_SCREEN;
+		allPanels[MENU_SCREEN].grabFocus();
 		allPanels[MENU_SCREEN].setVisible(true);
+	}
+	
+	public static void setBeginGame(){
+		waitForPlayer.setText("Press any key to begin the game.");
+		allPanels[WAIT_SCREEN].setFocusable(true);
+		allPanels[WAIT_SCREEN].grabFocus();
+		allPanels[WAIT_SCREEN].addKeyListener(new KeyListener(){
+			public void keyPressed(KeyEvent e) {
+				SplashScreen.setVisible(NO_SCREEN);
+				waitForPlayer.setText("Waiting for Player 2 ...");
+			}
+			public void keyReleased(KeyEvent e) {}
+			public void keyTyped(KeyEvent e) {}
+		});
+	}
+	
+	public static boolean getSplashOpen(){
+		if (openPane == NO_SCREEN){ return false; }
+		else { return true; }
 	}
 
 	private static final long serialVersionUID = 1L;

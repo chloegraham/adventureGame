@@ -29,6 +29,11 @@ public class Action {
 		JOINGAME (-1),
 		/* Adding new events below this line will increase the number of unnecessary checks.
 		 * Better to place above instead. */
+		TESTA (KeyEvent.VK_F1),		// TODO Start test run
+		TESTB (KeyEvent.VK_F2),		// TODO Establish connection.
+		TESTC (KeyEvent.VK_F3),		// TODO Start a new game 
+		TESTD (KeyEvent.VK_F4),		// TODO connect player 2
+		TESTE (KeyEvent.VK_F5),		// TODO Show death screen
 		COUNTERCLOCKWISE (KeyEvent.VK_O),		// Graphics rotation
 		CLOCKWISE (KeyEvent.VK_P),
 		NORTH (KeyEvent.VK_W),

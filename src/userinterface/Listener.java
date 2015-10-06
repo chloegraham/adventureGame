@@ -42,6 +42,16 @@ public class Listener implements KeyListener, ActionListener {
 	public void keyPressed(KeyEvent e) {
 		int event = e.getKeyCode();
 		
+		// TODO Test code
+		if (event == Actions.TESTA.getKeyCode()){ UI.TESTMETHOD(); }		// Start splash screen test cycle
+		else if (event == Actions.TESTB.getKeyCode()){ UI.setConnectionOpen(); }
+		else if (event == Actions.TESTC.getKeyCode()){ UI.setWaitForPlayer(); }
+		else if (event == Actions.TESTD.getKeyCode()){ UI.setReadyToPlay(); }
+		else if (event == Actions.TESTE.getKeyCode()){ UI.setPlayerDeath(); }
+		
+		
+		if (SplashScreen.getSplashOpen()){ return; }	// Don't do anything if the splash screen is open.
+		
 		/* First let's check for camera rotations. Does not yet rotate the actual view. */
 		if (Actions.COUNTERCLOCKWISE.getKeyCode() == event){
 			DIR--;
@@ -79,6 +89,8 @@ public class Listener implements KeyListener, ActionListener {
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		if (SplashScreen.getSplashOpen()){ return; }	// Don't do anything if the splash screen is open.
+		
 		String ac = e.getActionCommand();
 		if (ac.equals("Save")){ UI.sendUIAction(Actions.SAVE.ordinal()); }
 		else if (ac.equals("Load")){ UI.sendUIAction(Actions.LOAD.ordinal()); }

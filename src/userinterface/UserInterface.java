@@ -34,6 +34,7 @@ public class UserInterface {
 	public UserInterface(Client client) {
 		this.client = client;
 		addListeners();
+		splash.addKeyListener(listener);		// TODO For testing frame
 		frame.setVisible(true);
 	}
 	
@@ -106,26 +107,38 @@ public class UserInterface {
 	 * Methods to change the splash screen currently displayed.
 	 * ======================================================== */
 	
-	/**
-	 * Show the screen for player death.
-	 * Player will be able to turn off the screen on their own choice.
-	 */
-	public void setSplashDeath(){
-		SplashScreen.setVisible(SplashScreen.DEATH_SCREEN);
+	public void setConnectionOpen(){
+		SplashScreen.setMenuVisible();
 	}
 	
 	/**
 	 * Set the splash screen to wait for a second player to join.
 	 */
 	public void setWaitForPlayer(){
-		SplashScreen.setVisible(SplashScreen.DEATH_SCREEN);
+		SplashScreen.setVisible(SplashScreen.WAIT_SCREEN);
 	}
 	
 	/**
 	 * Allow the player to begin the game when ready
 	 */
 	public void setReadyToPlay(){
+		SplashScreen.setBeginGame();
+		frame.repaint();
+	}
+	
+	/**
+	 * Show the screen for player death.
+	 * Player will be able to turn off the screen on their own choice.
+	 */
+	public void setPlayerDeath(){
 		SplashScreen.setVisible(SplashScreen.DEATH_SCREEN);
+	}
+	
+	/**
+	 * TEST METHOD FOR SPLASH.
+	 */
+	public void TESTMETHOD(){
+		SplashScreen.setVisible(SplashScreen.STARTUP_SCREEN);
 	}
 	
 	
@@ -225,7 +238,17 @@ public class UserInterface {
 		graphics.addKeyListener(listener);
 		graphics.addFocusListener(new FocusAdapter() {		// Reclaim focus when lost
 	          public void focusLost(FocusEvent ev) {
-	        	  graphics.requestFocusInWindow();
+	        	  if (!SplashScreen.getSplashOpen()){		// Only reclaim focus if Splash Screen is not up.
+	        		  graphics.requestFocusInWindow();
+	        	  }
+	          }
+	        });
+		
+		splash.addFocusListener(new FocusAdapter() {		// Reclaim focus when lost
+	          public void focusLost(FocusEvent ev) {
+	        	  if (SplashScreen.getSplashOpen()){		// Only reclaim focus if Splash Screen is up.
+	        		  graphics.requestFocusInWindow();
+	        	  }
 	          }
 	        });
 
