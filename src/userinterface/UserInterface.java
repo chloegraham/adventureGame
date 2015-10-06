@@ -7,6 +7,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
 import javax.swing.JFrame;
+import javax.swing.JMenu;
 import javax.swing.JOptionPane;
 
 import renderer.RenderPane;
@@ -21,13 +22,19 @@ public class UserInterface {
 	private Client client;
 	private RenderPane graphics = new RenderPane();
 	private Listener listener = new Listener(this);
-	private GameFrame frame = new GameFrame(graphics, listener, this);
+	
+	/* Frame objects */
+	private final JMenu file = new JMenu("File");
+	private final SplashScreen splash = new SplashScreen(this);
+	private GameFrame frame = new GameFrame(graphics, listener, file, splash);
+	
 	private int action = 99;
-	private int keys = 0;
+	private int keys = 0;		// Number of keys player is holding
 	
 	public UserInterface(Client client) {
 		this.client = client;
 		addListeners();
+		
 		frame.setVisible(true);
 	}
 	
@@ -39,6 +46,10 @@ public class UserInterface {
 	
 	public void sendUIAction(int action) {
 		client.passClientAction(action);
+	}
+	
+	public void setContentEnabled(boolean enabled){
+		file.setEnabled(enabled);
 	}
 	
 	/**
