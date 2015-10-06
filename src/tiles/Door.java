@@ -5,26 +5,47 @@ import movable.Key;
 public class Door extends Unmoveable implements Tile {
 	
 	private boolean locked = true;
-	private String character = "d";
-	private Key key = new Key("1234", "I'm the key to your heart");
-
-	public String toString() {
-		return character;
-	}
+	private boolean levelChanger = false;
+	private boolean nextLevel = true;
 	
-	public void openDoor(Key pKey){
-		if(key.equals(pKey)){
-			this.locked = false;
-			this.character = "o";
-		}
-	}
+	private Key key = new Key("1234", "I'm the key to your heart");
 
 	public boolean isLocked(){
 		return locked;
 	}
+	
+	public boolean isLevelChanger() {
+		return levelChanger; 
+	}
+	
+	public boolean isNextLevel() {
+		return nextLevel;
+	}
+	
+	public void setNextLevel(boolean isNext) {
+		nextLevel = isNext;
+	}
+	
+	public void openDoor(Key pKey){
+		if(key.equals(pKey))
+			openDoor();
+	}
 
 	public void openWithPad() {
-		this.locked = false;
-		this.character = "o";		
+		openDoor();		
+	}
+	
+	private void openDoor() {
+		locked = false;
+		levelChanger = true;
+	}
+	
+	@Override
+	public String toString() {
+		if (levelChanger)
+			return "x";
+		if (locked) 	 
+			return "d";
+		return "D";
 	}
 }

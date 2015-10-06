@@ -85,23 +85,43 @@ public class GameLogic {
 	
 	
 	private boolean move(Player player, Level level, Point newLoc) {
+		
 		//check for out of bounds
 		if (newLoc.y < 0 || newLoc.y > level.getTiles().length-1 || newLoc.x < 0 || newLoc.x > level.getTiles()[0].length-1){
 			return false;
 		}	
 		
 		Tile tile = level.getTiles()[newLoc.y][newLoc.x];
-		for(Boulder b: level.getBoulders()){
-			if(b.getLocation().equals(newLoc)){
-				System.out.println("OOPS DON't HIT MR BOUL");
+	
+		
+		
+		for(Boulder b: level.getBoulders())
+			if(b.getLocation().equals(newLoc))
 				return false;
+			
+		
+		
+		if (tile instanceof Chest || tile instanceof Wall || (tile instanceof Door && ((Door)tile).isLocked())) {
+			return false;
+		} 
+		
+		
+		
+		if (tile instanceof Door) {
+			Door door = (Door) tile;
+			if (!door.isLocked() && door.isLevelChanger()) {
+				if (door.isNextLevel()) {
+					moveNextLevel();
+				} else {
+					movePrevLevel();
+				}
+				return true;
 			}
 		}
 		
-		if (tile instanceof Chest || tile instanceof Wall || tile instanceof Door && ((Door)tile).isLocked()){
-			return false;
-		} //activate pressure pad if moved onto one
-		else if (tile instanceof PressurePad){
+		
+		
+		if (tile instanceof PressurePad){	//activate pressure pad if moved onto one
 			((PressurePad)tile).activate();
 			if(((PressurePad)tile).getDoor()!=null){
 				((PressurePad)tile).getDoor().openWithPad();
@@ -117,9 +137,8 @@ public class GameLogic {
 		return player.setLocation(newLoc);		
 	}	
 	
-	
-	
-	
+
+
 	private String interact(Player player, Level level, Point now) {
 		
 		Direction direction = player.getDirection();
@@ -204,5 +223,29 @@ public class GameLogic {
 			}
 		}	
 		return ConvertAction.inspectMsg();
+	}
+	
+	private void moveNextLevel() {
+		for (int i = 0; i != players.length; i++) {
+			players[i].nextLevel();
+		}
+		for (int i = 0; i != levels.length; i++) {
+			if (levels[i].getLevelID() == players[0].getLevelID())
+				levels[i].addPlayers(players);
+			else
+				levels[i].removePlayers();
+		}
+	}
+	
+	private void movePrevLevel() {
+		for (int i = 0; i != players.length; i++) {
+			players[i].prevLevel();
+		}
+		for (int i = 0; i != levels.length; i++) {
+			if (levels[i].getLevelID() == players[0].getLevelID())
+				levels[i].addPlayers(players);
+			else
+				levels[i].removePlayers();
+		}
 	}
 }

@@ -111,6 +111,14 @@ public class Level {
 	
 	
 	/*
+	 *  Getter to Remove Players from a Level
+	 */
+	public void removePlayers() {
+		players = null;
+	}
+	
+	
+	/*
 	 *  Method to Transfer Players between Levels
 	 */
 	public void addPlayers(Player[] players) {
@@ -242,4 +250,7 @@ public class Level {
 		
 		return array;
 	}
+
+
+	
 }

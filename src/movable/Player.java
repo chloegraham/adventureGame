@@ -37,36 +37,15 @@ public class Player extends Moveable{
 		this.direction = direction2;
 	}
 
-	@Override
-	public String toString() {
-		switch (this.direction) {
-		case NORTH:
-			if(hasBoulder) return "I";
-			else return "i";
-		case SOUTH:
-			if(hasBoulder) return "K";
-			else return "k";
-		case EAST:
-			if(hasBoulder) return "L";
-			else return "l";
-		default:
-			if(hasBoulder) return "J";
-			else return "j";
-		}
-	}
+	public int getLevelID() { return levelID; }
 	
 	public Direction getDirection() {
 		return direction;
 	}
 	
-	public void createKeys(int amount){
-		for(int i = 0; i < amount; i++){
-			addToInventory(new Key("110", "I'm a good key"));
-		}
-	}
-
-	public void setDirection(Direction direction) {
-		this.direction = direction;
+	public String getEncodedPlayer() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 	public int getUserID() {
@@ -80,6 +59,18 @@ public class Player extends Moveable{
 			}
 		}
 		return null;
+	}
+	
+	
+	
+	public void createKeys(int amount){
+		for(int i = 0; i < amount; i++){
+			addToInventory(new Key("110", "I'm a good key"));
+		}
+	}
+
+	public void setDirection(Direction direction) {
+		this.direction = direction;
 	}
 	
 	public void removeBoulder(){
@@ -138,12 +129,32 @@ public class Player extends Moveable{
 		return amount;
 	}
 
-	public int getLevelID() {
-		return levelID;
-	}
 
-	public String getEncodedPlayer() {
-		// TODO Auto-generated method stub
-		return null;
+	public void nextLevel() {
+		levelID++;
+		setLocation(new Point(1, 1));
+	}
+	
+	public void prevLevel() {
+		levelID--; 
+		setLocation(new Point(1, 1));
+	}
+	
+	@Override
+	public String toString() {
+		switch (this.direction) {
+		case NORTH:
+			if(hasBoulder) return "I";
+			else return "i";
+		case SOUTH:
+			if(hasBoulder) return "K";
+			else return "k";
+		case EAST:
+			if(hasBoulder) return "L";
+			else return "l";
+		default:
+			if(hasBoulder) return "J";
+			else return "j";
+		}
 	}
 }
