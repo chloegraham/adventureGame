@@ -11,44 +11,83 @@ import testconvert.Messages;
 import userinterface.UserInterface;
 
 public class Client implements Runnable {
-	private String host;
-	private int port;
-	private Socket connection;
-	private InetAddress address;
+	private String host = "localhost";
+	private int  port = 19999;
+	private InetAddress address; 
 	
 	private DataOutputStream output;
 	private DataInputStream input;
 	
+	private int userID;
 	private UserInterface ui;
 	
-	public Client() {
-		ui = new UserInterface(this);
+	// TODO just for testing
+	private int testID;
+	
+	public Client(int test) {
+		testID = test;
 	}
 	
 	public void run() {
-	    host = "localhost";  // Define a host server
-	    port = 19999;		 // Define a port
-	 
 	    try {
-	    	System.out.println("CLIENT: SocketClient initialized");			// Try and connect to the Server
-	        address = InetAddress.getByName(host);							// Obtain an address object of the server
-	        connection = new Socket(address, port); 						// Establish a socket connection 
-	        System.out.println("CLIENT: I've connected to the Server :)"); 
-	        
-	    	output = new DataOutputStream(connection.getOutputStream());
-	    	input = new DataInputStream(connection.getInputStream());
- 
-	    	while (input.available() == 0) {
-	    	}
-	    	// Get initial GameState from Server
-	    	System.out.println("CLIENT: Waiting for initial GameState from Server");
-			clientDecode();
-			System.out.println("CLIENT: I should have printed the initial GameState by now.");
+	    	// Create UI which puts up Splash with "waiting for connection"
+	    	// ui = new UserInterface(this);
 	    	
-	   } catch (IOException f) {
-		   System.out.println("IOException: " + f);
-	   } 
+	    	// Try and connect to Server
+	    	address = InetAddress.getByName(host);				// Convert host to address
+	    	Socket clientSocket = new Socket(address, port); 	// Try connect to the Server
+	        
+	    	// Means of talking to Server
+	    	output = new DataOutputStream(clientSocket.getOutputStream());
+	    	input = new DataInputStream(clientSocket.getInputStream());
+ 
+	    	System.out.println(toString() + " " + clientSocket.toString());
+	    	
+	    	userID = 0;
+	    	while (userID == 0)
+	    		userID = input.readInt();
+	 
+	    	
+	    	// if (userID==1111) UI changes to Menu screen = new, load, save
+	    	// ui.addUserID(userUD);
+	    	// message that waiting for Player Two to connect
+	    	
+	    	
+	    	// if (userID==2222) UI changes to tell Player One that Player Two is ready now
+	    	// ui.addUserID(userUD);
+	    	// new/load/save become enabled for Player One
+	    	// Player Two has Splash saying that Player One is choosing a game
+	    	
+	    	
+	    	System.out.println(userID +  " " + toString() + " " + clientSocket.toString());
+	    	
+	    	clientSocket.close();
+	    	
+	   } catch (IOException e) {
+		   e.printStackTrace();
+	   }
 	}
+	
+	@Override
+	public String toString() {
+		return "Client " + testID;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	public void passClientAction(int action) {
 		try {
