@@ -94,6 +94,15 @@ public class XML {
 		// Player looks like = (userID, levelID, keyAmount, boulder, directionfacing, x, y, <Player>)
 		//					   101 % 1234 % 2 % 1 % 2 % 3 % 3 %@<Player>
 		
+		String Level1 = "wwwweww%weeeeee%weeeeee%weeeeee%weeeeee%@nnnndnn%nnnnnnn%nnnnnnn%nnnnnnn%nnnnnnn%@nnnnnnn%nnnnnnn%nnnlnnn%nnnnnnn%nnnnnnn%@1111@<Level><Split>101%1111%2%1%2%3%3%@<Player><Split>";
+		String Level2 = "wwwweww%weeeeee%weeeeee%weeeeee%weeeeee%@nnnndnn%nnnnnnn%nnnnnnn%nnnnnnn%nnnncnn%@nnnnnnn%nnnnnnn%nnnlnnn%nnnnnnn%nnnnnnn%@2222@<Level><Split>101%2222%0%1%2%3%3%@<Player><Split>";
+		String Level3 = "wwwweww%weeeeee%weeeeee%weeeeee%weeeeee%@nnnndnn%nnnnnnn%nnnnnnn%nnnnnnn%nnnnnnz%@nnnnnnn%nnnnnnn%nnnlnnn%nnnnnnn%nnbnnnn%@3333@<Level><Split>101%3333%0%1%2%3%3%@<Player><Split>";
+		String Level4 = "wwwweww%weeeeee%weeeeee%weeeeee%weeeeee%@nnnndnn%nnnsnnn%nnnnnnn%nnnnnnn%nnnncnz%@nnnnnnn%nnnnnnn%nnnlnnn%nnnnnnn%nnbnnnn%@4444@<Level><Split>101%4444%0%1%2%3%3%@<Player><Split>";
+		
+		String multiLevel = "wwwweww%weeeeee%weeeeee%weeeeee%weeeeee%@nnnndnn%nnnnnnn%nnnnnnn%nnnnnnn%nnnnnnn%@nnnnnnn%nnnnnnn%nnnlnnn%nnnnnnn%nnnnnnn%@4567@<Level><Split>wwwweww%weeeeee%weeeeee%weeeeee%weeeeee%@nnnndnn%nnnnnnn%nnnnnnn%nnnnnnn%nnnncnn%@nnnnnnn%nnnnnnn%nnnlnnn%nnnnnnn%nnnnnnn%@5678@<Level><Split>101%4567%2%1%2%3%3%@<Player><Split>";
+		//TODO: how to implement multiple levels?
+		String multiPlayer = "wwwweww%weeeeee%weeeeee%weeeeee%weeeeee%@nnnndnn%nnnnnnn%nnnnnnn%nnnnnnn%nnnncnn%@nnnnnnn%nnnnnnn%nnnlnnn%nnnnnnn%nnnnnnn%@7899@<Level><Split>101%7899%0%1%2%3%3%@<Player><Split>202%7899%0%1%2%4%4%@<Player><Split>";
+		//TODO: how to implement multiple players?
 		
 		String testLevel = "wwwweww%weeeeee%weeeeee%weeeeee%weeeeee%@nnnndnn%nnnsnnn%nnnnnnn%nnnnnnn%nnnncnz%@nnnnnnn%nnnnnnn%nnnlnnn%nnnnnnn%nnbnnnn%@1234@<Level><Split>101%1234%2%1%2%3%3%@<Player><Split>";
 		return testLevel;
