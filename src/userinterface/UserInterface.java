@@ -8,25 +8,25 @@ import java.awt.event.WindowListener;
 
 import javax.swing.JFrame;
 import javax.swing.JMenu;
-import javax.swing.JOptionPane;
 
 import renderer.RenderPane;
 import serverclient.Client;
 import userinterface.Action.Actions;
 
 /**
- * Organises what displays to the user.
+ * Organises the content that is displayed to the user, and passes data between the server and the interface.
  * @author Kirsty
  */
 public class UserInterface {
-	private Client client;
+	/* Content in the frame */
+	private final JMenu file = new JMenu("File");
 	private RenderPane graphics = new RenderPane();
 	private Listener listener = new Listener(this);
-	
-	/* Frame objects */
-	private final JMenu file = new JMenu("File");
-	private final SplashScreen splash = new SplashScreen(this);
+	private final SplashScreen splash = new SplashScreen(this, listener);
 	private GameFrame frame = new GameFrame(graphics, listener, file, splash);
+
+	/* For sending data through the connection */
+	private Client client;
 	
 	private int action = 99;
 	private int keys = 0;		// Number of keys player is holding
@@ -34,7 +34,6 @@ public class UserInterface {
 	public UserInterface(Client client) {
 		this.client = client;
 		addListeners();
-		splash.addKeyListener(listener);		// TODO For testing frame
 		frame.setVisible(true);
 	}
 	
@@ -61,6 +60,9 @@ public class UserInterface {
 		}
 	}
 	
+	/**
+	 * Erases all messages from the text box history.
+	 */
 	public void clearMessageHistory(){
 		frame.clearMessages();
 	}
@@ -78,7 +80,7 @@ public class UserInterface {
 	 * @return true if a key was removed, false otherwise.
 	 */
 	public boolean removeKey(){
-		if (keys >= 0){
+		if (keys > 0){
 			keys--;
 			frame.updateInventory(keys);
 			return true;
@@ -101,50 +103,106 @@ public class UserInterface {
 	 */
 	public void setContentEnabled(boolean enabled){
 		file.setEnabled(enabled);
+		listener.setSplashLocked(enabled);
 	}
 	
 	/* ========================================================
-	 * Methods to change the splash screen currently displayed.
+	 * Methods to change or modify the current splash screen.
 	 * ======================================================== */
 	
-	public void setConnectionOpen(){
-		SplashScreen.setMenuVisible();
-	}
-	
 	/**
-	 * Set the splash screen to wait for a second player to join.
+	 * Once a connection has been established, allow the player to begin a game.
+	 * Enables/Disables each button in the menu and allows display of menu splash screen.
+	 * TODO Refactor so player can press button before moving to menu
 	 */
-	public void setWaitForPlayer(){
-		SplashScreen.setVisible(SplashScreen.WAIT_SCREEN);
+	public void setMenu(boolean newGame, boolean joinGame, boolean loadGame){
+		splash.setVisibleMenu(newGame, joinGame, loadGame);
 	}
 	
 	/**
-	 * Allow the player to begin the game when ready
+	 * If the player is currently on the wait screen, allow the player to close the wait screen and 
+	 * send key presses / actions through the client.
 	 */
-	public void setReadyToPlay(){
-		SplashScreen.setBeginGame();
-		frame.repaint();
+	public void setGameReadyToPlay(){
+		if (splash.getOpenCard() != SplashScreen.WAIT_CARD){ return; }
+		splash.setWaitCardClosable(true);
 	}
 	
 	/**
-	 * Show the screen for player death.
-	 * Player will be able to turn off the screen on their own choice.
+	 * If the splash screen menu is open, respond the the button pressed.
+	 */
+	public void performSplashActionCommand(String ac){
+		if (splash.getOpenCard() != SplashScreen.MENU_CARD){ return; }	// Only the menu card has action listeners.
+		if (ac.equals("New Game")){
+			showWaitCardHelper();
+			sendUIAction(Actions.NEWGAME.ordinal());
+		}
+		else if (ac.equals("Join Game")){
+			showWaitCardHelper();
+			sendUIAction(Actions.JOINGAME.ordinal());
+		}
+		else if (ac.equals("Load Game")){
+			showWaitCardHelper();
+			sendUIAction(Actions.LOAD.ordinal());
+		}
+	}
+	
+	/**
+	 * Displays a Wait Card to the user that must be closed by the server.
+	 */
+	private void showWaitCardHelper(){
+		splash.setWaitCardClosable(false);
+		splash.setVisibleCard(SplashScreen.WAIT_CARD);
+	}
+	
+	/**
+	 * Alert the user that their character has died. Sleeps for a short period then allows the user to return to the game.
 	 */
 	public void setPlayerDeath(){
-		SplashScreen.setVisible(SplashScreen.DEATH_SCREEN);
+		splash.setVisibleCard(SplashScreen.DEATH_CARD);
+		try {
+			Thread.sleep(1000);		// Freeze the frame for a short time so key spamming doesn't skip the window.
+		} catch (InterruptedException e) {}
 	}
 	
 	/**
-	 * TEST METHOD FOR SPLASH.
+	 * Alert the user that they have won the game.
+	 * Player will return to the startup screen from this point.
 	 */
-	public void TESTMETHOD(){
-		SplashScreen.setVisible(SplashScreen.STARTUP_SCREEN);
+	public void setPlayerWon(){
+		splash.setVisibleCard(SplashScreen.WIN_CARD);
+		try {
+			Thread.sleep(1000);		// Freeze the frame for a short time so key spamming doesn't skip the window.
+		} catch (InterruptedException e) {}
 	}
 	
+	/**
+	 * Displays a custom message that the user cannot close. Must call closeGenericScreen() to close this.
+	 * TODO not yet implemented
+	 * @param message
+	 */
+	public void openGenericMessage(String message){}
+	
+	/**
+	 * Closes currently open generic screen
+	 * TODO not yet implemented
+	 */
+	public void closeGenericScreen(){}
+	
+	/**
+	 * Call when disconnected or connection cannot be established. Player returns to startup screen. 
+	 * TODO not yet implemented
+	 * @param message Explain connection error to user 
+	 */
+	public void connectionError(String message){}
+	
+	/** Tells the splash screen a key has been pressed. */
+	public void performKeyPressed(){ splash.performKeyPress(); }
 	
 	/* ========================================================
 	 * Methods for the renderer.
 	 * ======================================================== */
+	
 	/**
 	 * Rotates the graphics pane either clockwise or counterclockwise
 	 */
@@ -233,35 +291,19 @@ public class UserInterface {
 	 * Requests confirmation and closes the system if player tries to close the window.
 	 */
 	private void addListeners() {
-		graphics.setFocusable(true);
-		
-		graphics.addKeyListener(listener);
-		graphics.addFocusListener(new FocusAdapter() {		// Reclaim focus when lost
+		listener.setFocusable(true);
+		listener.addKeyListener(listener);
+		listener.addFocusListener(new FocusAdapter() {		// Reclaim focus when lost
 	          public void focusLost(FocusEvent ev) {
-	        	  if (!SplashScreen.getSplashOpen()){		// Only reclaim focus if Splash Screen is not up.
-	        		  graphics.requestFocusInWindow();
-	        	  }
+	        	  listener.requestFocusInWindow();
 	          }
 	        });
 		
-		splash.addFocusListener(new FocusAdapter() {		// Reclaim focus when lost
-	          public void focusLost(FocusEvent ev) {
-	        	  if (SplashScreen.getSplashOpen()){		// Only reclaim focus if Splash Screen is up.
-	        		  graphics.requestFocusInWindow();
-	        	  }
-	          }
-	        });
-
 		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);		// Use a window listener to close the game
 		WindowListener exitListener = new WindowAdapter() {
 		    @Override
 		    public void windowClosing(WindowEvent e) {				// Override closing event. If OK is not selected, don't do anything.
-		        int confirm = JOptionPane.showOptionDialog(null,
-		        	"Are you sure you want to exit the game?\nProgress since last save will be lost.\nConnection to server will be closed.", 
-		        	"Exit Game", JOptionPane.CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
-		        if (confirm == 0) {
-		           System.exit(0);
-		        }
+		        listener.exitGame();
 		    }
 		};
 		frame.addWindowListener(exitListener);

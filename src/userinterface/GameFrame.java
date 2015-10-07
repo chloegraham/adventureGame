@@ -90,6 +90,8 @@ public class GameFrame extends JFrame {
 		contentPane.add(scrollPane, new Integer(2));
 		contentPane.add(inventoryPane, new Integer(3));
 		contentPane.add(splash, new Integer(4));
+		contentPane.add(listener, new Integer(5));
+		listener.setOpaque(false);
 		
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		this.pack();
