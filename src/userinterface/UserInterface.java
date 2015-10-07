@@ -1,7 +1,10 @@
 package userinterface;
 
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
@@ -34,7 +37,7 @@ public class UserInterface {
 	public UserInterface(Client client) {
 		this.client = client;
 		addListeners();
-		splash.addKeyListener(listener);		// TODO For testing frame
+		//splash.addKeyListener(listener);		// TODO For testing frame
 		frame.setVisible(true);
 	}
 	
@@ -101,6 +104,11 @@ public class UserInterface {
 	 */
 	public void setContentEnabled(boolean enabled){
 		file.setEnabled(enabled);
+		listener.lockListener(!enabled);
+	}
+	
+	public void sendSplashAction(KeyEvent e){
+		splash.readAction(e);
 	}
 	
 	/* ========================================================
@@ -108,21 +116,21 @@ public class UserInterface {
 	 * ======================================================== */
 	
 	public void setConnectionOpen(){
-		SplashScreen.setMenuVisible();
+		splash.setMenuVisible();
 	}
 	
 	/**
 	 * Set the splash screen to wait for a second player to join.
 	 */
 	public void setWaitForPlayer(){
-		SplashScreen.setVisible(SplashScreen.WAIT_SCREEN);
+		splash.setVisible(SplashScreen.WAIT_SCREEN);
 	}
 	
 	/**
 	 * Allow the player to begin the game when ready
 	 */
 	public void setReadyToPlay(){
-		SplashScreen.setBeginGame();
+		splash.setBeginGame();
 		frame.repaint();
 	}
 	
@@ -131,14 +139,14 @@ public class UserInterface {
 	 * Player will be able to turn off the screen on their own choice.
 	 */
 	public void setPlayerDeath(){
-		SplashScreen.setVisible(SplashScreen.DEATH_SCREEN);
+		splash.setVisible(SplashScreen.DEATH_SCREEN);
 	}
 	
 	/**
 	 * TEST METHOD FOR SPLASH.
 	 */
 	public void TESTMETHOD(){
-		SplashScreen.setVisible(SplashScreen.STARTUP_SCREEN);
+		splash.setVisible(SplashScreen.STARTUP_SCREEN);
 	}
 	
 	
@@ -233,25 +241,16 @@ public class UserInterface {
 	 * Requests confirmation and closes the system if player tries to close the window.
 	 */
 	private void addListeners() {
-		graphics.setFocusable(true);
+		listener.setFocusable(true);
 		
-		graphics.addKeyListener(listener);
-		graphics.addFocusListener(new FocusAdapter() {		// Reclaim focus when lost
+		listener.addKeyListener(listener);
+		
+		listener.addFocusListener(new FocusAdapter() {		// Reclaim focus when lost
 	          public void focusLost(FocusEvent ev) {
-	        	  if (!SplashScreen.getSplashOpen()){		// Only reclaim focus if Splash Screen is not up.
-	        		  graphics.requestFocusInWindow();
-	        	  }
+        		  splash.setFocusOnCard();
 	          }
 	        });
 		
-		splash.addFocusListener(new FocusAdapter() {		// Reclaim focus when lost
-	          public void focusLost(FocusEvent ev) {
-	        	  if (SplashScreen.getSplashOpen()){		// Only reclaim focus if Splash Screen is up.
-	        		  graphics.requestFocusInWindow();
-	        	  }
-	          }
-	        });
-
 		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);		// Use a window listener to close the game
 		WindowListener exitListener = new WindowAdapter() {
 		    @Override

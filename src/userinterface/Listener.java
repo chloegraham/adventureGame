@@ -6,6 +6,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 import userinterface.Action.Actions;
 
@@ -14,13 +15,19 @@ import userinterface.Action.Actions;
  * Organises camera rotation.
  * @author Kirsty
  */
-public class Listener implements KeyListener, ActionListener {
+public class Listener extends JPanel implements KeyListener, ActionListener {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private final UserInterface UI;
 	// Stores the direction the screen is currently being shown at. Key Events are rotated to match, must remain in this order.
 	private final Actions[] ROTATION = new Actions[] { Actions.NORTH, Actions.EAST, Actions.SOUTH, Actions.WEST };
 	private int DIR = 0;
 	
 	private final Actions[] ACTIONS = Actions.values();	// All possible movements the player may make
+	
+	private boolean locked = false;
 	
 	public Listener(UserInterface ui) {
 		this.UI = ui;
@@ -38,6 +45,10 @@ public class Listener implements KeyListener, ActionListener {
 		}
 	}
 	
+	public void lockListener(boolean locked){
+		this.locked = locked;
+	}
+	
 	@Override
 	public void keyPressed(KeyEvent e) {
 		int event = e.getKeyCode();
@@ -49,8 +60,10 @@ public class Listener implements KeyListener, ActionListener {
 		else if (event == Actions.TESTD.getKeyCode()){ UI.setReadyToPlay(); }
 		else if (event == Actions.TESTE.getKeyCode()){ UI.setPlayerDeath(); }
 		
-		
-		if (SplashScreen.getSplashOpen()){ return; }	// Don't do anything if the splash screen is open.
+		if (locked){
+			UI.sendSplashAction(e);
+			return;
+		}
 		
 		/* First let's check for camera rotations. Does not yet rotate the actual view. */
 		if (Actions.COUNTERCLOCKWISE.getKeyCode() == event){
@@ -89,8 +102,9 @@ public class Listener implements KeyListener, ActionListener {
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if (SplashScreen.getSplashOpen()){ return; }	// Don't do anything if the splash screen is open.
-		
+		if (locked){
+			return;
+		}
 		String ac = e.getActionCommand();
 		if (ac.equals("Save")){ UI.sendUIAction(Actions.SAVE.ordinal()); }
 		else if (ac.equals("Load")){ UI.sendUIAction(Actions.LOAD.ordinal()); }

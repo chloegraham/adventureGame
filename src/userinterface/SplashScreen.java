@@ -2,20 +2,14 @@ package userinterface;
 
 import java.awt.CardLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-
-import userinterface.Action.Actions;
 
 /**
  * Displays one splash screen at a time.
@@ -30,15 +24,15 @@ public class SplashScreen extends JPanel {
 	public static final int COMPLETED_SCREEN = 5;
 	public static final int GENERIC_SCREEN = 6;			// Use for save/load
 	
-	private static final JPanel[] allPanels = new JPanel[7];
-	private static final JLabel waitForPlayer = new JLabel("Waiting for Player 2 ...");
+	private final JPanel[] allPanels = new JPanel[7];
+	private final JLabel waitForPlayer = new JLabel("Waiting for Player 2 ...");
 	
-	private static UserInterface ui;
+	private UserInterface ui;
 	
-	private static int openPane = NO_SCREEN;
+	private int openPane = NO_SCREEN;
 	
 	public SplashScreen(UserInterface ui){		// TODO listener for testing
-		SplashScreen.ui = ui;
+		this.ui = ui;
 		this.setLayout(new CardLayout());
 		this.setOpaque(false);
 		
@@ -66,7 +60,7 @@ public class SplashScreen extends JPanel {
 	 * Initial screen that displays while the game is loading for the first time.
 	 * Player must wait for connection to be established before doing anything.
 	 */
-	private static void buildStartUpScreen(){
+	private void buildStartUpScreen(){
 		allPanels[STARTUP_SCREEN] = new JPanel();
 		allPanels[STARTUP_SCREEN].setFocusable(true);			// Lock key input while this screen is open
 		allPanels[STARTUP_SCREEN].setBackground(new Color(200, 200, 200));	// No game behind this splash, don't make transparant.
@@ -93,16 +87,16 @@ public class SplashScreen extends JPanel {
 	 * Builds the screen that allows the player to start a new game
 	 * Creates buttons and adds a new ActionListener to them.
 	 */
-	private static void buildMenuScreen(){
-		Dimension btnSize = new Dimension(100, 25);
-		ActionListener menuListener = new ActionListener(){		// Send user's actions to the UI.
-			public void actionPerformed(ActionEvent e) {
-				String ac = e.getActionCommand();
-				if (ac.equals("New Game")){ ui.sendUIAction(Actions.NEWGAME.ordinal()); }	// TODO Should we send through this method?
-				else if (ac.equals("Load Game")){ ui.sendUIAction(Actions.LOAD.ordinal()); }
-				else if (ac.equals("Join Game")){ ui.sendUIAction(Actions.JOINGAME.ordinal()); }
-			}			
-		};
+	private void buildMenuScreen(){
+		//Dimension btnSize = new Dimension(100, 25);
+		//ActionListener menuListener = new ActionListener(){		// Send user's actions to the UI.
+		//	public void actionPerformed(ActionEvent e) {
+		//		String ac = e.getActionCommand();
+		//		if (ac.equals("New Game")){ ui.sendUIAction(Actions.NEWGAME.ordinal()); }
+		//		else if (ac.equals("Load Game")){ ui.sendUIAction(Actions.LOAD.ordinal()); }
+		//		else if (ac.equals("Join Game")){ ui.sendUIAction(Actions.JOINGAME.ordinal()); }
+		//	}			
+		//};
 		allPanels[MENU_SCREEN] = new JPanel();
 		allPanels[MENU_SCREEN].setFocusable(true);				// Locks Listener input while the menu is open
 		allPanels[MENU_SCREEN].setBackground(new Color(200, 200, 200));		// No game behind the menu, don't make transparent
@@ -115,9 +109,9 @@ public class SplashScreen extends JPanel {
 		allPanels[MENU_SCREEN].add(Box.createVerticalGlue());
 		allPanels[MENU_SCREEN].add(message);
 		allPanels[MENU_SCREEN].add(Box.createVerticalGlue());
-		allPanels[MENU_SCREEN].add(makeButton(menuListener, "New Game", btnSize));
-		allPanels[MENU_SCREEN].add(makeButton(menuListener, "Join Game", btnSize));
-		allPanels[MENU_SCREEN].add(makeButton(menuListener, "Load Game", btnSize));
+		//allPanels[MENU_SCREEN].add(makeButton(menuListener, "New Game", btnSize));
+		//allPanels[MENU_SCREEN].add(makeButton(menuListener, "Join Game", btnSize));
+		//allPanels[MENU_SCREEN].add(makeButton(menuListener, "Load Game", btnSize));
 		allPanels[MENU_SCREEN].add(Box.createVerticalGlue());
 		
 	}
@@ -125,7 +119,7 @@ public class SplashScreen extends JPanel {
 	/**
 	 * Builds the screen that displays the Key movements while waiting for the second player to join.
 	 */
-	private static void buildWaitForPlayerScreen(){
+	private void buildWaitForPlayerScreen(){
 		allPanels[WAIT_SCREEN] = new JPanel();
 		allPanels[WAIT_SCREEN].setFocusable(true);				// ???
 		allPanels[WAIT_SCREEN].setBackground(new Color(200, 200, 200, 200));		// Game available behind the menu, make transparent
@@ -146,16 +140,9 @@ public class SplashScreen extends JPanel {
 	 * Build the screen that shows upon the player's death
 	 * Player can press any key to go back to the game normally.
 	 */
-	private static void buildDeathScreen(){
+	private void buildDeathScreen(){
 		allPanels[DEATH_SCREEN] = new JPanel();
 		allPanels[DEATH_SCREEN].setFocusable(true);				// Must be focusable for the key listener to register
-		allPanels[DEATH_SCREEN].addKeyListener(new KeyListener(){
-			public void keyPressed(KeyEvent e) {
-				SplashScreen.setVisible(NO_SCREEN);
-			}
-			public void keyReleased(KeyEvent e) {}
-			public void keyTyped(KeyEvent arg0) {}
-		});
 		
 		/* Decorate the screen */
 		allPanels[DEATH_SCREEN].setLayout(new BoxLayout(allPanels[DEATH_SCREEN], BoxLayout.Y_AXIS));
@@ -178,8 +165,8 @@ public class SplashScreen extends JPanel {
 	
 	/**
 	 * Builds a new button with the given listener and Action command, and an x alignment in the centre
-	 */
-	private static JButton makeButton(ActionListener listener, String action, Dimension size){
+	 *
+	private JButton makeButton(ActionListener listener, String action, Dimension size){
 		JButton btn = new JButton(action);
 		btn.setMaximumSize(size);
 		btn.setActionCommand(action);
@@ -187,50 +174,58 @@ public class SplashScreen extends JPanel {
 		btn.setAlignmentX(CENTER_ALIGNMENT);
 		btn.setFocusable(false);
 		return btn;
-	}
+	}*/
 	
 	/**
 	 * Hide the originally open pane and display the passed in pane instead.
 	 */
-	public static void setVisible(int newPane){
+	public void setVisible(int newPane){
 		if (newPane == NO_SCREEN){ ui.setContentEnabled(true); }
 		else { ui.setContentEnabled(false); }		// Disable menus while splash screen is open
 		allPanels[openPane].setVisible(false);
 		openPane = newPane;
 		allPanels[openPane].setVisible(true);
-		allPanels[openPane].grabFocus();
+		//setFocusOnCard();
 	}
 	
 	/**
 	 * Close the current pane and show the menu screen instead.
 	 */
-	public static void setMenuVisible(){
+	public void setMenuVisible(){
 		allPanels[openPane].setVisible(false);
 		ui.setContentEnabled(false);
 		openPane = MENU_SCREEN;
-		allPanels[MENU_SCREEN].grabFocus();
 		allPanels[MENU_SCREEN].setVisible(true);
+		//setFocusOnCard();
 	}
 	
-	public static void setBeginGame(){
+	public void setBeginGame(){
 		waitForPlayer.setText("Press any key to begin the game.");
 		allPanels[WAIT_SCREEN].setFocusable(true);
 		allPanels[WAIT_SCREEN].grabFocus();
-		allPanels[WAIT_SCREEN].addKeyListener(new KeyListener(){
-			public void keyPressed(KeyEvent e) {
-				SplashScreen.setVisible(NO_SCREEN);
-				waitForPlayer.setText("Waiting for Player 2 ...");
-			}
-			public void keyReleased(KeyEvent e) {}
-			public void keyTyped(KeyEvent e) {}
-		});
+		//allPanels[WAIT_SCREEN].addKeyListener(new KeyListener(){
+		//	public void keyPressed(KeyEvent e) {
+		//		SplashScreen.setVisible(NO_SCREEN);
+		//		waitForPlayer.setText("Waiting for Player 2 ...");
+		//	}
+		//	public void keyReleased(KeyEvent e) {}
+		//	public void keyTyped(KeyEvent e) {}
+		//});
 	}
 	
-	public static boolean getSplashOpen(){
-		if (openPane == NO_SCREEN){ return false; }
-		else { return true; }
+	public void setFocusOnCard(){
+		allPanels[openPane].requestFocusInWindow();
 	}
+	
+	//private static boolean getSplashOpen(){
+	//	if (openPane == NO_SCREEN){ return false; }
+	//	else { return true; }
+	//}
 
 	private static final long serialVersionUID = 1L;
+	
+	public void readAction(KeyEvent e){
+		System.out.println("Printing stuff.");
+	}
 	
 }
