@@ -104,7 +104,7 @@ public class XML {
 		String multiPlayer = "wwwweww%weeeeee%weeeeee%weeeeee%weeeeee%@nnnndnn%nnnnnnn%nnnnnnn%nnnnnnn%nnnncnn%@nnnnnnn%nnnnnnn%nnnlnnn%nnnnnnn%nnnnnnn%@7899@<Level><Split>101%7899%0%1%2%3%3%@<Player><Split>202%7899%0%1%2%4%4%@<Player><Split>";
 		//TODO: how to implement multiple players?
 		
-		String testLevel = "wwwweww%weeeeee%weeeeee%weeeeee%weeeeee%@nnnndnn%nnnsnnn%nnnnnnn%nnnnnnn%nnnncnz%@nnnnnnn%nnnnnnn%nnnlnnn%nnnnnnn%nnbnnnn%@1234@<Level><Split>101%1234%2%1%2%3%3%@<Player><Split>";
+		String testLevel = "wwwweww%weeeeee%weeeeee%weeeeee%weeeeee%@nnnndnn%nnnsnnn%nnnnnnn%nnnnnnn%nnnncnz%@nnnnnnn%nnnnnnn%nnnlnnn%nnnnnnn%nnbnnnn%@1234@<Level><Split>101%1234%2%0%2%3%3%@<Player><Split>";
 		return testLevel;
 	}
 	

@@ -19,17 +19,14 @@ public class Player extends Moveable{
 	private int levelID;
 	
 	public Player(Point location) {
-		this(location, "i");
-	}
-	
-	public Player(Point location, String c) {
-		super(location, c);
+		super(location);
+		
 	}
 	
 	//open a saved game
 	public Player(int userID, int levelID, int keyAmount, boolean boulder,
 			Direction direction2, Point point) {
-		super(point, "i");
+		super(point);
 		this.userID = userID;
 		this.levelID = levelID;
 		createKeys(keyAmount);
@@ -44,7 +41,6 @@ public class Player extends Moveable{
 	}
 	
 	public String getEncodedPlayer() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 	
@@ -65,7 +61,7 @@ public class Player extends Moveable{
 	
 	public void createKeys(int amount){
 		for(int i = 0; i < amount; i++){
-			addToInventory(new Key("110", "I'm a good key"));
+			addToInventory(new Key("1234", "I'm the key to your heart"));
 		}
 	}
 
@@ -136,8 +132,10 @@ public class Player extends Moveable{
 	}
 	
 	public void prevLevel() {
-		levelID--; 
-		setLocation(new Point(1, 1));
+		if(levelID > 1){ //levels will start on one
+			levelID--; 
+			setLocation(new Point(1, 1));
+		}
 	}
 	
 	@Override

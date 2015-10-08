@@ -11,7 +11,6 @@ public class GameWorld {
 	
 	public GameWorld(String encodedGameWorld){
 		String[] split = encodedGameWorld.split(Messages.DELIM_SPLIT);
-		
 		int levelAmount = 0;
 		int playerAmount = 0;
 		
@@ -42,15 +41,13 @@ public class GameWorld {
 			else {
 				throw new IllegalArgumentException();
 			}
-		}
-		
+		}	
 		levels[0].addPlayers(players);
 		logic = new GameLogic(levels, players);
 	}
 	
 	public GameLogic getLogic() { return logic; }
-	
-	
+		
 	public String getEncodedGameWorld(){
 		String str = "";
 		
@@ -59,7 +56,6 @@ public class GameWorld {
 		
 		return str;
 	}
-	
 	
 	public String getEncodedGameSave(){
 		String str = "";

@@ -13,7 +13,7 @@ public class Chest extends Unmoveable implements Tile {
 	}
 	
 	public Key openChest(){
-		this.character = "l";
+		this.character = "C";
 		Key key = myKey;
 		myKey = null;
 		return key;
