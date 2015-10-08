@@ -27,26 +27,30 @@ public class Server implements Runnable {
 	private static Socket socketOne;
 	private static Socket socketTwo;
 	
-	private static final int PLAYER_ONE = 1111;
-	private static final int PLAYER_TWO = 2222;
-	
+	public static final int PLAYER_ONE = 1111;
+	public static final int PLAYER_TWO = 2222;
+	public static final String HOST = "Host";
+	public static final String FOLLOWER = "Follower";
 	
 	public void run() {
 	    try{
 	    	// ONLY ONE - Initialize ServerSocket
 	    	serverSocket = new ServerSocket(port);
-	    	System.out.println(toString());
+	    	System.out.println(toString() + ": ServerSocket initialised   |||   ACTION: n/a  ");
+	    	
+	    	
 	    	
 	    	/*
 	    	 *  Listen for first Client connection
 	    	 */
 	    	socketOne = serverSocket.accept();
+	    	System.out.println(toString() + ": PlayerOne successful connection " + socketOne.getPort() + "   |||   ACTION: Worker111 should tell Client " + socketOne.getPort() + " they are PlayerONE");
 	    	
 	    	playerOne = new ServerWorker(this, socketOne, PLAYER_ONE);
 	    	Thread t1 = new Thread(playerOne);
 	    	t1.start();
-	    	// Tell first Client they have connected, and are first
-	    	// ---- menu opens + message that waiting for player two to connect
+	    	// Tell Client connecting to SocketOne they are PlayerONE
+	    	// DONE IN WORKER
 	    	
 	    	
 	    	
@@ -55,36 +59,24 @@ public class Server implements Runnable {
 	    	 *  Listen for second Client connection
 	    	 */
 	    	socketTwo = serverSocket.accept();
+	    	System.out.println(toString() + ": PlayerTWO successful connection " + socketOne.getPort() + "   |||   ACTION: Worker222 should tell Client " + socketOne.getPort() + " they are PlayerTWO");
 	    	
 	    	playerTwo = new ServerWorker(this, socketTwo, PLAYER_TWO);
 	    	Thread t2 = new Thread(playerTwo);
 	    	t2.start();
-	    	// Second Client should know it's second
-	    	// ---- menu opens + message that waiting for player one to choose 'new / load / save'
-	    	// Tell first Client second has now connected.
-	    	// ---- 1st menu should now be enabled for 'new / load' selection
-	    	
-	    	
-	    	/*
-	    	 *  Listen for 'new/load' selection
-	    	 */
+	    	// Tell Client connecting to SocketOne they are PlayerONE
+	    	// DONE IN WORKER
 	    	
 	    	
 	    	
-	    	/*
-	    	 *  Broadcast initial game state
-	    	 */
-	    	
-	    	
-	    	
-	    	/*
-	    	 *  Listen for Client actions
-	    	 *  [maybe go get them from Client]
-	    	 */
+	    	// Stop Server Closing
+	    	 while (true) { 
+	    	 }
 	    	
 	    } catch (IOException e) {
 	    	e.printStackTrace();
 	    } finally {
+	    	System.out.println(toString() + " finally.");
 	    	try {
 				serverSocket.close();
 			} catch (IOException e) { e.printStackTrace(); }
@@ -110,7 +102,7 @@ public class Server implements Runnable {
 	
 	@Override
 	public String toString() {
-		return "Server";
+		return "--- server";
 	}
 	
 	

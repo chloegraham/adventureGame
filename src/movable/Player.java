@@ -1,13 +1,10 @@
 package movable;
 
 import gameWorld.Direction;
-import gameWorld.Level;
 
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
-
-import testenums.MsgDirection;
 
 public class Player extends Moveable{
 

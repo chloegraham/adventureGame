@@ -15,6 +15,8 @@ public class Client implements Runnable {
 	private int  port = 19999;
 	private InetAddress address; 
 	
+	private Socket clientSocket;
+	
 	private DataOutputStream output;
 	private DataInputStream input;
 	
@@ -23,91 +25,124 @@ public class Client implements Runnable {
 	
 	// TODO just for testing
 	private int testID;
-	
+	// TODO just for testing
 	public Client(int test) {
 		testID = test;
 	}
 	
 	public void run() {
 	    try {
-	    	// Create UI which puts up Splash with "waiting for connection"
+	    	// Open UI Frame
+	    	// Show Splash = "waiting to connect to Server"
 	    	// ui = new UserInterface(this);
+	    	System.out.println(toString() + ": just before connection attempted   |||   ACTION: open UI Frame + Splash [Splash text: 'waiting to connect to Server']");
+	    	
 	    	
 	    	// Try and connect to Server
-	    	address = InetAddress.getByName(host);				// Convert host to address
-	    	Socket clientSocket = new Socket(address, port); 	// Try connect to the Server
-	        
+	    	address = InetAddress.getByName(host);		// Convert host to address
+	    	clientSocket = new Socket(address, port); 	// Try connect to the Server
+	    	System.out.println(toString() + ": successful connection to " + clientSocket.getLocalPort() + " but don't have 'userID' yet.    |||    ACTION: no change yet");
+	    	
 	    	// Means of talking to Server
 	    	output = new DataOutputStream(clientSocket.getOutputStream());
 	    	input = new DataInputStream(clientSocket.getInputStream());
- 
-	    	System.out.println(toString() + " " + clientSocket.toString());
+	    	System.out.println(toString() + ": create DataStreams " + clientSocket.getLocalPort() + "   |||    ACTION: no change yet");
 	    	
+	    	
+	    	
+	    	/*
+	    	 *  Listen for UserID -> Set Clients UserID -> return UserID to Server for confirmation
+	    	 */
 	    	userID = 0;
 	    	while (userID == 0)
 	    		userID = input.readInt();
 	 
+	    	if (userID == Server.PLAYER_ONE)
+	    		System.out.println(toString() + ": set UserID to " + userID + " of port-" + clientSocket.getLocalPort() + "   |||    ACTION: update Splash  [Splash text: 'You're Player ONE. You connected to Server']");
+	    	else if (userID == Server.PLAYER_TWO)
+	    		System.out.println(toString() + ": set UserID to " + userID + " of port-" + clientSocket.getLocalPort() + "   |||    ACTION: update Splash  [Splash text: 'You're Player TWO. You connected to Server. Waiting for Player ONE to start game']");
+	    	else
+	    		throw new RuntimeException(toString() + "??");
 	    	
-	    	// if (userID==1111) UI changes to Menu screen = new, load, save
-	    	// ui.addUserID(userUD);
-	    	// message that waiting for Player Two to connect
-	    	
-	    	
-	    	// if (userID==2222) UI changes to tell Player One that Player Two is ready now
-	    	// ui.addUserID(userUD);
-	    	// new/load/save become enabled for Player One
-	    	// Player Two has Splash saying that Player One is choosing a game
+	    	output.writeInt(userID);
 	    	
 	    	
-	    	System.out.println(userID +  " " + toString() + " " + clientSocket.toString());
 	    	
-	    	clientSocket.close();
+	    	/*
+	    	 * 	Broadcast that Client wants to be the 'Host' (party host) only one will ever become the Hots
+	    	 */
+	    	output.writeUTF(Server.HOST);
+	    	
+	    	String host = "z";
+	    	while (host.equals("z"))
+	    		host = input.readUTF();
+	    	
+	    	if (host.equals(Server.HOST)) {
+	    		System.out.println(toString() + "  I'm the HOST. <host string from serverWorker> " + host);
+	    		// Tell the UI that they are the Host [so they can see and press the menu 'new' & 'load']
+	    		
+	    		// listen for menu choice FROM UI and then pass it to the server to build the GameWorld
+	    		passServerMenuChoice("new");
+	    	} else {
+	    		System.out.println(toString() + "  I'm a FOLLOWER waiting for a game. <host string from serverWorker> " + host);
+	    		
+	    		// show a message that we/Client is waiting for the other player
+	    		
+	    	}
+	    	
+	    	// expecting serverWorker to send us initial game for render
+	    	// listen for a initial game to render
+	    	decodePassGameToUI();
+	    	
+	    	
+	    	while (true) {
+	    		// listen for new game renders
+	    		// OR
+	    		// u.i. passing us actions
+	    	}
+	    	
 	    	
 	   } catch (IOException e) {
 		   e.printStackTrace();
+	   } finally {
+		   System.out.println(toString() + " finally.");
+		   try {
+			   clientSocket.close();
+		   } catch (IOException e) { e.printStackTrace(); }
 	   }
 	}
 	
-	@Override
-	public String toString() {
-		return "Client " + testID;
+	
+	public void passServerMenuChoice(String menuChoice) {
+		try {
+			
+			if (menuChoice.equals("new"))
+				output.writeUTF("new");
+			else if (menuChoice.equals("load"))
+				output.writeUTF("load");
+			else
+				throw new IllegalArgumentException("Invalid menuChoice");
+			
+		} catch (IOException e) { e.printStackTrace(); }
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	
 	public void passClientAction(int action) {
 		try {
 			while (output == null) {
 			}
-			
 			output.writeInt(action);
-			System.out.println("CLIENT: -- Action sent --- It was (" + action + ") now wait");
-			
-			System.out.println("CLIENT: Waiting for Game State from the Server");
-			clientDecode();
-			System.out.println("CLIENT: ------------ Here is the Game State from the Server");
+			decodePassGameToUI();
 		
-		} catch (IOException f) {
-			System.out.println("IOException: " + f);
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 	
-	private void clientDecode() {
+	
+	private void decodePassGameToUI() {
 		try {
+			System.out.println("here?!?");
 			String encodedInput = input.readUTF();
 			// I'll receive an ENCODED String from the Server
 			// ENCODED either: levelImage & message
@@ -116,6 +151,11 @@ public class Client implements Runnable {
 			// x3 splits = levelImage & message & keyUpdate
 			// x2 splits = levelImage & message
 			// x1 splits = levelImage
+			
+			
+			
+			// TODO testing
+			System.out.println("here?!?");
 			
 			String[] encodedSplit = encodedInput.split("<Split>");
 			
@@ -144,5 +184,10 @@ public class Client implements Runnable {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	@Override
+	public String toString() {
+		return "*** client " + testID;
 	}
 }

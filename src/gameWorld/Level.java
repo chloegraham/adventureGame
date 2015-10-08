@@ -6,7 +6,6 @@ import java.util.Set;
 
 import movable.Boulder;
 import movable.Player;
-import serverclient.LevelState;
 import testconvert.Messages;
 import tiles.Chest;
 import tiles.Door;

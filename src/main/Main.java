@@ -7,8 +7,8 @@ import serverclient.Server;
 public class Main {
 	public static void main(String[] args) throws InterruptedException {
 		Server server = new Server();
-		Client client = new Client(888);
-		Client client2 = new Client(555);
+		Client client = new Client(7);
+		Client client2 = new Client(8);
 		
 		Thread tServer = new Thread(server);
 		Thread tClient = new Thread(client);
