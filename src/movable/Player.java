@@ -42,7 +42,6 @@ public class Player extends Moveable{
 	}
 	
 	public String getEncodedPlayer() {
-<<<<<<< HEAD
 		
 		String playerStr = "";
 		int userID = getUserID();
@@ -70,29 +69,6 @@ public class Player extends Moveable{
 		playerStr += Messages.DELIM_PLAYER;
 		playerStr += Messages.DELIM_SPLIT;
 		return playerStr;
-=======
-		StringBuilder sb = new StringBuilder();
-		sb.append(Messages.DELIM_PLAYER);
-		sb.append(this.userID);
-		sb.append("%");
-		sb.append(this.levelID);
-		sb.append("%");
-		sb.append(numberOfKeys());
-		sb.append("%");
-		sb.append(containsBoulder());
-		sb.append("%");
-		sb.append(getDirection());
-		sb.append("%");
-		Point p = this.getLocation();
-		sb.append((int)p.getX());
-		sb.append("%");
-		sb.append((int)p.getY());
-		sb.append("%");
-		sb.append("@");
-		sb.append(Messages.DELIM_PLAYER);
-		sb.append(Messages.DELIM_SPLIT);
-		return sb.toString();
->>>>>>> origin/Prototype#7-new-gameWorld&Loading-XML
 	}
 	
 	public int getUserID() {

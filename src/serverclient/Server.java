@@ -46,6 +46,7 @@ public class Server implements Runnable {
 	    	System.out.println("SERVER: Sending Client initial GameState");
 
 	    	String encodedNewGame = newGame();						    // Get encoded String of a New Game from XML file.
+	    	//String encodedNewGame = load();						    // Get encoded String of a New Game from XML file.
 	    	gameWorld = new GameWorld(encodedNewGame);				    // Create a new GameWorld by decoding the New Game String
 	    	logic = gameWorld.getLogic();							    // Get a GameLogic reference to communicate with GameWorld
 				    
