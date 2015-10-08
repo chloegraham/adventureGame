@@ -13,7 +13,7 @@ import org.w3c.dom.*;
 public class XML {
 	
 	private final static String fileName = "continue.xml";
-	private final static String tag = "Game State";
+	private final static String tag = "Game_State";
 	
 	public static String load() {
         Document dom;
