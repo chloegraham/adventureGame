@@ -45,16 +45,24 @@ public class Player extends Moveable{
 		StringBuilder sb = new StringBuilder();
 		sb.append(Messages.DELIM_PLAYER);
 		sb.append(this.userID);
+		sb.append("%");
 		sb.append(this.levelID);
+		sb.append("%");
 		sb.append(numberOfKeys());
+		sb.append("%");
 		sb.append(containsBoulder());
+		sb.append("%");
 		sb.append(getDirection());
+		sb.append("%");
 		Point p = this.getLocation();
-		sb.append(p.getX());
-		sb.append(p.getY());
+		sb.append((int)p.getX());
+		sb.append("%");
+		sb.append((int)p.getY());
+		sb.append("%");
 		sb.append("@");
 		sb.append(Messages.DELIM_PLAYER);
-		return null;
+		sb.append(Messages.DELIM_SPLIT);
+		return sb.toString();
 	}
 	
 	public int getUserID() {
