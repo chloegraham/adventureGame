@@ -79,7 +79,6 @@ public class Server implements Runnable {
 	        System.out.println("SERVER: I sent action: - " + action + " to the Client.");
 	    
 	        
-	        
 	        /*
 	         *  Return Client GameState including Messages about chosen Action
 	         */
@@ -91,6 +90,11 @@ public class Server implements Runnable {
 	       
 	        System.out.println("SERVER: I've sent the GameState. Lets see if Client gets it");
 	        
+	        if (action == 2){
+	        	String gameSave = gameWorld.getEncodedGameSave();
+	        	System.out.println("GameSave is: " + gameSave);
+	        	save(gameSave);
+		       }
 	        
 		} catch (IOException e) {
 			e.printStackTrace();

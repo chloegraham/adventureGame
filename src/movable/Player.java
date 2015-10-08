@@ -7,6 +7,7 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 
+import testconvert.Messages;
 import testenums.MsgDirection;
 
 public class Player extends Moveable{
@@ -41,6 +42,18 @@ public class Player extends Moveable{
 	}
 	
 	public String getEncodedPlayer() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(Messages.DELIM_PLAYER);
+		sb.append(this.userID);
+		sb.append(this.levelID);
+		sb.append(numberOfKeys());
+		sb.append(containsBoulder());
+		sb.append(getDirection());
+		Point p = this.getLocation();
+		sb.append(p.getX());
+		sb.append(p.getY());
+		sb.append("@");
+		sb.append(Messages.DELIM_PLAYER);
 		return null;
 	}
 	
