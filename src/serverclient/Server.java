@@ -27,8 +27,8 @@ public class Server implements Runnable {
 	private static Socket socketOne;
 	private static Socket socketTwo;
 	
-	public static final int PLAYER_ONE = 1111;
-	public static final int PLAYER_TWO = 2222;
+	public static final int PLAYER_ONE = 101;
+	public static final int PLAYER_TWO = 202;
 	public static final String HOST = "Host";
 	public static final String FOLLOWER = "Follower";
 	
@@ -59,7 +59,7 @@ public class Server implements Runnable {
 	    	 *  Listen for second Client connection
 	    	 */
 	    	socketTwo = serverSocket.accept();
-	    	System.out.println(toString() + ": PlayerTWO successful connection " + socketOne.getPort() + "   |||   ACTION: Worker222 should tell Client " + socketOne.getPort() + " they are PlayerTWO");
+	    	System.out.println(toString() + ": PlayerTWO successful connection " + socketTwo.getPort() + "   |||   ACTION: Worker222 should tell Client " + socketOne.getPort() + " they are PlayerTWO");
 	    	
 	    	playerTwo = new ServerWorker(this, socketTwo, PLAYER_TWO);
 	    	Thread t2 = new Thread(playerTwo);
@@ -87,12 +87,14 @@ public class Server implements Runnable {
 		//TODO: call newGame() inside run at some point, ATM XML.newGame() hardcoded
 		String encodedGameWorld = XML.newGame();
 		gameWorld = new GameWorld(encodedGameWorld);
+		logic = gameWorld.getLogic();
 	}
 	
 	public void load() {
 		//TODO: call load() inside run at some point, if return == null issue loading
 		String encodedGameWorld = XML.load();
 		gameWorld = new GameWorld(encodedGameWorld);
+		logic = gameWorld.getLogic();
 	}
 	
 	public boolean save(String gameState) {
@@ -100,24 +102,22 @@ public class Server implements Runnable {
 		return XML.save(gameState);
 	}
 	
+	public void handleAction(int action, int userID) {
+		logic.handleAction(action, userID);
+		broadcastGame();
+	}
+	
+	public void broadcastGame() {
+		playerOne.broadcastGame();
+		playerTwo.broadcastGame();
+	}
+
+	public String getGameWorld() {
+		return gameWorld.getEncodedGameWorld();
+	}
+	
 	@Override
 	public String toString() {
 		return "--- server";
 	}
-	
-	
-	
-//	/*
-//	 *  Send the Client(s) the initial GameState
-//	 */
-//	System.out.println("SERVER: Sending Client initial GameState");
-//
-//	String encodedNewGame = newGame();						    // Get encoded String of a New Game from XML file.
-//	gameWorld = new GameWorld(encodedNewGame);				    // Create a new GameWorld by decoding the New Game String
-//	logic = gameWorld.getLogic();							    // Get a GameLogic reference to communicate with GameWorld
-//		    
-//	String encodedGameState = gameWorld.getEncodedGameWorld();  // Get a copy of the GameWorld at one point in time (referred to as GameState)
-//	output.writeUTF(encodedGameState);						    // Send encoded String through the Socket
-//
-//	System.out.println("SERVER: I've sent the INITIAL GameState.");
 }

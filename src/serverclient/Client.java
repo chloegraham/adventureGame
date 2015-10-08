@@ -34,7 +34,7 @@ public class Client implements Runnable {
 	    try {
 	    	// Open UI Frame
 	    	// Show Splash = "waiting to connect to Server"
-	    	// ui = new UserInterface(this);
+	    	ui = new UserInterface(this);
 	    	System.out.println(toString() + ": just before connection attempted   |||   ACTION: open UI Frame + Splash [Splash text: 'waiting to connect to Server']");
 	    	
 	    	
@@ -85,7 +85,6 @@ public class Client implements Runnable {
 	    		passServerMenuChoice("new");
 	    	} else {
 	    		System.out.println(toString() + "  I'm a FOLLOWER waiting for a game. <host string from serverWorker> " + host);
-	    		
 	    		// show a message that we/Client is waiting for the other player
 	    		
 	    	}
@@ -94,11 +93,14 @@ public class Client implements Runnable {
 	    	// listen for a initial game to render
 	    	decodePassGameToUI();
 	    	
-	    	
+
 	    	while (true) {
 	    		// listen for new game renders
 	    		// OR
 	    		// u.i. passing us actions
+	    		
+	    		if (input.available() > 0)
+	    			decodePassGameToUI();
 	    	}
 	    	
 	    	
@@ -129,10 +131,8 @@ public class Client implements Runnable {
 	
 	public void passClientAction(int action) {
 		try {
-			while (output == null) {
-			}
+			System.out.println(toString() + " pass action " + userID);
 			output.writeInt(action);
-			decodePassGameToUI();
 		
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -154,8 +154,12 @@ public class Client implements Runnable {
 			
 			
 			
+			
 			// TODO testing
-			System.out.println("here?!?");
+			System.out.println("EVEN here?!?");
+			
+			
+			
 			
 			String[] encodedSplit = encodedInput.split("<Split>");
 			

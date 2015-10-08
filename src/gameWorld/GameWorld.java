@@ -30,20 +30,23 @@ public class GameWorld {
 		levels = new Level[levelAmount];
 		players = new Player[playerAmount];
 		
+		int levelIndex = 0;
+		int playerIndex = 0;
 		for (String s  : split) {
 			if (s.contains(Messages.DELIM_LEVEL)) {
 				String encodedLevel = s;
-				levels[levels.length-1] = new Level(encodedLevel);
+				levels[levelIndex++] = new Level(encodedLevel);
 			}
 			else if (s.contains(Messages.DELIM_PLAYER)) {
 				String encodedPlayer = s;
-				players[players.length-1] = ConvertPlayer.toPlayer(encodedPlayer);
+				players[playerIndex++] = ConvertPlayer.toPlayer(encodedPlayer);
 			}
 			else {
 				throw new IllegalArgumentException();
 			}
 		}
 		
+		// TODO testing 
 		levels[0].addPlayers(players);
 		logic = new GameLogic(levels, players);
 	}

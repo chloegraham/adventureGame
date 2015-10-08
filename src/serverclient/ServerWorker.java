@@ -15,16 +15,14 @@ public class ServerWorker implements Runnable {
 	private DataOutputStream output;
 	private DataInputStream input;
 	
-	private static Lock lock;
-	private static boolean hostAvailable;
+	private static Lock lock  = new ReentrantLock();
+	private static boolean hostAvailable = true;
 	private int userID;
 	
 	public ServerWorker(Server server, Socket clientSocket, int userID) {
 		this.server = server;
 		this.clientSocket = clientSocket;
 		this.userID = userID;
-		this.hostAvailable = true;
-		this.lock = new ReentrantLock();
 	}
 	
 	public void run() {
@@ -64,30 +62,31 @@ public class ServerWorker implements Runnable {
 	    	if (isHostAvailable()) {
 	    		System.out.println(toString() + " First to send/receive Host is " + userID + ".");
 	    		output.writeUTF(Server.HOST);
-	    	} else {
-	    		System.out.println(toString() + " Second to send/receive host so NOW FOLLOWER is " + userID + ".");
-	    		output.writeUTF(Server.FOLLOWER);
+	    		
+	    		String newORload = "z";
+		    	while (newORload.equals("z"))
+		    		newORload = input.readUTF();
+		    	
+		    	System.out.println(toString() + "   " + newORload);
+		    	if (newORload.equals("new"))
+		    		server.newGame();
+		    	else if (newORload.equals("load"))
+		    		server.load();
+		    	else
+		    		throw new IllegalArgumentException(toString() + "  Received incorrect string related to menu choice from Client");
+		    	
 	    	}
 	    	
 	    	
+	    	server.broadcastGame();
 	    	
-	    	/*
-	    	 *  Listen for 'New' / 'Load'
-	    	 */
-	    	String newORload = "z";
-	    	while (newORload.equals("z"))
-	    		newORload = input.readUTF();
-	    	
-	    	System.out.println(toString() + "   " + newORload);
-	    	if (newORload.equals("new"))
-	    		server.newGame();
-	    	else if (newORload.equals("load"))
-	    		server.load();
-	    	else
-	    		throw new IllegalArgumentException(toString() + "  Received incorrect string related to menu choice from Client");
 	    	
 	    	
 	    	while (true) {
+	    		if (input.available() > 0) {
+	    			int actionOrdinal = input.readInt();
+	    			server.handleAction(actionOrdinal, userID);
+	    		}
 	    	}
 	    	
 	    	
@@ -112,6 +111,14 @@ public class ServerWorker implements Runnable {
 		return result;
 	}
 
+	public void broadcastGame() {
+		try {
+			
+			output.writeUTF(server.getGameWorld());
+		
+		} catch (IOException e) { e.printStackTrace(); }
+	}
+	
 	@Override
 	public String toString() {
 		return "^^^ worker " + userID;
