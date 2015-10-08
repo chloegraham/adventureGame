@@ -7,6 +7,7 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 
+import testconvert.Messages;
 import testenums.MsgDirection;
 
 public class Player extends Moveable{
@@ -41,7 +42,33 @@ public class Player extends Moveable{
 	}
 	
 	public String getEncodedPlayer() {
-		return null;
+		
+		String playerStr = "";
+		int userID = getUserID();
+		playerStr += userID + "%";
+		
+		int levelID = getLevelID();
+		playerStr += levelID + "%";
+		
+		int keyAmount = numberOfKeys();
+		playerStr += keyAmount + "%";
+		
+		int boulder = containsBoulder() ? 1 : 0;
+		playerStr += boulder + "%";
+		
+		Direction direction = getDirection();
+		playerStr += direction.ordinal() + "%";
+		
+		Point point = getLocation();
+		int x = point.x;
+		playerStr += x + "%";
+		
+		int y = point.y;
+		playerStr += y + "%@";
+		
+		playerStr += Messages.DELIM_PLAYER;
+		playerStr += Messages.DELIM_SPLIT;
+		return playerStr;
 	}
 	
 	public int getUserID() {

@@ -32,7 +32,16 @@ public class Door extends Unmoveable implements Tile {
 	}
 
 	public void openWithPad() {
-		openDoor();		
+		openDoor();
+	}
+	
+	public void closeWithPad(){
+		closeDoor();		
+	}
+	
+	private void closeDoor(){
+		locked = true;
+		levelChanger = false;
 	}
 	
 	private void openDoor() {
