@@ -207,8 +207,14 @@ public class UserInterface {
 	 * Rotates the graphics pane either clockwise or counterclockwise
 	 */
 	public void rotation(Actions direction){
-		if (direction == Actions.CLOCKWISE){ }
-		else if (direction == Actions.COUNTERCLOCKWISE){ }
+		if (direction == Actions.CLOCKWISE){ 
+			this.graphics.rotateViewClockwise(true);
+		}
+		else if (direction == Actions.COUNTERCLOCKWISE){
+			this.graphics.rotateViewClockwise(false);
+		}
+		
+		graphics.repaint();
 	}
 	
 	/**
@@ -277,7 +283,7 @@ public class UserInterface {
 	            }
 		 }
 		
-		graphics.setCameraLocation(camX,camY);
+		//graphics.setCameraLocation(camX,camY);
 		graphics.setLayers(level, objects, moveables);
 		frame.repaint();
 	}
