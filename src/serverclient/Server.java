@@ -10,110 +10,184 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 import saveload.XML;
+import userinterface.Action.Actions;
 
 public class Server implements Runnable {
-	private GameWorld gameWorld;
-	private GameLogic logic;
 	
-	private static ServerSocket socket1;
+	// Only ONE GameWorld & GameLogic
+	private static GameWorld gameWorld;
+	private static GameLogic logic;
+	
+	// Only ONE ServerSocket so = static
 	private final static int port = 19999;
-	private static Socket connection;
- 
-	private DataOutputStream output;
-	private DataInputStream input;
+	private static ServerSocket serverSocket;
+	
+	
+	// x1 Socket for each Player/Client
+	private static Socket socketOne;
+	private DataOutputStream outputOne;
+	private DataInputStream inputOne;
+	
+	
+	// x1 Thread for each Player/Client
+	private static Socket socketTwo;
+	private DataOutputStream outputTwo;
+	private DataInputStream inputTwo;
+	
+	
+	public static final int PLAYER_ONE = 101;
+	public static final int PLAYER_TWO = 202;
+	
 	
 	public void run() {
 	    try{
-	    	System.out.println("SERVER: SingleSocketServer Initialized");
-	    	socket1 = new ServerSocket(port);
-
-
-	    	/*
-	    	 *  Do NOTHING until a Client connects (just one at this point)
-	    	 */
-	    	System.out.println("SERVER: Waiting for Client");
+	    	// ONLY ONE - Initialize ServerSocket
+	    	serverSocket = new ServerSocket(port);
+	    	System.out.println(toString());
 	    	
-	    	connection = socket1.accept();
-	    	input = new DataInputStream(connection.getInputStream());
-	    	output = new DataOutputStream(connection.getOutputStream());
 	    	
-	    	System.out.println("SERVER: Client found me :)");
-
-
+	    	
 	    	/*
-	    	 *  Send the Client(s) the initial GameState
+	    	 *  Listen for first Client connection
 	    	 */
-	    	System.out.println("SERVER: Sending Client initial GameState");
-
-	    	String encodedNewGame = newGame();						    // Get encoded String of a New Game from XML file.
-	    	//String encodedNewGame = load();						    // Get encoded String of a New Game from XML file.
-	    	gameWorld = new GameWorld(encodedNewGame);				    // Create a new GameWorld by decoding the New Game String
-	    	logic = gameWorld.getLogic();							    // Get a GameLogic reference to communicate with GameWorld
-				    
-	    	String encodedGameState = gameWorld.getEncodedGameWorld();  // Get a copy of the GameWorld at one point in time (referred to as GameState)
-	    	output.writeUTF(encodedGameState);						    // Send encoded String through the Socket
-
-	    	System.out.println("SERVER: I've sent the INITIAL GameState.");
-
-
+	    	socketOne = serverSocket.accept();
+	    	inputOne = new DataInputStream(socketOne.getInputStream());
+	    	outputOne = new DataOutputStream(socketOne.getOutputStream());
+	    	System.out.println(toString());
+	    	
+	    	
+	    	
 	    	/*
-	    	 *  DUMMY Method for now on an Infinite LOOP
+	    	 *  Tell the Client who connected to socketOne that they are PlayerONE and Host
+	    	 *  that PlayerONE can see the Menu-new,load
+	    	 *  (when they choose one until a render comes back show "waiting for player two")
 	    	 */
-	    	while (true) {
-	    		handleActions();
+	    	outputOne.writeUTF("host");
+	    	String confirmHost = inputOne.readUTF();
+	    	if (!confirmHost.equals("host"))
+	    		throw new IllegalArgumentException("Attempt to confirm the Host failed.");
+	    	
+	    	
+	    	
+	    	/*
+	    	 *  Listen for second Client connection
+	    	 */
+	    	socketTwo = serverSocket.accept();
+	    	inputTwo = new DataInputStream(socketTwo.getInputStream());
+	    	outputTwo = new DataOutputStream(socketTwo.getOutputStream());
+	    	System.out.println(toString());
+	    	
+	    	
+	    	
+	    	/*
+	    	 *  Tell the Client who connected to socketTwo that they are PlayerTWO and Guest
+	    	 *  that PlayerTWO has a splash that they are waiting for game render
+	    	 */
+	    	outputTwo.writeUTF("guest");
+	    	String confirmGuest = inputTwo.readUTF();
+	    	if (!confirmGuest.equals("guest"))
+	    		throw new IllegalArgumentException("Attempt to confirm the Guest failed.");
+	    	System.out.println(toString());
+	    	
+	
+	    	
+	    	/*
+	    	 *  Listen for Actions from Clients
+	    	 */
+	    	while (true) { 
+	    		
+	    		if (inputOne.available() > 0) {
+			    	String action = inputOne.readUTF();
+			    	if (!action.contains("<action>"))
+			    		throw new IllegalArgumentException("A handle action was sent without 'action' in the string (or wasn't even an action.)");
+			    	System.out.println(inputOne.toString() + "  " + action);
+			    	int ordinal = Integer.parseInt(action.substring("<action>".length()));
+			    	System.out.println(ordinal);
+			    	
+			    	if (gameWorld == null)
+		    			if (ordinal != Actions.NEW.ordinal() && ordinal != Actions.LOAD.ordinal())
+		    				throw new IllegalArgumentException("GameWorld still null and Client is trying to send Actions that aren't New or Load");
+			    	
+			    	if (ordinal == Actions.NEW.ordinal())
+			    		newGame();
+			    	else if (ordinal == Actions.LOAD.ordinal())
+			    		load();
+			    	else
+			    		handleAction(ordinal, Server.PLAYER_ONE);
+	    		}
+		    	
+		    	if (inputTwo.available() > 0) {
+			    	String action = inputTwo.readUTF();
+			    	if (!action.contains("<action>"))
+			    		throw new IllegalArgumentException("A handle action was sent without 'action' in the string (or wasn't even an action.)");
+			    	System.out.println(inputOne.toString() + "  " + action);
+			    	int ordinal = Integer.parseInt(action.substring("<action>".length()));
+			    	System.out.println(ordinal);
+			    	
+			    	if (gameWorld == null || ordinal == Actions.NEW.ordinal() || ordinal == Actions.LOAD.ordinal())
+			    			throw new IllegalArgumentException("Player TWO should never be able to send Action with null GameWorld. Also Player TWO should never be able to New or Load Game.");
+			    	handleAction(ordinal, Server.PLAYER_TWO);
+		    	}
 	    	}
-	   
-//	    	connection.close(); 	
-	    } catch (IOException e) {
+
 	    	
+	    	
+	    } catch (IOException e) {
+	    	e.printStackTrace();
+	    } finally {
+	    	System.out.println(toString() + " finally.");
+	    	try {
+				serverSocket.close();
+			} catch (IOException e) { e.printStackTrace(); }
 	    }
     }
 	
-	private void handleActions() {
-		try {
-			/*
-			 *  Listen for Client/User action & ask GameLogic to handle it
-			 */
-			System.out.println("SERVER: Checking for an action");
-	        int action = input.readInt();
-	        String actionResponse = logic.handleAction(action, 101);
-	        System.out.println("SERVER: I sent action: - " + action + " to the Client.");
-	    
-	        
-	        /*
-	         *  Return Client GameState including Messages about chosen Action
-	         */
-	        System.out.println("SERVER: Sending Client the GameState");   
-	       
-	        String encodedGameWorld = gameWorld.getEncodedGameWorld();  // Convert GameState to an encoded String to send through Socket
-	        encodedGameWorld += actionResponse;							// Add Message returned from ActionResponse
-	        output.writeUTF(encodedGameWorld);						    // Send encoded String through the Socket
-	       
-	        System.out.println("SERVER: I've sent the GameState. Lets see if Client gets it");
-	        
-	        if (action == 2){
-	        	String gameSave = gameWorld.getEncodedGameSave();
-	        	System.out.println("GameSave is: " + gameSave);
-	        	save(gameSave);
-		       }
-	        
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
 	
-	private String load(){
-		//TODO: call load() inside run at some point, if return == null issue loading
-		return XML.load();
-	}
 	
-	private boolean save(String gameState){
-		//TODO: call save(String representing the gameState) inside run at some point
-		return XML.save(gameState);
+	private void handleAction(int ordinal, int userID) throws IOException {
+		logic.handleAction(ordinal, userID);
+		broadcast();
 	}
-	
-	private String newGame(){
+
+
+
+	private void broadcast() throws IOException {
+		String game = gameWorld.getEncodedGameWorld();
+		outputOne.writeUTF(game);
+		outputTwo.writeUTF(game);
+	}
+
+
+
+	/*
+	 *  New, Load, Save
+	 */
+	public void newGame() throws IOException {
 		//TODO: call newGame() inside run at some point, ATM XML.newGame() hardcoded
-		return XML.newGame();
+		String encodedGameWorld = XML.newGame();
+		gameWorld = new GameWorld(encodedGameWorld);
+		logic = gameWorld.getLogic();
+		broadcast();
+	}
+	
+	public void load() throws IOException {
+		//TODO: call load() inside run at some point, if return == null issue loading
+		String encodedGameWorld = XML.load();
+		gameWorld = new GameWorld(encodedGameWorld);
+		logic = gameWorld.getLogic();
+		broadcast();
+	}
+	
+	public boolean save() {
+		//TODO: call save(String representing the gameState) inside run at some point
+		return XML.save(gameWorld.getEncodedGameSave());
+	}
+
+	
+	
+	
+	@Override
+	public String toString() {
+		return "--- Server(ServerSocket- " +(serverSocket!=null)+ "):    socketONEstatus- " +(socketOne!=null)+ "    socketTWOstatus- " +(socketTwo!=null)+ "  ";
 	}
 }

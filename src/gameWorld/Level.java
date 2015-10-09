@@ -6,7 +6,6 @@ import java.util.Set;
 
 import movable.Boulder;
 import movable.Player;
-import serverclient.LevelState;
 import testconvert.Messages;
 import tiles.Chest;
 import tiles.Door;
@@ -243,7 +242,7 @@ public class Level {
 			for (int i = 0; i != players.length; i++) {
 				if (players[i] != null) {
 					Point p = players[i].getLocation();
-					array[p.y][p.x] = players[0].toString().charAt(0);
+					array[p.y][p.x] = players[i].toString().charAt(0);
 				}
 			}
 		}

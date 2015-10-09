@@ -1,14 +1,10 @@
 package movable;
 
 import gameWorld.Direction;
-import gameWorld.Level;
 
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
-
-import testconvert.Messages;
-import testenums.MsgDirection;
 
 public class Player extends Moveable{
 
@@ -20,14 +16,17 @@ public class Player extends Moveable{
 	private int levelID;
 	
 	public Player(Point location) {
-		super(location);
-		
+		this(location, "i");
+	}
+	
+	public Player(Point location, String c) {
+		super(location, c);
 	}
 	
 	//open a saved game
 	public Player(int userID, int levelID, int keyAmount, boolean boulder,
 			Direction direction2, Point point) {
-		super(point);
+		super(point, "i");
 		this.userID = userID;
 		this.levelID = levelID;
 		createKeys(keyAmount);
@@ -42,33 +41,8 @@ public class Player extends Moveable{
 	}
 	
 	public String getEncodedPlayer() {
-		
-		String playerStr = "";
-		int userID = getUserID();
-		playerStr += userID + "%";
-		
-		int levelID = getLevelID();
-		playerStr += levelID + "%";
-		
-		int keyAmount = numberOfKeys();
-		playerStr += keyAmount + "%";
-		
-		int boulder = containsBoulder() ? 1 : 0;
-		playerStr += boulder + "%";
-		
-		Direction direction = getDirection();
-		playerStr += direction.ordinal() + "%";
-		
-		Point point = getLocation();
-		int x = point.x;
-		playerStr += x + "%";
-		
-		int y = point.y;
-		playerStr += y + "%@";
-		
-		playerStr += Messages.DELIM_PLAYER;
-		playerStr += Messages.DELIM_SPLIT;
-		return playerStr;
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 	public int getUserID() {
@@ -88,7 +62,7 @@ public class Player extends Moveable{
 	
 	public void createKeys(int amount){
 		for(int i = 0; i < amount; i++){
-			addToInventory(new Key("1234", "I'm the key to your heart"));
+			addToInventory(new Key("110", "I'm a good key"));
 		}
 	}
 
@@ -159,10 +133,8 @@ public class Player extends Moveable{
 	}
 	
 	public void prevLevel() {
-		if(levelID > 1){ //levels will start on one
-			levelID--; 
-			setLocation(new Point(1, 1));
-		}
+		levelID--; 
+		setLocation(new Point(1, 1));
 	}
 	
 	@Override
