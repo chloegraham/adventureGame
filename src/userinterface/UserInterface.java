@@ -9,6 +9,8 @@ import java.awt.event.WindowListener;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 
+import com.sun.glass.events.KeyEvent;
+
 import renderer.RenderPane;
 import serverclient.Client;
 import userinterface.Action.Actions;
@@ -27,9 +29,11 @@ public class UserInterface {
 
 	/* For sending data through the connection */
 	private Client client;
+	private boolean playing = false;		// Set true only when the game state and renderer are ready.
 	
 	private int action = 99;
 	private int keys = 0;		// Number of keys player is holding
+	private int uid = -1;		// this player's ID
 	
 	public UserInterface(Client client) {
 		this.client = client;
@@ -45,6 +49,12 @@ public class UserInterface {
 	
 	public void sendUIAction(int action) {
 		client.passClientAction(action);
+	}
+
+	/** Sets the unique ID for this user */
+	public void setUserID(int uid){
+		this.uid = uid;
+		frame.setTitle("Chicken Little : User " + this.uid);
 	}
 	
 	/* ========================================================
@@ -109,50 +119,31 @@ public class UserInterface {
 	/* ========================================================
 	 * Methods to change or modify the current splash screen.
 	 * ======================================================== */
-	
+
 	/**
-	 * Once a connection has been established, allow the player to begin a game.
-	 * Enables/Disables each button in the menu and allows display of menu splash screen.
-	 * TODO Refactor so player can press button before moving to menu
+	 * The player cannot close this screen.
+	 * Set the message displayed on the startup splash screen.
 	 */
-	public void setMenu(boolean newGame, boolean joinGame, boolean loadGame){
-		splash.setVisibleMenu(newGame, joinGame, loadGame);
+	public void setConnected(){
+		splash.showStartup("Successfully connected. Waiting for game state ...");
 	}
 	
 	/**
-	 * If the player is currently on the wait screen, allow the player to close the wait screen and 
-	 * send key presses / actions through the client.
+	 * This screen may be closed by the player.
+	 * This player is the host, show the host menu and let the player choose new game or load game.
+	 * @param loadGame if true, enable the loadGame button, otherwise disable it
 	 */
-	public void setGameReadyToPlay(){
-		if (splash.getOpenCard() != SplashScreen.WAIT_CARD){ return; }
-		splash.setWaitCardClosable(true);
+	public void showHostMenu(boolean loadGame){
+		splash.setVisibleMenu(loadGame);
 	}
 	
 	/**
-	 * If the splash screen menu is open, respond the the button pressed.
+	 * This screen may be closed by the player.
+	 * Requires a game state to be ready to play.
 	 */
-	public void performSplashActionCommand(String ac){
-		if (splash.getOpenCard() != SplashScreen.MENU_CARD){ return; }	// Only the menu card has action listeners.
-		if (ac.equals("New Game")){
-			showWaitCardHelper();
-			sendUIAction(Actions.NEWGAME.ordinal());
-		}
-		else if (ac.equals("Join Game")){
-			showWaitCardHelper();
-			sendUIAction(Actions.JOINGAME.ordinal());
-		}
-		else if (ac.equals("Load Game")){
-			showWaitCardHelper();
-			sendUIAction(Actions.LOAD.ordinal());
-		}
-	}
-	
-	/**
-	 * Displays a Wait Card to the user that must be closed by the server.
-	 */
-	private void showWaitCardHelper(){
-		splash.setWaitCardClosable(false);
-		splash.setVisibleCard(SplashScreen.WAIT_CARD);
+	private void setGameReady(){
+		playing = true;
+		splash.setVisibleCard(SplashScreen.READY_CARD);		// Player can close this card
 	}
 	
 	/**
@@ -177,27 +168,50 @@ public class UserInterface {
 	}
 	
 	/**
-	 * Displays a custom message that the user cannot close. Must call closeGenericScreen() to close this.
-	 * TODO not yet implemented
-	 * @param message
+	 * Displays a custom message that the user cannot close. Must call closeGenericScreen() to close it.
 	 */
-	public void openGenericMessage(String message){}
+	public void showSplashMessage(String message){
+		splash.setVisibleGeneric(message);
+	}
 	
 	/**
 	 * Closes currently open generic screen
-	 * TODO not yet implemented
 	 */
-	public void closeGenericScreen(){}
+	public void closeSplashMessage(){
+		splash.setVisibleCard(SplashScreen.NO_CARD);
+	}
 	
 	/**
 	 * Call when disconnected or connection cannot be established. Player returns to startup screen. 
-	 * TODO not yet implemented
 	 * @param message Explain connection error to user 
 	 */
-	public void connectionError(String message){}
+	public void connectionError(String message){
+		playing = false;
+		splash.showStartup(message);
+	}
 	
-	/** Tells the splash screen a key has been pressed. */
-	public void performKeyPressed(){ splash.performKeyPress(); }
+	/** Handles splash screen key presses, and passes through that a key has been pressed. */
+	public void performKeyPressed(int event){
+		String ac = splash.performKeyPress(event);
+		performSplashActionCommand(ac);
+	}
+	
+	/**
+	 * If the splash screen menu is open, respond the button pressed.
+	 * Returns the player to the startup splash screen.
+	 * Ignores an empty string.
+	 */
+	public void performSplashActionCommand(String ac){
+		if (splash.getOpenCard() != SplashScreen.HOST_CARD){ return; }	// Only the host's menu card has action listeners.
+		else if (ac.equals("New Game")){
+			splash.showStartup("Creating a new game. Waiting for game state ...");
+			sendUIAction(Actions.NEWGAME.ordinal());
+		}
+		else if (ac.equals("Load Game")){
+			splash.showStartup("Loading a game. Waiting for game state ...");
+			sendUIAction(Actions.LOAD.ordinal());
+		}
+	}
 	
 	/* ========================================================
 	 * Methods for the renderer.
@@ -259,7 +273,6 @@ public class UserInterface {
 	 * @param moveables
 	 */
 	public void redrawFromLayers(char[][]level, char[][]objects, char[][]moveables){
-    	
     	int numberOfRows = level.length;
 	    int numberOfColums = level[0].length;
     	
@@ -285,6 +298,8 @@ public class UserInterface {
 		
 		//graphics.setCameraLocation(camX,camY);
 		graphics.setLayers(level, objects, moveables);
+		
+		if (!playing){ setGameReady(); }
 		frame.repaint();
 	}
 	
