@@ -11,6 +11,8 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import com.sun.glass.events.KeyEvent;
+
 /**
  * Displays one splash screen or menu at a time. Does not contain any listeners, needs method
  * calls to respond to user input.
@@ -26,8 +28,10 @@ public class SplashScreen extends JPanel {
 	public static final int GENERIC_CARD = 6;		// Displays any message to the player.
 	private final JPanel[] allPanels = new JPanel[7];
 	
+	// Menu buttons and the key events for each
 	private final int LOAD_GAME = 1;
 	private final JButton[] menuButtons = new JButton[]{new JButton("New Game"), new JButton("Load Game")};
+	private final int[] menuMnemonics = new int[]{KeyEvent.VK_N, KeyEvent.VK_L};
 
 	/* Labels for screens with changing messages. */
 	private final JLabel startupMessage = new JLabel("Waiting for connection ..."); 
@@ -35,7 +39,7 @@ public class SplashScreen extends JPanel {
 	
 	private final CardLayout layout = new CardLayout();
 	private UserInterface ui;						// Used to enable/disable content while a card is displayed
-	private int openCard = NO_CARD;			// Card to display when the game starts.
+	private int openCard = STARTUP_CARD;			// Card to display when the game starts.
 	
 	public SplashScreen(UserInterface ui, Listener listener){
 		this.ui = ui;
@@ -99,13 +103,24 @@ public class SplashScreen extends JPanel {
 	/** Returns the card that is currently displaying to the user. */
 	public int getOpenCard(){ return openCard; }
 	
+	/** Returns true if the Load button is enabled, false otherwise */
+	public boolean getLoadEnabled(){ return menuButtons[LOAD_GAME].isEnabled(); }
+	
 	/**
 	 * Cards that close on key press will be closed if they are open.
+	 * If a key event matches a button, return the action command for it.
 	 */
-	public void performKeyPress(){
-		if (openCard == READY_CARD || openCard == DEATH_CARD){
+	public String performKeyPress(int event){
+		if (openCard == HOST_CARD){
+			if (!menuButtons[LOAD_GAME].isEnabled() && event == KeyEvent.VK_L){ return ""; }	// If load isn't enabled, don't use it.
+			for (int i=0; i<menuMnemonics.length; i++){
+				if (menuMnemonics[i] == event){ return menuButtons[i].getActionCommand(); }
+			}
+		}
+		else if (openCard == READY_CARD || openCard == DEATH_CARD){
 			setVisibleCard(NO_CARD);
 		}
+		return "";
 	}
 	
 	/**
@@ -149,10 +164,11 @@ public class SplashScreen extends JPanel {
 		
 		makeTitleLabels(allPanels[HOST_CARD]);
 		
-		for (JButton btn : menuButtons){									// Menu buttons
-			makeButton(listener, btn, btnSize);
-			allPanels[HOST_CARD].add(btn);
-		}
+		makeButton(listener, menuButtons[0], btnSize, KeyEvent.VK_N);		// Set key events
+		makeButton(listener, menuButtons[1], btnSize, KeyEvent.VK_L);
+		allPanels[HOST_CARD].add(menuButtons[0]);
+		allPanels[HOST_CARD].add(menuButtons[1]);
+		
 		allPanels[HOST_CARD].add(Box.createVerticalGlue());
 	}
 	
@@ -262,11 +278,12 @@ public class SplashScreen extends JPanel {
 	/**
 	 * Assigns listener, size, position and focusable to a button
 	 */
-	private void makeButton(Listener listener, JButton btn, Dimension size){
+	private void makeButton(Listener listener, JButton btn, Dimension size, int mnemonic){
 		btn.setMaximumSize(size);
+		btn.setMnemonic(mnemonic);		// Will display to the user the key to press
 		btn.addActionListener(listener);
 		btn.setAlignmentX(CENTER_ALIGNMENT);
-		btn.setFocusable(false);
+		btn.setFocusable(true);
 	}
 	
 	/**

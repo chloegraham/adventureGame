@@ -60,7 +60,7 @@ public class Listener extends JPanel implements KeyListener, ActionListener {
 		
 		/* Splash Screen controls */
 		if (!splashLocked){
-			UI.performKeyPressed();
+			UI.performKeyPressed(event);
 			return;				// If splash screen is unlocked, prevent any further keys from being used.
 		}
 
@@ -108,8 +108,7 @@ public class Listener extends JPanel implements KeyListener, ActionListener {
 		
 		/* Splash screen controls */
 		if (!splashLocked){
-			if (ac.equals("New Game")){ UI.sendUIAction(Actions.NEWGAME.ordinal()); }
-			else if (ac.equals("Load Game")){ UI.sendUIAction(Actions.LOAD.ordinal()); }
+			UI.performSplashActionCommand(ac);
 			return;				// If splash screen is unlocked, prevent any further keys from being used.
 		}
 		

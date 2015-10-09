@@ -9,6 +9,8 @@ import java.awt.event.WindowListener;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 
+import com.sun.glass.events.KeyEvent;
+
 import renderer.RenderPane;
 import serverclient.Client;
 import userinterface.Action.Actions;
@@ -145,22 +147,6 @@ public class UserInterface {
 	}
 	
 	/**
-	 * If the splash screen menu is open, respond the button pressed.
-	 * Returns the player to the startup splash screen.
-	 */
-	public void performSplashActionCommand(String ac){
-		if (splash.getOpenCard() != SplashScreen.HOST_CARD){ return; }	// Only the host's menu card has action listeners.
-		if (ac.equals("New Game")){
-			splash.showStartup("Creating a new game. Waiting for game state ...");
-			sendUIAction(Actions.NEWGAME.ordinal());
-		}
-		else if (ac.equals("Load Game")){
-			splash.showStartup("Loading a game. Waiting for game state ...");
-			sendUIAction(Actions.LOAD.ordinal());
-		}
-	}
-	
-	/**
 	 * Alert the user that their character has died. Sleeps for a short period then allows the user to return to the game.
 	 */
 	public void setPlayerDeath(){
@@ -204,8 +190,28 @@ public class UserInterface {
 		splash.showStartup(message);
 	}
 	
-	/** Tells the splash screen a key has been pressed. */
-	public void performKeyPressed(){ splash.performKeyPress(); }
+	/** Handles splash screen key presses, and passes through that a key has been pressed. */
+	public void performKeyPressed(int event){
+		String ac = splash.performKeyPress(event);
+		performSplashActionCommand(ac);
+	}
+	
+	/**
+	 * If the splash screen menu is open, respond the button pressed.
+	 * Returns the player to the startup splash screen.
+	 * Ignores an empty string.
+	 */
+	public void performSplashActionCommand(String ac){
+		if (splash.getOpenCard() != SplashScreen.HOST_CARD){ return; }	// Only the host's menu card has action listeners.
+		else if (ac.equals("New Game")){
+			splash.showStartup("Creating a new game. Waiting for game state ...");
+			sendUIAction(Actions.NEWGAME.ordinal());
+		}
+		else if (ac.equals("Load Game")){
+			splash.showStartup("Loading a game. Waiting for game state ...");
+			sendUIAction(Actions.LOAD.ordinal());
+		}
+	}
 	
 	/* ========================================================
 	 * Methods for the renderer.
