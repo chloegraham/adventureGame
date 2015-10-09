@@ -20,13 +20,13 @@ public class Player extends Moveable{
 	}
 	
 	public Player(Point location, String c) {
-		super(location, c);
+		super(location);
 	}
 	
 	//open a saved game
 	public Player(int userID, int levelID, int keyAmount, boolean boulder,
 			Direction direction2, Point point) {
-		super(point, "i");
+		super(point);
 		this.userID = userID;
 		this.levelID = levelID;
 		createKeys(keyAmount);
