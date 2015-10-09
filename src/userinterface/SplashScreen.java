@@ -70,6 +70,7 @@ public class SplashScreen extends JPanel {
 	 * Enables/Disables UI content depending on which card is open.
 	 * Changes the visible card to the new one.
 	 * Will not make any changes to the cards themselves.
+	 * Call setVisibleMenu(boolean) to set the menu visible instead.
 	 */
 	public void setVisibleCard(int newPane){
 		if (newPane == NO_CARD){ ui.setContentEnabled(true); }
@@ -95,15 +96,6 @@ public class SplashScreen extends JPanel {
 		setVisibleCard(GENERIC_CARD);
 	}
 	
-	/**
-	 * Returns the player to the startup screen with an error message displayed.
-	 * Do not use any special characters in the message.
-	 */
-	public void connectionError(String message){
-		startupMessage.setText(message);
-		setVisibleCard(STARTUP_CARD);
-	}
-	
 	/** Returns the card that is currently displaying to the user. */
 	public int getOpenCard(){ return openCard; }
 	
@@ -114,6 +106,14 @@ public class SplashScreen extends JPanel {
 		if (openCard == READY_CARD || openCard == DEATH_CARD){
 			setVisibleCard(NO_CARD);
 		}
+	}
+	
+	/**
+	 * Change the startup message and change to it.
+	 */
+	public void showStartup(String message){
+		startupMessage.setText(message);
+		setVisibleCard(STARTUP_CARD);
 	}
 	
 	// ==========================================

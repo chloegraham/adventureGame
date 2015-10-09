@@ -27,7 +27,7 @@ public class UserInterface {
 
 	/* For sending data through the connection */
 	private Client client;
-	private boolean playing = false;
+	private boolean playing = false;		// Set true only when the game state and renderer are ready.
 	
 	private int action = 99;
 	private int keys = 0;		// Number of keys player is holding
@@ -52,7 +52,7 @@ public class UserInterface {
 	/** Sets the unique ID for this user */
 	public void setUserID(int uid){
 		this.uid = uid;
-		frame.setTitle("Chicken Little : User " + uid);
+		frame.setTitle("Chicken Little : User " + this.uid);
 	}
 	
 	/* ========================================================
@@ -123,7 +123,7 @@ public class UserInterface {
 	 * Set the message displayed on the startup splash screen.
 	 */
 	public void setConnected(){
-		// TODO
+		splash.showStartup("Successfully connected. Waiting for game state ...");
 	}
 	
 	/**
@@ -132,7 +132,7 @@ public class UserInterface {
 	 * @param loadGame if true, enable the loadGame button, otherwise disable it
 	 */
 	public void showHostMenu(boolean loadGame){
-		// TODO
+		splash.setVisibleMenu(loadGame);
 	}
 	
 	/**
@@ -140,22 +140,22 @@ public class UserInterface {
 	 * Requires a game state to be ready to play.
 	 */
 	private void setGameReady(){
-		// TODO
 		playing = true;
-		// show the READY splash screen to the player
+		splash.setVisibleCard(SplashScreen.READY_CARD);		// Player can close this card
 	}
 	
 	/**
-	 * If the splash screen menu is open, respond the the button pressed.
+	 * If the splash screen menu is open, respond the button pressed.
+	 * Returns the player to the startup splash screen.
 	 */
 	public void performSplashActionCommand(String ac){
-		if (splash.getOpenCard() != SplashScreen.HOST_CARD){ return; }	// Only the menu card has action listeners.
+		if (splash.getOpenCard() != SplashScreen.HOST_CARD){ return; }	// Only the host's menu card has action listeners.
 		if (ac.equals("New Game")){
-			// TODO user makes a choice, shows connection screen "/waiting for Game State" 
+			splash.showStartup("Creating a new game. Waiting for game state ...");
 			sendUIAction(Actions.NEWGAME.ordinal());
 		}
 		else if (ac.equals("Load Game")){
-			// TODO user makes a choice, shows connection screen "/waiting for Game State"
+			splash.showStartup("Loading a game. Waiting for game state ...");
 			sendUIAction(Actions.LOAD.ordinal());
 		}
 	}
@@ -183,23 +183,26 @@ public class UserInterface {
 	
 	/**
 	 * Displays a custom message that the user cannot close. Must call closeGenericScreen() to close it.
-	 * TODO not yet implemented
-	 * @param message
 	 */
-	public void showSplashMessage(String message){}
+	public void showSplashMessage(String message){
+		splash.setVisibleGeneric(message);
+	}
 	
 	/**
 	 * Closes currently open generic screen
-	 * TODO not yet implemented
 	 */
-	public void closeSplashMessage(){}
+	public void closeSplashMessage(){
+		splash.setVisibleCard(SplashScreen.NO_CARD);
+	}
 	
 	/**
 	 * Call when disconnected or connection cannot be established. Player returns to startup screen. 
-	 * TODO not yet implemented
 	 * @param message Explain connection error to user 
 	 */
-	public void connectionError(String message){}
+	public void connectionError(String message){
+		playing = false;
+		splash.showStartup(message);
+	}
 	
 	/** Tells the splash screen a key has been pressed. */
 	public void performKeyPressed(){ splash.performKeyPress(); }
@@ -264,7 +267,6 @@ public class UserInterface {
 	 * @param moveables
 	 */
 	public void redrawFromLayers(char[][]level, char[][]objects, char[][]moveables){
-    	
     	int numberOfRows = level.length;
 	    int numberOfColums = level[0].length;
     	
@@ -290,6 +292,8 @@ public class UserInterface {
 		
 		//graphics.setCameraLocation(camX,camY);
 		graphics.setLayers(level, objects, moveables);
+		
+		if (!playing){ setGameReady(); }
 		frame.repaint();
 	}
 	
