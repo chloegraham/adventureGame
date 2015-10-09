@@ -3,11 +3,14 @@ package serverclient;
 import gameWorld.GameLogic;
 import gameWorld.GameWorld;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
 import saveload.XML;
+import userinterface.Action.Actions;
 
 public class Server implements Runnable {
 	
@@ -19,24 +22,28 @@ public class Server implements Runnable {
 	private final static int port = 19999;
 	private static ServerSocket serverSocket;
 	
-	// x1 Thread for each Player/Client
-	private ServerWorker playerOne;
-	private ServerWorker playerTwo;
 	
 	// x1 Socket for each Player/Client
 	private static Socket socketOne;
+	private DataOutputStream outputOne;
+	private DataInputStream inputOne;
+	
+	
+	// x1 Thread for each Player/Client
 	private static Socket socketTwo;
+	private DataOutputStream outputTwo;
+	private DataInputStream inputTwo;
+	
 	
 	public static final int PLAYER_ONE = 101;
 	public static final int PLAYER_TWO = 202;
-	public static final String HOST = "Host";
-	public static final String FOLLOWER = "Follower";
+	
 	
 	public void run() {
 	    try{
 	    	// ONLY ONE - Initialize ServerSocket
 	    	serverSocket = new ServerSocket(port);
-	    	System.out.println(toString() + ": ServerSocket initialised   |||   ACTION: n/a  ");
+	    	System.out.println(toString());
 	    	
 	    	
 	    	
@@ -44,14 +51,21 @@ public class Server implements Runnable {
 	    	 *  Listen for first Client connection
 	    	 */
 	    	socketOne = serverSocket.accept();
-	    	System.out.println(toString() + ": PlayerOne successful connection " + socketOne.getPort() + "   |||   ACTION: Worker111 should tell Client " + socketOne.getPort() + " they are PlayerONE");
+	    	inputOne = new DataInputStream(socketOne.getInputStream());
+	    	outputOne = new DataOutputStream(socketOne.getOutputStream());
+	    	System.out.println(toString());
 	    	
-	    	playerOne = new ServerWorker(this, socketOne, PLAYER_ONE);
-	    	Thread t1 = new Thread(playerOne);
-	    	t1.start();
-	    	// Tell Client connecting to SocketOne they are PlayerONE
-	    	// DONE IN WORKER
 	    	
+	    	
+	    	/*
+	    	 *  Tell the Client who connected to socketOne that they are PlayerONE and Host
+	    	 *  that PlayerONE can see the Menu-new,load
+	    	 *  (when they choose one until a render comes back show "waiting for player two")
+	    	 */
+	    	outputOne.writeUTF("host");
+	    	String confirmHost = inputOne.readUTF();
+	    	if (!confirmHost.equals("host"))
+	    		throw new IllegalArgumentException("Attempt to confirm the Host failed.");
 	    	
 	    	
 	    	
@@ -59,19 +73,64 @@ public class Server implements Runnable {
 	    	 *  Listen for second Client connection
 	    	 */
 	    	socketTwo = serverSocket.accept();
-	    	System.out.println(toString() + ": PlayerTWO successful connection " + socketTwo.getPort() + "   |||   ACTION: Worker222 should tell Client " + socketOne.getPort() + " they are PlayerTWO");
-	    	
-	    	playerTwo = new ServerWorker(this, socketTwo, PLAYER_TWO);
-	    	Thread t2 = new Thread(playerTwo);
-	    	t2.start();
-	    	// Tell Client connecting to SocketOne they are PlayerONE
-	    	// DONE IN WORKER
+	    	inputTwo = new DataInputStream(socketTwo.getInputStream());
+	    	outputTwo = new DataOutputStream(socketTwo.getOutputStream());
+	    	System.out.println(toString());
 	    	
 	    	
 	    	
-	    	// Stop Server Closing
-	    	 while (true) { 
-	    	 }
+	    	/*
+	    	 *  Tell the Client who connected to socketTwo that they are PlayerTWO and Guest
+	    	 *  that PlayerTWO has a splash that they are waiting for game render
+	    	 */
+	    	outputTwo.writeUTF("guest");
+	    	String confirmGuest = inputTwo.readUTF();
+	    	if (!confirmGuest.equals("guest"))
+	    		throw new IllegalArgumentException("Attempt to confirm the Guest failed.");
+	    	System.out.println(toString());
+	    	
+	
+	    	
+	    	/*
+	    	 *  Listen for Actions from Clients
+	    	 */
+	    	while (true) { 
+	    		
+	    		if (inputOne.available() > 0) {
+			    	String action = inputOne.readUTF();
+			    	if (!action.contains("<action>"))
+			    		throw new IllegalArgumentException("A handle action was sent without 'action' in the string (or wasn't even an action.)");
+			    	System.out.println(inputOne.toString() + "  " + action);
+			    	int ordinal = Integer.parseInt(action.substring("<action>".length()));
+			    	System.out.println(ordinal);
+			    	
+			    	if (gameWorld == null)
+		    			if (ordinal != Actions.NEW.ordinal() && ordinal != Actions.LOAD.ordinal())
+		    				throw new IllegalArgumentException("GameWorld still null and Client is trying to send Actions that aren't New or Load");
+			    	
+			    	if (ordinal == Actions.NEW.ordinal())
+			    		newGame();
+			    	else if (ordinal == Actions.LOAD.ordinal())
+			    		load();
+			    	else
+			    		handleAction(ordinal, Server.PLAYER_ONE);
+	    		}
+		    	
+		    	if (inputTwo.available() > 0) {
+			    	String action = inputTwo.readUTF();
+			    	if (!action.contains("<action>"))
+			    		throw new IllegalArgumentException("A handle action was sent without 'action' in the string (or wasn't even an action.)");
+			    	System.out.println(inputOne.toString() + "  " + action);
+			    	int ordinal = Integer.parseInt(action.substring("<action>".length()));
+			    	System.out.println(ordinal);
+			    	
+			    	if (gameWorld == null || ordinal == Actions.NEW.ordinal() || ordinal == Actions.LOAD.ordinal())
+			    			throw new IllegalArgumentException("Player TWO should never be able to send Action with null GameWorld. Also Player TWO should never be able to New or Load Game.");
+			    	handleAction(ordinal, Server.PLAYER_TWO);
+		    	}
+	    	}
+
+	    	
 	    	
 	    } catch (IOException e) {
 	    	e.printStackTrace();
@@ -83,41 +142,52 @@ public class Server implements Runnable {
 	    }
     }
 	
-	public void newGame() {
+	
+	
+	private void handleAction(int ordinal, int userID) throws IOException {
+		logic.handleAction(ordinal, userID);
+		broadcast();
+	}
+
+
+
+	private void broadcast() throws IOException {
+		String game = gameWorld.getEncodedGameWorld();
+		outputOne.writeUTF(game);
+		outputTwo.writeUTF(game);
+	}
+
+
+
+	/*
+	 *  New, Load, Save
+	 */
+	public void newGame() throws IOException {
 		//TODO: call newGame() inside run at some point, ATM XML.newGame() hardcoded
 		String encodedGameWorld = XML.newGame();
 		gameWorld = new GameWorld(encodedGameWorld);
 		logic = gameWorld.getLogic();
+		broadcast();
 	}
 	
-	public void load() {
+	public void load() throws IOException {
 		//TODO: call load() inside run at some point, if return == null issue loading
 		String encodedGameWorld = XML.load();
 		gameWorld = new GameWorld(encodedGameWorld);
 		logic = gameWorld.getLogic();
+		broadcast();
 	}
 	
-	public boolean save(String gameState) {
+	public boolean save() {
 		//TODO: call save(String representing the gameState) inside run at some point
-		return XML.save(gameState);
-	}
-	
-	public void handleAction(int action, int userID) {
-		logic.handleAction(action, userID);
-		broadcastGame();
-	}
-	
-	public void broadcastGame() {
-		playerOne.broadcastGame();
-		playerTwo.broadcastGame();
+		return XML.save(gameWorld.getEncodedGameSave());
 	}
 
-	public String getGameWorld() {
-		return gameWorld.getEncodedGameWorld();
-	}
+	
+	
 	
 	@Override
 	public String toString() {
-		return "--- server";
+		return "--- Server(ServerSocket- " +(serverSocket!=null)+ "):    socketONEstatus- " +(socketOne!=null)+ "    socketTWOstatus- " +(socketTwo!=null)+ "  ";
 	}
 }

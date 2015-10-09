@@ -5,6 +5,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.io.IOException;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -24,6 +25,7 @@ public class UserInterface {
 	private GameFrame frame = new GameFrame(graphics, listener);
 	private int action = 99;
 	private int keys = 0;
+	private int userID = 0;
 	
 	public UserInterface(Client client) {
 		this.client = client;
@@ -38,7 +40,7 @@ public class UserInterface {
 	}
 	
 	public void sendUIAction(int action) {
-		client.passClientAction(action);
+		client.handleAction(action);
 	}
 	
 	/**
@@ -51,7 +53,7 @@ public class UserInterface {
 		graphics.addKeyListener(listener);
 		graphics.addFocusListener(new FocusAdapter() {		// Reclaim focus when lost
 	          public void focusLost(FocusEvent ev) {
-	        	  graphics.requestFocus();
+//	        	  graphics.requestFocus();
 	          }
 	        });
 
@@ -190,5 +192,10 @@ public class UserInterface {
 		graphics.setCameraLocation(camX,camY);
 		graphics.setLayers(level, objects, moveables);
 		frame.repaint();
+	}
+
+	public void setUserID(int player) {
+		userID = player;
+		frame.setTitle("BensTest - " + userID);
 	}
 }

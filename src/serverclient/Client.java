@@ -8,6 +8,8 @@ import java.net.Socket;
 
 import testconvert.Layers;
 import testconvert.Messages;
+import userinterface.Action;
+import userinterface.Action.Actions;
 import userinterface.UserInterface;
 
 public class Client implements Runnable {
@@ -16,12 +18,13 @@ public class Client implements Runnable {
 	private InetAddress address; 
 	
 	private Socket clientSocket;
-	
 	private DataOutputStream output;
 	private DataInputStream input;
 	
+	private String hostORguest = "n/a";
 	private int userID;
 	private UserInterface ui;
+	
 	
 	// TODO just for testing
 	private int testID;
@@ -35,72 +38,51 @@ public class Client implements Runnable {
 	    	// Open UI Frame
 	    	// Show Splash = "waiting to connect to Server"
 	    	ui = new UserInterface(this);
-	    	System.out.println(toString() + ": just before connection attempted   |||   ACTION: open UI Frame + Splash [Splash text: 'waiting to connect to Server']");
+	    	System.out.println(toString());
+	    	
 	    	
 	    	
 	    	// Try and connect to Server
 	    	address = InetAddress.getByName(host);		// Convert host to address
 	    	clientSocket = new Socket(address, port); 	// Try connect to the Server
-	    	System.out.println(toString() + ": successful connection to " + clientSocket.getLocalPort() + " but don't have 'userID' yet.    |||    ACTION: no change yet");
+	    	System.out.println(toString());
+	    	
+	    	
 	    	
 	    	// Means of talking to Server
 	    	output = new DataOutputStream(clientSocket.getOutputStream());
 	    	input = new DataInputStream(clientSocket.getInputStream());
-	    	System.out.println(toString() + ": create DataStreams " + clientSocket.getLocalPort() + "   |||    ACTION: no change yet");
+	    	System.out.println(toString());
 	    	
 	    	
 	    	
 	    	/*
-	    	 *  Listen for UserID -> Set Clients UserID -> return UserID to Server for confirmation
+	    	 *  Server will send one Client "host".
+	    	 *  If Client receives "host" then they are Player ONE and the host with access to the menu
+	    	 *  BUT need to handle the fact that "host" message might never come
+	    	 *  If doesn't contain "host" if will be a game render
 	    	 */
-	    	userID = 0;
-	    	while (userID == 0)
-	    		userID = input.readInt();
-	 
-	    	if (userID == Server.PLAYER_ONE)
-	    		System.out.println(toString() + ": set UserID to " + userID + " of port-" + clientSocket.getLocalPort() + "   |||    ACTION: update Splash  [Splash text: 'You're Player ONE. You connected to Server']");
-	    	else if (userID == Server.PLAYER_TWO)
-	    		System.out.println(toString() + ": set UserID to " + userID + " of port-" + clientSocket.getLocalPort() + "   |||    ACTION: update Splash  [Splash text: 'You're Player TWO. You connected to Server. Waiting for Player ONE to start game']");
-	    	else
-	    		throw new RuntimeException(toString() + "??");
+	    	hostORguest = input.readUTF();
 	    	
-	    	output.writeInt(userID);
+	    	if (hostORguest.equals("host"))
+	    		userID = Server.PLAYER_ONE;
+	    	else if (hostORguest.equals("guest")) 
+	    		userID = Server.PLAYER_TWO;
+	    	else 
+	    		throw new IllegalArgumentException("Expected host or guest");
+	    	
+	    	ui.setUserID(userID);
+    		output.writeUTF(hostORguest);
+	    	
+    	
 	    	
 	    	
 	    	
 	    	/*
-	    	 * 	Broadcast that Client wants to be the 'Host' (party host) only one will ever become the Hots
+	    	 *  Listen for Renders
 	    	 */
-	    	output.writeUTF(Server.HOST);
-	    	
-	    	String host = "z";
-	    	while (host.equals("z"))
-	    		host = input.readUTF();
-	    	
-	    	if (host.equals(Server.HOST)) {
-	    		System.out.println(toString() + "  I'm the HOST. <host string from serverWorker> " + host);
-	    		// Tell the UI that they are the Host [so they can see and press the menu 'new' & 'load']
-	    		
-	    		// listen for menu choice FROM UI and then pass it to the server to build the GameWorld
-	    		passServerMenuChoice("new");
-	    	} else {
-	    		System.out.println(toString() + "  I'm a FOLLOWER waiting for a game. <host string from serverWorker> " + host);
-	    		// show a message that we/Client is waiting for the other player
-	    		
-	    	}
-	    	
-	    	// expecting serverWorker to send us initial game for render
-	    	// listen for a initial game to render
-	    	decodePassGameToUI();
-	    	
-
-	    	while (true) {
-	    		// listen for new game renders
-	    		// OR
-	    		// u.i. passing us actions
-	    		
-	    		if (input.available() > 0)
-	    			decodePassGameToUI();
+	    	while (true) { 
+		    	decodePassGameToUI();
 	    	}
 	    	
 	    	
@@ -114,35 +96,24 @@ public class Client implements Runnable {
 	   }
 	}
 	
-	
-	public void passServerMenuChoice(String menuChoice) {
+	public void handleAction(int ordinal) {
 		try {
-			
-			if (menuChoice.equals("new"))
-				output.writeUTF("new");
-			else if (menuChoice.equals("load"))
-				output.writeUTF("load");
-			else
-				throw new IllegalArgumentException("Invalid menuChoice");
-			
-		} catch (IOException e) { e.printStackTrace(); }
-	}
-	
-	
-	public void passClientAction(int action) {
-		try {
-			System.out.println(toString() + " pass action " + userID);
-			output.writeInt(action);
-		
+			handleAction(ordinal, userID);
 		} catch (IOException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 	
+	private void handleAction(int ordinal, int userID) throws IOException {
+		if (ordinal == Actions.LOAD.ordinal() || ordinal == Actions.NEW.ordinal())
+			if (userID != Server.PLAYER_ONE && this.userID != Server.PLAYER_ONE)
+				throw new IllegalArgumentException("Only player one should be able to Start a NewGame or Load a Game.");
+		output.writeUTF("<action>" + ordinal);
+	}
 	
 	private void decodePassGameToUI() {
 		try {
-			System.out.println("here?!?");
 			String encodedInput = input.readUTF();
 			// I'll receive an ENCODED String from the Server
 			// ENCODED either: levelImage & message
@@ -151,15 +122,7 @@ public class Client implements Runnable {
 			// x3 splits = levelImage & message & keyUpdate
 			// x2 splits = levelImage & message
 			// x1 splits = levelImage
-			
-			
-			
-			
-			// TODO testing
-			System.out.println("EVEN here?!?");
-			
-			
-			
+			System.out.println(toString() + " || " + encodedInput);
 			
 			String[] encodedSplit = encodedInput.split("<Split>");
 			
@@ -190,8 +153,12 @@ public class Client implements Runnable {
 		}
 	}
 	
+	
+	
 	@Override
 	public String toString() {
-		return "*** client " + testID;
+		if (clientSocket == null)
+			return "*** Client( testid-" +testID+ "  userid-" +userID+ "):    socketStatus- null    isHost?- " +hostORguest;
+		return "*** Client( testid-" +testID+ "  userid-" +userID+ "):    socketStatus- " +clientSocket.getPort()+"/"+clientSocket.getLocalPort()+ "    isHost?- " +hostORguest;
 	}
 }
