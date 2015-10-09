@@ -5,11 +5,9 @@ import java.awt.Point;
 public abstract class Moveable {
 	
 	private Point location;
-	protected String character;
 	
-	public Moveable(Point location, String character) {
+	public Moveable(Point location) {
 		this.location = location;
-		this.character = character;
 	}
 	
 	public Point getLocation() {
@@ -20,11 +18,4 @@ public abstract class Moveable {
 		this.location = myLocation;
 		return true;
 	}
-	
-	@Override
-	public String toString() {
-		return character;
-	}
-	
-
 }

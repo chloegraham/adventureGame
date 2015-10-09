@@ -123,8 +123,18 @@ public class GameLogic {
 		
 		if (tile instanceof PressurePad){	//activate pressure pad if moved onto one
 			((PressurePad)tile).activate();
-			if(((PressurePad)tile).getDoor()!=null){
-				((PressurePad)tile).getDoor().openWithPad();
+			//TODO: THIS IS TEMPORARY LOGIC
+			Tile[][]doors = level.getTiles();
+			for (int i = 0; i < doors.length; i++) {
+				for (int j = 0; j < doors[0].length; j++) {
+					if(doors[i][j] instanceof Door){
+						if(!((PressurePad)tile).isActivated()){
+							((Door)doors[i][j]).openWithPad();
+						} else {
+							((Door)doors[i][j]).closeWithPad();
+						}
+					}
+				}
 			}
 		}
 		else if (tile instanceof Spikes){
