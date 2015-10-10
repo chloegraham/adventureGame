@@ -146,16 +146,32 @@ public class Server implements Runnable {
 	
 	private void handleAction(int ordinal, int userID) throws IOException {
 		String message = logic.handleAction(ordinal, userID);
-		broadcast(message);
+		broadcast(userID, message);
 	}
 
 
 
-	private void broadcast(String message) throws IOException {
-		String game = gameWorld.getEncodedGameWorld();
-		game += message;
-		outputOne.writeUTF(game);
-		outputTwo.writeUTF(game);
+	private void broadcast(int userID, String message) throws IOException {
+		String current = gameWorld.getEncodedGameWorld(userID);
+		current += message;
+		
+		int otherUserID;
+		if (userID == PLAYER_ONE)
+			otherUserID = PLAYER_TWO;
+		else if (userID == PLAYER_TWO)
+			otherUserID = PLAYER_ONE;
+		else
+			throw new IllegalArgumentException("Should be PlayerOne or PlayerTwo so somthing has gone wrong.");
+		
+		String other = gameWorld.getEncodedGameWorld(otherUserID);
+		
+		if (userID == PLAYER_ONE) {
+			outputOne.writeUTF(current);
+			outputTwo.writeUTF(other);
+		} else {
+			outputOne.writeUTF(other);
+			outputTwo.writeUTF(current);
+		}
 	}
 
 
@@ -168,7 +184,7 @@ public class Server implements Runnable {
 		String encodedGameWorld = XML.newGame();
 		gameWorld = new GameWorld(encodedGameWorld);
 		logic = gameWorld.getLogic();
-		broadcast("");
+		broadcast(PLAYER_ONE, "");
 	}
 	
 	public void load() throws IOException {
@@ -176,7 +192,7 @@ public class Server implements Runnable {
 		String encodedGameWorld = XML.load();
 		gameWorld = new GameWorld(encodedGameWorld);
 		logic = gameWorld.getLogic();
-		broadcast("");
+		broadcast(PLAYER_ONE, "");
 	}
 	
 	public boolean save() {

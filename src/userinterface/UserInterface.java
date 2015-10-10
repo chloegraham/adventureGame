@@ -237,72 +237,16 @@ public class UserInterface {
 		graphics.repaint();
 	}
 	
-	/**
-	 * Set the level and redraw the pane.
-	 */
-	public void redraw(char[][] level){
-		char[][] testLevel =   	{{'e','i','e','e','e' },
-								{'j','e','l','e','e' },
-								{'e','k','e','e','e' },
-								{'e','e','p','I','e' },
-								{'e','e','J','e','L' },
-								{'e','e','e','K','e' }};
-		
-		//level = testLevel;
-		
-		 int numberOfRows = level.length;
-	     int numberOfColums = level[0].length;
-
-		
-		int camX = 0;
-		int camY = 0;
-		
-		 for (int i = 0; i < numberOfRows; i++) {
-	            for (int j = 0; j < numberOfColums; j++) {
-	            	if(level[i][j] == 'p'){
-	            		camX = j;
-	            		camY = i;
-	            	}
-	            }
-		 }
-		
-		graphics.setCameraLocation(camX,camY);
-		graphics.setLevel(level);
-		frame.repaint();
-	}
 	
 	
 	/**
-	 * Same as redraw, but this time from 3 separate char layers not one.
+	 * Redraws the renderer from 3 char layers
 	 * @param level
 	 * @param objects
 	 * @param moveables
 	 */
 	public void redrawFromLayers(char[][]level, char[][]objects, char[][]moveables){
-    	int numberOfRows = level.length;
-	    int numberOfColums = level[0].length;
     	
-		int camX = 0;
-		int camY = 0;
-		
-		 for (int i = 0; i < numberOfRows; i++) {
-	            for (int j = 0; j < numberOfColums; j++) {
-	            	if(moveables[i][j] == 'i' || 
-            			moveables[i][j] == 'j' || 
-            			moveables[i][j] == 'k' || 
-            			moveables[i][j] == 'l' ||
-            			moveables[i][j] == 'I' || 
-            			moveables[i][j] == 'J' || 
-            			moveables[i][j] == 'K' || 
-            			moveables[i][j] == 'L'){
-	            		
-	            		camX = j;
-	            		camY = i;
-	            	}
-	            }
-		 }
-		
-		//graphics.setCameraLocation(camX,camY);
 		graphics.setLayers(level, objects, moveables);
 		
 		if (!playing){ setGameReady(); }

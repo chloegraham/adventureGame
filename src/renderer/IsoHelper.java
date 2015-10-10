@@ -4,20 +4,26 @@ import java.awt.Point;
 
 /**
  * Created by Eliot on 15/09/2015.
+ * 
+ * A helper class to convert between Cartesian and Isometric, and rotate arrays. 
  */
-public final class Iso {
-    private Iso(){}
-    
+public final class IsoHelper {
+    private IsoHelper(){}
     public static Point cameraOffset = new Point(0,0);
     private static int tileSize = 128;
     
-    public void setOffset(Point camPoint){
-    	cameraOffset = camPoint;
+    /**
+     * Sets what tile is the center of the screen, in tile coordinates 
+     * @param camPoint
+     */
+    public static void setCameraOffset(int x, int y){
+    	cameraOffset.x = x;
+    	cameraOffset.y = y;
     }
 
     
     /**
-     * Converts a 2d Cartesian Coordinate into a 2d isometric
+     * Converts a Cartesian Coordinate into an isometric point in screen space, offset by the camera position.
      * @param twoDee
      * @return
      */
@@ -36,8 +42,11 @@ public final class Iso {
         return tempPoint;
     }
     
+    
+    
     /**
-     * Helper to rotate the 2d arrays
+     * Rotates a 2d level array 90 degrees clockwise. 
+     * Will also rotate player tiles which have direction
      * @param mat
      * @return
      */
@@ -65,10 +74,20 @@ public final class Iso {
         return ret;
     }
     
+    /**
+     * Rotates a 2d level array 90 degrees counter-clockwise. 
+     * @param mat
+     * @return
+     */
     static char[][] rotateCCW(char[][] mat) {
        return rotateCW(rotateCW(rotateCW(mat)));
     }
     
+    /**
+     * Rotates a 2d level array 180 degrees 
+     * @param mat
+     * @return
+     */
     static char[][] rotate180(char[][] mat) {
         return rotateCW(rotateCW(mat));
      }

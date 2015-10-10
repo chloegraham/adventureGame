@@ -54,13 +54,27 @@ public class GameWorld {
 	public GameLogic getLogic() { return logic; }
 	
 	
-	public String getEncodedGameWorld(){
+	public String getEncodedGameWorld(int userID){
 		String str = "";
-		
-		for (int i = 0; i != levels.length; i++)
-			str += levels[0].getEncodedLevel();
-		
-		return str;
+		//player.getLevel
+		Player currentPlayer = null;
+		for(Player p: this.players){
+			if(p.getUserID() == userID){
+				currentPlayer = p;
+			}
+		}
+		if(currentPlayer == null){
+			throw new IllegalArgumentException("Passed in userID doesn't belong to a player");
+		}
+
+		int levelID = currentPlayer.getLevelID();
+		for(int i = 0; i < levels.length; i++){
+			if(levels[i].getLevelID() == levelID){
+				return str += levels[i].getEncodedLevel();
+			}
+		} 
+		throw new IllegalArgumentException("No such level that matches player's level");
+		//get the level that the player's on
 	}
 	
 	
