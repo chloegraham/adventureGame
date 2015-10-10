@@ -8,48 +8,56 @@ import java.net.Socket;
 
 import testconvert.Layers;
 import testconvert.Messages;
-import userinterface.Action;
 import userinterface.Action.Actions;
 import userinterface.UserInterface;
 
+/**
+ * Opens the Users UserInterface and connects to the Game Server.
+ * 
+ * @author benscully
+ */
 public class Client implements Runnable {
+	
+	// Server address details
 	private String host = "localhost";
 	private int  port = 19999;
 	private InetAddress address; 
 	
+	// Socket & Streams for sending/receiving data to the Server
 	private Socket clientSocket;
 	private DataOutputStream output;
 	private DataInputStream input;
 	
-	private String hostORguest = "n/a";
+	// UserID of both the Client and the UI - Server sets UserID later on
 	private int userID;
 	private UserInterface ui;
 	
 	
 	// TODO just for testing
-	private int testID;
-	// TODO just for testing
+	private String hostORguest = "n/a";  	// TODO put this inside run() once it's no longer used for testing
+	private int testID;						// TODO remove 'testID' field & @param once testing finished
 	public Client(int test) {
 		testID = test;
 	}
 	
+
+	
 	public void run() {
 	    try {
-	    	// Open UI Frame
-	    	// Show Splash = "waiting to connect to Server"
+	    	// Open the UserInterface and tell the User/Player they are "waiting to connect to Server"
 	    	ui = new UserInterface(this);
 	    	System.out.println(toString());
 	    	
 	    	
 	    	
 	    	// Try and connect to Server
-	    	address = InetAddress.getByName(host);		// Convert host to address
-	    	clientSocket = new Socket(address, port); 	// Try connect to the Server
+	    	address = InetAddress.getByName(host);	
+	    	clientSocket = new Socket(address, port); 
 	    	System.out.println(toString());
 	    	
 	    	
 	    	
-	    	// Means of talking to Server
+	    	// create DataStream for communicating with the Server
 	    	output = new DataOutputStream(clientSocket.getOutputStream());
 	    	input = new DataInputStream(clientSocket.getInputStream());
 	    	System.out.println(toString());
@@ -71,19 +79,16 @@ public class Client implements Runnable {
 	    	else 
 	    		throw new IllegalArgumentException("Expected host or guest");
 	    	
-	    	ui.setUserID(userID);
+	    	ui.setUserID(userID, false);
     		output.writeUTF(hostORguest);
 	    	
-    	
-	    	
-	    	
+    
 	    	
 	    	/*
-	    	 *  Listen for Renders
+	    	 *  Listen for Renders of the GameWorld
 	    	 */
-	    	while (true) { 
+	    	while (true)
 		    	decodePassGameToUI();
-	    	}
 	    	
 	    	
 	   } catch (IOException e) {
@@ -96,33 +101,34 @@ public class Client implements Runnable {
 	   }
 	}
 	
+	
+	
+	/**
+	 * @param ordinal of the Actions Enum (e.g. Move.West, Interact)
+	 */
 	public void handleAction(int ordinal) {
 		try {
 			handleAction(ordinal, userID);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 	
+	
+	
+	// Manage some rules before sending to the Server
 	private void handleAction(int ordinal, int userID) throws IOException {
-		if (ordinal == Actions.LOAD.ordinal() || ordinal == Actions.NEW.ordinal())
+		if (ordinal == Actions.LOAD.ordinal() || ordinal == Actions.NEWGAME.ordinal())
 			if (userID != Server.PLAYER_ONE && this.userID != Server.PLAYER_ONE)
 				throw new IllegalArgumentException("Only player one should be able to Start a NewGame or Load a Game.");
 		output.writeUTF("<action>" + ordinal);
 	}
 	
+	
+	
 	private void decodePassGameToUI() {
 		try {
 			String encodedInput = input.readUTF();
-			// I'll receive an ENCODED String from the Server
-			// ENCODED either: levelImage & message
-			//				   levelImage & message & keyUpdate	
-			// Client decode
-			// x3 splits = levelImage & message & keyUpdate
-			// x2 splits = levelImage & message
-			// x1 splits = levelImage
-			System.out.println(toString() + " || " + encodedInput);
 			
 			String[] encodedSplit = encodedInput.split("<Split>");
 			

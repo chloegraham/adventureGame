@@ -42,6 +42,19 @@ public class RenderPane extends JPanel {
         this.level = level;
     }
     
+    /**
+     * True for clockwise, false for counter-clockwise
+     * @param direction
+     */
+    public void rotateViewClockwise(boolean dir){
+    	if(dir == false){
+    		viewDir = Direction.rotateClockwise(viewDir);
+
+    	}else{
+    		viewDir = Direction.rotateCounterClockwise(viewDir);
+    	}
+    }
+    
     public void setLayers(char[][] level, char[][] objects, char[][] moveables){
     	this.level = level;
     	this.objects = objects;
@@ -105,8 +118,6 @@ public class RenderPane extends JPanel {
      * @param g2
      */
     private void paintFromCharLayers(Graphics2D g2){
-
-       
         
         char[][] rotatedLevel = null;
         char[][] rotatedObjects = null;
@@ -133,14 +144,41 @@ public class RenderPane extends JPanel {
         	rotatedMoveables = Iso.rotate180(this.moveables);
         }
         else
-        	throw new RuntimeException("Should have received a direction but got something else");
+        	throw new RuntimeException("Invalid direction.");
         
         int numberOfRows = rotatedLevel.length;
         int numberOfColums = rotatedLevel[0].length;
         
+        
+        
+        /* The camera position must be found before using Iso.TwoDee */
+        
+        int camX = 0;
+		int camY = 0;
+		
+		 for (int i = 0; i < numberOfRows; i++) {
+	            for (int j = 0; j < numberOfColums; j++) {
+	            	if(rotatedMoveables[i][j] == 'i' || 
+	            			rotatedMoveables[i][j] == 'j' || 
+	            			rotatedMoveables[i][j] == 'k' || 
+	            			rotatedMoveables[i][j] == 'l' ||
+	            			rotatedMoveables[i][j] == 'I' || 
+	            			rotatedMoveables[i][j] == 'J' || 
+	            			rotatedMoveables[i][j] == 'K' || 
+	            			rotatedMoveables[i][j] == 'L'){
+		            		
+		            		camX = j;
+		            		camY = i;
+		            }
+	            }
+		 }
+		 
+		 // Rotated camera location
+		 setCameraLocation(camX, camY);
+        
       
         g2.setStroke(new BasicStroke(1));
-        System.out.println(Arrays.deepToString(rotatedLevel));
+       // System.out.println(Arrays.deepToString(rotatedLevel));
 
 
         for (int i = 0; i < numberOfRows; i++) {

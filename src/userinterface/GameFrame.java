@@ -32,35 +32,36 @@ import renderer.RenderPane;
  * @author Kirsty
  */
 public class GameFrame extends JFrame {
+	/* Frame and Panel sizes */
 	private final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 	private final int frameWidth;
 	private final int frameHeight;
 	private final int renderWidth;
 	private final int renderHeight;
 	private final int menuHeight = 20;
-	private final int textHeight = 80;
-	private final int inventoryWidth = 70;
-	private final int inventoryHeight = textHeight;
+	private final int contentSize = 80;
+	private final Dimension frameSize;
+	private final Dimension labelSize = new Dimension(contentSize, 25);
 	
 	private final Icon iconKey = loadImage("icon-key.png");
 	
-	private final Dimension frameSize;
-	private final Dimension labelSize = new Dimension(inventoryWidth, 25);
-	
+	/*  */
 	private final JTextArea messagePane = new JTextArea();
 	private final JLayeredPane contentPane = new JLayeredPane();
 	private final JPanel inventoryPane = new JPanel();
 	private final JMenuBar menuBar = new JMenuBar();
 	
+	/* Changeable inventory items */
 	private final JLabel keys = new JLabel("0");
 	
 	/**
 	 * Sets up the window to display the game and all controls/menus.
 	 * Adds Action, Key & Mouse listeners.
+	 * Pass the UserInterface to the SplashScreen
 	 */
-	public GameFrame(RenderPane graphics, Listener listener) {
+	public GameFrame(RenderPane graphics, Listener listener, JMenu file, SplashScreen splash) {
 		super("Adventure Game");
-
+		
 		/* Position and size of Render Pane */
 		Dimension dim = graphics.getPreferredSize();
 		renderWidth = (int) dim.getWidth();
@@ -68,8 +69,8 @@ public class GameFrame extends JFrame {
 		graphics.setBounds(0, menuHeight, renderWidth, renderHeight);
 		
 		/* Position (centre) and size of frame */
-		frameWidth = (int) (dim.getWidth() + inventoryWidth + 16);		// Needs extra width for border
-		frameHeight = (int) (dim.getHeight() + textHeight + menuHeight + 16);
+		frameWidth = (int) (dim.getWidth() + contentSize + 16);		// Needs extra width for border
+		frameHeight = (int) (dim.getHeight() + contentSize + menuHeight + 16);
 		frameSize = new Dimension(frameWidth, frameHeight);
 		this.setPreferredSize(frameSize);
 		int frameX = (int) ((screenSize.getWidth()/2)-(frameWidth/2));
@@ -79,14 +80,18 @@ public class GameFrame extends JFrame {
 		
 		/* Build panels */
 		buildInventoryPane();
-		buildMenuBar(listener);
+		buildMenuBar(listener, file);
 		JScrollPane scrollPane = buildMessagePane();
+		splash.setBounds(0, 0, frameWidth, frameHeight);
 
 		/* Add panes to content pane with z coordinate */
 		contentPane.add(graphics, new Integer(0));
 		contentPane.add(menuBar, new Integer(1));
 		contentPane.add(scrollPane, new Integer(2));
 		contentPane.add(inventoryPane, new Integer(3));
+		contentPane.add(splash, new Integer(4));
+		contentPane.add(listener, new Integer(5));
+		listener.setOpaque(false);
 		
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		this.pack();
@@ -102,14 +107,13 @@ public class GameFrame extends JFrame {
 		keys.setMaximumSize(labelSize);
 		inventoryPane.add(keys);
 		inventoryPane.setOpaque(false);
-		inventoryPane.setBounds(renderWidth, 20, inventoryWidth, inventoryHeight);
+		inventoryPane.setBounds(renderWidth, 20, contentSize, contentSize);
 	}
 	
 	/**
-	 * Create all items inside the menu bar
+	 * Create all items inside the menu bar. MenuItems are created using CTRL+(key event)
 	 */
-	private void buildMenuBar(Listener listener){
-		JMenu file = new JMenu("File");
+	private void buildMenuBar(Listener listener, JMenu file){
 		menuBar.add(file);
 		
 		file.add(menuItemHelper(listener, "Save", KeyEvent.VK_S));
@@ -126,7 +130,7 @@ public class GameFrame extends JFrame {
 	private JScrollPane buildMessagePane(){
 		JScrollPane scrollPane = new JScrollPane(messagePane,
 				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		scrollPane.setBounds(0, renderHeight, renderWidth, textHeight);
+		scrollPane.setBounds(0, renderHeight, renderWidth, contentSize);
 		messagePane.setOpaque(false);
 		messagePane.setEditable(false);
 		
