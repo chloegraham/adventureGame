@@ -248,7 +248,7 @@ public class SplashScreen extends JPanel {
 	 */
 	private void createAboutCard(){
 		allPanels[ABOUT_CARD] = new JPanel();
-		allPanels[ABOUT_CARD].setLayout(new BoxLayout(allPanels[GENERIC_CARD], BoxLayout.Y_AXIS));
+		allPanels[ABOUT_CARD].setLayout(new BoxLayout(allPanels[ABOUT_CARD], BoxLayout.Y_AXIS));
 		allPanels[ABOUT_CARD].setBackground(new Color(200, 200, 200, 200));		// slightly transparent.
 		
 		allPanels[ABOUT_CARD].add(Box.createVerticalGlue());
