@@ -1,4 +1,4 @@
-package testconvert;
+package convertors;
 
 public class Layers {
 	private char[][] level;

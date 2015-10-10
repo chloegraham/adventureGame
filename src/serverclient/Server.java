@@ -97,12 +97,15 @@ public class Server implements Runnable {
 	    	while (true) { 
 	    		
 	    		if (inputOne.available() > 0) {
-			    	String action = inputOne.readUTF();
-			    	if (!action.contains("<action>"))
+			    	
+	    			// Listen for an action to handle
+	    			String handleAction = inputOne.readUTF();
+			    	if (!handleAction.contains("<action>"))
 			    		throw new IllegalArgumentException("A handle action was sent without 'action' in the string (or wasn't even an action.)");
-			    	System.out.println(inputOne.toString() + "  " + action);
-			    	int ordinal = Integer.parseInt(action.substring("<action>".length()));
-			    	System.out.println(ordinal);
+			    	int ordinal = Integer.parseInt(handleAction.substring("<action>".length()));
+			    	
+			    	// Print chosen handle action to Server for testing & understanding
+			    	System.out.println("--- Server   InputONE received action: " + Actions.getName(ordinal) + "   Action sent to Logic (except New & Load done in Server)");
 			    	
 			    	if (gameWorld == null)
 		    			if (ordinal != Actions.NEWGAME.ordinal() && ordinal != Actions.LOAD.ordinal())
@@ -117,15 +120,20 @@ public class Server implements Runnable {
 	    		}
 		    	
 		    	if (inputTwo.available() > 0) {
-			    	String action = inputTwo.readUTF();
-			    	if (!action.contains("<action>"))
+		    		
+		    		// Listen for an action to handle
+			    	String handleAction = inputTwo.readUTF();
+			    	if (!handleAction.contains("<action>"))
 			    		throw new IllegalArgumentException("A handle action was sent without 'action' in the string (or wasn't even an action.)");
-			    	System.out.println(inputOne.toString() + "  " + action);
-			    	int ordinal = Integer.parseInt(action.substring("<action>".length()));
-			    	System.out.println(ordinal);
+			    	int ordinal = Integer.parseInt(handleAction.substring("<action>".length()));
 			    	
+			    	// Print chosen handle action to Server for testing & understanding
+			    	System.out.println("--- Server   InputTWO received action: " + Actions.getName(ordinal) + "   Action sent to Logic (except New & Load done in Server)");
+			    	
+			    	// Checks that PlayerTWO doesn't attempt invalid actions
 			    	if (gameWorld == null || ordinal == Actions.NEWGAME.ordinal() || ordinal == Actions.LOAD.ordinal())
 			    			throw new IllegalArgumentException("Player TWO should never be able to send Action with null GameWorld. Also Player TWO should never be able to New or Load Game.");
+			    	
 			    	handleAction(ordinal, Server.PLAYER_TWO);
 		    	}
 	    	}
@@ -143,7 +151,9 @@ public class Server implements Runnable {
     }
 	
 	
-	
+	/*
+	 *  Ask Logic to handle users action & then Broadcast the results back to the Clients
+	 */
 	private void handleAction(int ordinal, int userID) throws IOException {
 		String message = logic.handleAction(ordinal, userID);
 		broadcast(userID, message);
@@ -155,20 +165,20 @@ public class Server implements Runnable {
 		String current = gameWorld.getEncodedGameWorld(userID);
 		current += message;
 		
-		int otherUserID;
-		if (userID == PLAYER_ONE)
-			otherUserID = PLAYER_TWO;
-		else if (userID == PLAYER_TWO)
+		int otherUserID = PLAYER_TWO;
+		if (userID == PLAYER_TWO)
 			otherUserID = PLAYER_ONE;
-		else
-			throw new IllegalArgumentException("Should be PlayerOne or PlayerTwo so somthing has gone wrong.");
 		
 		String other = gameWorld.getEncodedGameWorld(otherUserID);
 		
 		if (userID == PLAYER_ONE) {
+			System.out.println("--- Server:    broadcasting game after PlayerONE handle action.");
+					
 			outputOne.writeUTF(current);
 			outputTwo.writeUTF(other);
 		} else {
+			System.out.println("--- Server:    broadcasting game after PlayerTWO handle action.");
+			
 			outputOne.writeUTF(other);
 			outputTwo.writeUTF(current);
 		}
@@ -180,23 +190,31 @@ public class Server implements Runnable {
 	 *  New, Load, Save
 	 */
 	public void newGame() throws IOException {
-		//TODO: call newGame() inside run at some point, ATM XML.newGame() hardcoded
+		// Get encoded gameWorld of the standard new game
 		String encodedGameWorld = XML.newGame();
+		
+		// Create the GameWorld based of the encoded new game + initialize Game Logic
 		gameWorld = new GameWorld(encodedGameWorld);
 		logic = gameWorld.getLogic();
+		System.out.println("--- Server:    NewGame created.");
+		
 		broadcast(PLAYER_ONE, "");
 	}
 	
 	public void load() throws IOException {
-		//TODO: call load() inside run at some point, if return == null issue loading
+		// Get encoded gameWorld of the standard new game
 		String encodedGameWorld = XML.load();
+		
+		// Create the GameWorld based of the encoded previously saved game + initialize Game Logic
 		gameWorld = new GameWorld(encodedGameWorld);
 		logic = gameWorld.getLogic();
+		System.out.println("--- Server:    Loaded Game created.");
+		
 		broadcast(PLAYER_ONE, "");
 	}
 	
 	public boolean save() {
-		//TODO: call save(String representing the gameState) inside run at some point
+		System.out.println("--- Server:    attempting to Save Game.");
 		return XML.save(gameWorld.getEncodedGameSave());
 	}
 

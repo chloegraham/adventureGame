@@ -1,8 +1,7 @@
 package gameWorld;
 
 import movable.Player;
-import testconvert.ConvertPlayer;
-import testconvert.Messages;
+import convertors.Messages;
 
 public class GameWorld {
 	private GameLogic logic;
@@ -39,7 +38,7 @@ public class GameWorld {
 			}
 			else if (s.contains(Messages.DELIM_PLAYER)) {
 				String encodedPlayer = s;
-				players[playerIndex++] = ConvertPlayer.toPlayer(encodedPlayer);
+				players[playerIndex++] = new Player(encodedPlayer);
 			}
 			else {
 				throw new IllegalArgumentException();
@@ -56,6 +55,8 @@ public class GameWorld {
 		}
 			
 		logic = new GameLogic(levels, players);
+		
+		System.out.println(toString());
 	}
 	
 	public GameLogic getLogic() { return logic; }
@@ -95,5 +96,10 @@ public class GameWorld {
 			str += players[0].getEncodedPlayer();
 		
 		return str;
+	}
+	
+	@Override
+	public String toString() {
+		return "   GameWorld:   #levels:  " + levels.length + "   #players:  " + players.length;
 	}
 }

@@ -18,10 +18,12 @@ public class Door extends Unmoveable implements Tile {
 	
 	public void unlock() {
 		locked = false;
+		levelChanger = true;
 	}
 	
 	public void lock() {
 		locked = true;
+		levelChanger = false;
 	}
 	
 	

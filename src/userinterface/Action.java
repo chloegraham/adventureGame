@@ -49,6 +49,12 @@ public class Action {
 			return keyCode;
 		}
 		
+		public static String getName(int ordinal) {
+			for (Actions a : values())
+				if (a.ordinal() == ordinal)
+					return a.toString();
+			throw new IllegalArgumentException("Invalid ordinal. No enum with that ordinal.");
+		}
 	}
 
 }

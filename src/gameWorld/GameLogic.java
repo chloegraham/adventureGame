@@ -2,9 +2,9 @@ package gameWorld;
 
 import java.awt.Point;
 
+import convertors.Messages;
 import movable.Boulder;
 import movable.Player;
-import testconvert.ConvertAction;
 import tiles.Chest;
 import tiles.Door;
 import tiles.EmptyTile;
@@ -73,7 +73,7 @@ public class GameLogic {
 		// Only for Move not Interact
 		if (ordinal == Actions.NORTH.ordinal() || ordinal == Actions.SOUTH.ordinal() || ordinal == Actions.WEST.ordinal() || ordinal == Actions.EAST.ordinal()) {
 			boolean success = move(player, level, newLocation);
-			message = ConvertAction.moveMsg(player.getDirection(), success);
+			message = Messages.moveMsg(player.getDirection(), success);
 		}
 		
 		return message;

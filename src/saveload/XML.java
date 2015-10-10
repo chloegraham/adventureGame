@@ -61,7 +61,7 @@ public class XML {
 	        // create the root element
 	        Element rootEle = dom.createElement("Continue");
 
-//	         create data elements and place them under root
+	        // create data elements and place them under root
 	        e = dom.createElement(tag);
 	        e.appendChild(dom.createTextNode(gameState));
 	        rootEle.appendChild(e);
@@ -94,19 +94,22 @@ public class XML {
 		// Player looks like = (userID, levelID, keyAmount, boulder, directionfacing, x, y, <Player>)
 		//					   101 % 1234 % 2 % 1 % 2 % 3 % 3 %@<Player>
 		
-		String Level1 = "wwwweww%weeeeee%weeeeee%weeeeee%weeeeee%@nnnndnn%nnnnnnn%nnnnnnn%nnnnnnn%nnnnnnn%@nnnnnnn%nnnnnnn%nnnlnnn%nnnnnnn%nnnnnnn%@1111@<Level><Split>101%1111%2%1%2%3%3%@<Player><Split>";
-		String Level2 = "wwwweww%weeeeee%weeeeee%weeeeee%weeeeee%@nnnndnn%nnnnnnn%nnnnnnn%nnnnnnn%nnnncnn%@nnnnnnn%nnnnnnn%nnnlnnn%nnnnnnn%nnnnnnn%@2222@<Level><Split>101%2222%0%1%2%3%3%@<Player><Split>";
-		String Level3 = "wwwweww%weeeeee%weeeeee%weeeeee%weeeeee%@nnnndnn%nnnnnnn%nnnnnnn%nnnnnnn%nnnnnnz%@nnnnnnn%nnnnnnn%nnnlnnn%nnnnnnn%nnbnnnn%@3333@<Level><Split>101%3333%0%1%2%3%3%@<Player><Split>";
-		String Level4 = "wwwweww%weeeeee%weeeeee%weeeeee%weeeeee%@nnnndnn%nnnsnnn%nnnnnnn%nnnnnnn%nnnncnz%@nnnnnnn%nnnnnnn%nnnlnnn%nnnnnnn%nnbnnnn%@4444@<Level><Split>101%4444%0%1%2%3%3%@<Player><Split>";
+		String level900 = "wwwweww%weeeeee%weeeeee%weeeeee%weeeeee%@nnnndnn%nnnnnnn%nnnnnnn%nnnnnnn%nnnnnnn%@nnnnnnn%nnnnnnn%nnnlnnn%nnnnnnn%nnnnnnn%@900@<Level><Split>";
+		String level901 = "wwwweww%weeeeee%weeeeee%weeeeee%weeeeee%@nnnndnn%nnnnnnn%nnnnnnn%nnnnnnn%nnnncnn%@nnnnnnn%nnnnnnn%nnnlnnn%nnnnnnn%nnnnnnn%@901@<Level><Split>";
+		String level902 = "wwwweww%weeeeee%weeeeee%weeeeee%weeeeee%@nnnndnn%nnnnnnn%nnnnnnn%nnnnnnn%nnnnnnz%@nnnnnnn%nnnnnnn%nnnlnnn%nnnnnnn%nnbnnnn%@902@<Level><Split>";
+		String level903 = "wwwweww%weeeeee%weeeeee%weeeeee%weeeeee%@nnnndnn%nnnsnnn%nnnnnnn%nnnnnnn%nnnncnz%@nnnnnnn%nnnnnnn%nnnlnnn%nnnnnnn%nnbnnnn%@903@<Level><Split>";
 		
-		String multiLevel = "wwwweww%weeeeee%weeeeee%weeeeee%weeeeee%@nnnndnn%nnnnnnn%nnnnnnn%nnnnnnn%nnnnnnn%@nnnnnnn%nnnnnnn%nnnlnnn%nnnnnnn%nnnnnnn%@4567@<Level><Split>wwwweww%weeeeee%weeeeee%weeeeee%weeeeee%@nnnndnn%nnnnnnn%nnnnnnn%nnnnnnn%nnnncnn%@nnnnnnn%nnnnnnn%nnnlnnn%nnnnnnn%nnnnnnn%@5678@<Level><Split>101%4567%2%1%2%3%3%@<Player><Split>";
-		//TODO: how to implement multiple levels?
-		String multiPlayer = "wwwweww%weeeeee%weeeeee%weeeeee%weeeeee%@nnnndnn%nnnnnnn%nnnnnnn%nnnnnnn%nnnncnn%@nnnnnnn%nnnnnnn%nnnlnnn%nnnnnnn%nnnnnnn%@7899@<Level><Split>101%7899%0%1%2%3%3%@<Player><Split>202%7899%0%1%2%4%4%@<Player><Split>";
-		//TODO: how to implement multiple players?
 		
+		String playerOne = "101%900%1%0%1%3%3%@<Player><Split>";
+		String playerTwo = "202%900%1%0%1%2%2%@<Player><Split>";
+		
+		String playerTwoDiffLvl = "202%901%0%0%1%2%2%@<Player><Split>";
 		
 		String testLevel = "wwwweww%weeeeee%weeeeee%weeeeee%weeeeee%@nnnndnn%nnnsnnn%nnnnnnn%nnnnnnn%nnnncnz%@nnnnnnn%nnnnnnn%nnnlnnn%nnnnnnn%nnbnnnn%@1234@<Level><Split>101%1234%1%0%2%3%3%@<Player><Split>202%1234%5%1%2%2%2%@<Player><Split>";
-		return testLevel;
+		
+		String demo = level900 + level901 + playerOne + playerTwo;
+		
+		return demo;
 	}
 	
 	private static String getTextValue(String def, Element doc, String tag) {

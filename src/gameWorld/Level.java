@@ -4,9 +4,9 @@ import java.awt.Point;
 import java.util.HashSet;
 import java.util.Set;
 
+import convertors.Messages;
 import movable.Boulder;
 import movable.Player;
-import testconvert.Messages;
 import tiles.Chest;
 import tiles.Door;
 import tiles.EmptyTile;
@@ -57,6 +57,8 @@ public class Level {
 		buildLevel(level);
 		buildObjects(objects);
 		buildMovables(movables);
+		
+		System.out.println(toString());
 	}
 	
 	
@@ -84,15 +86,43 @@ public class Level {
 		boolean success = boulders.add(boulder);
 		if (!success)
 			throw new IllegalArgumentException("Invalid to add a Boulder that is already in Boulder set. Investigate how this was possible.");
+		System.out.println(toString());
 	}
 	
 	public boolean removeBoulder(Boulder boulder) {
-		return boulders.remove(boulder);
+		boolean success = boulders.remove(boulder);
+		System.out.println(toString());
+		return success;
 	}
 	
 	public boolean containsBoulder(Boulder boulder) {
 		return boulders.contains(boulder);
 	}
+	
+	
+	
+
+	/*
+	 *  Getter to Remove Players from a Level
+	 */
+	public void removePlayer(Player player) {
+		boolean success = players.remove(player);
+		System.out.println(toString() + "  removed a player");
+	}
+	
+	
+	/*
+	 *  Method to Transfer Players between Levels
+	 */
+	public void addPlayer(Player player) {
+		boolean success = players.add(player);
+		if (!success)
+			throw new IllegalArgumentException("Should never be able to add two of the same player to one Level.");
+		System.out.println(toString() + "  added a player");
+	}
+	
+	
+	
 	
 	
 	
@@ -129,23 +159,6 @@ public class Level {
 			   Messages.DELIM_SPLIT;
 	}
 	
-	
-	/*
-	 *  Getter to Remove Players from a Level
-	 */
-	public void removePlayer(Player player) {
-		boolean success = players.remove(player);
-	}
-	
-	
-	/*
-	 *  Method to Transfer Players between Levels
-	 */
-	public void addPlayer(Player player) {
-		boolean success = players.add(player);
-		if (!success)
-			throw new IllegalArgumentException("Should never be able to add two of the same player to one Level.");
-	}
 	
 	
 	/*
@@ -268,5 +281,10 @@ public class Level {
 		}
 		
 		return array;
+	}
+	
+	@Override
+	public String toString() {
+		return "   Level( levelID- " + levelID + "):   #players:  " + players.size() + "    #boulders:  " + boulders.size();
 	}
 }
