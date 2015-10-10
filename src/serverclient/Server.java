@@ -145,14 +145,15 @@ public class Server implements Runnable {
 	
 	
 	private void handleAction(int ordinal, int userID) throws IOException {
-		logic.handleAction(ordinal, userID);
-		broadcast();
+		String message = logic.handleAction(ordinal, userID);
+		broadcast(message);
 	}
 
 
 
-	private void broadcast() throws IOException {
+	private void broadcast(String message) throws IOException {
 		String game = gameWorld.getEncodedGameWorld();
+		game += message;
 		outputOne.writeUTF(game);
 		outputTwo.writeUTF(game);
 	}
@@ -167,7 +168,7 @@ public class Server implements Runnable {
 		String encodedGameWorld = XML.newGame();
 		gameWorld = new GameWorld(encodedGameWorld);
 		logic = gameWorld.getLogic();
-		broadcast();
+		broadcast("");
 	}
 	
 	public void load() throws IOException {
@@ -175,7 +176,7 @@ public class Server implements Runnable {
 		String encodedGameWorld = XML.load();
 		gameWorld = new GameWorld(encodedGameWorld);
 		logic = gameWorld.getLogic();
-		broadcast();
+		broadcast("");
 	}
 	
 	public boolean save() {

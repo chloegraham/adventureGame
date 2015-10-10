@@ -115,7 +115,6 @@ public class GameLogic {
 				}
 				return true;
 			}
-			// TODO something missing here. a return false????
 		}
 		
 		
@@ -128,9 +127,9 @@ public class GameLogic {
 				for (int j = 0; j < doors[0].length; j++) {
 					if(doors[i][j] instanceof Door){
 						if(!((PressurePad)tile).isActivated()){
-							((Door)doors[i][j]).openWithPad();
+							((Door)doors[i][j]).unlock();
 						} else {
-							((Door)doors[i][j]).closeWithPad();
+							((Door)doors[i][j]).lock();
 						}
 					}
 				}
@@ -219,8 +218,36 @@ public class GameLogic {
 		 *  Door interaction code & message
 		 */
 		if (tile instanceof Door){
-			((Door) tile).openDoor(player.getKey());
-			return "temp Somthing happened with a Door? I hope?";
+			
+			Door door = (Door) tile;
+			
+			// is the door locked or not?
+			boolean isLocked = door.isLocked();
+			
+			// does the player have a key?
+			boolean hasKey = player.hasKey();
+			
+			// if isLocked try and unlock the Door
+			// if !isLocked that means the door is open [do nothing]
+			if (isLocked) {
+				if (hasKey) {
+					door.unlock();
+					player.useKey();
+				}
+				return "The door is locked but you don't have a key to unlock it. Go find a key.";
+			}
+			return "The Door is unlocked. You may enter.";
+			// ISLOCKED
+			// true - "The Door is locked"
+			// false - "The Door is unlocked. You may enter." RETURN
+			
+			// HAVEKEY
+			// true - [move on to try unlock the door]
+			// false - "you don't have a key so you can't unlock the door. go find one."
+			
+			// TRYUNLOCK
+			// true - "You have unlocked the Door. You may enter now." [remove a player key && unlock the door]
+			// false - "sdafnsdjfa"
 		}
 		
 		
@@ -245,12 +272,12 @@ public class GameLogic {
 			}
 			if (tile instanceof EmptyTile) {
 				level.addBoulder(new Boulder(interactWith));
-				player.removeBoulder();
+				player.dropBoulder();
 				return "you dropped a boulder on an empty tile";
 			}
 			if (tile instanceof PressurePad) {
 				level.addBoulder(new Boulder(interactWith));
-				player.removeBoulder();
+				player.dropBoulder();
 				PressurePad pad = (PressurePad) tile;
 				pad.activate();
 				return "you dropped a boulder on a pressurepad";

@@ -35,6 +35,8 @@ public class Chest extends Unmoveable implements Tile {
 	
 	@Override
 	public String toString() {
+		if (isOpen)
+			return "C";
 		return "c";
 	}
 

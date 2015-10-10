@@ -114,11 +114,28 @@ public class Player extends Moveable{
 		return inventory.add(new Key());
 	}
 	
-	public Key getKey(){
+	public boolean hasKey() {
 		for(Item i: inventory)
 			if(i instanceof Key)
-				return (Key) i;
-		return null;
+				return true;
+		return false;
+	}
+	
+	public boolean useKey(){
+		if (!hasKey()) 
+			return false;
+		removeKey();
+		return true;
+	}
+	
+	private void removeKey() {
+		for(Item i: inventory) {
+			if(i instanceof Key) {
+				inventory.remove(i);
+				return;
+			}
+		}
+		throw new IllegalArgumentException("Should be impossible to remove a key if Player has no keys.");
 	}
 	
 	public void createKeys(int amount){
@@ -147,7 +164,7 @@ public class Player extends Moveable{
 		return hasBoulder;
 	}
 	
-	public boolean removeBoulder(){
+	public boolean dropBoulder(){
 		if (!hasBoulder)
 			return false;
 		hasBoulder = false;

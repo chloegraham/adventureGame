@@ -12,4 +12,17 @@ public class Boulder extends Moveable implements Item {
 	public String toString(){
 		return "b";
 	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof Boulder)
+			if (((Boulder) o).getLocation().equals(this.getLocation()))
+				return true;
+		return false;
+	}
+	
+	@Override
+	public int hashCode() {
+		return getLocation().hashCode();
+	}
 }
