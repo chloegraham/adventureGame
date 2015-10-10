@@ -8,6 +8,8 @@ import java.awt.event.KeyListener;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import renderer.RenderPane;
+import serverclient.Client;
 import userinterface.Action.Actions;
 
 /**
@@ -16,37 +18,26 @@ import userinterface.Action.Actions;
  * @author Kirsty
  */
 public class Listener extends JPanel implements KeyListener, ActionListener {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	private final UserInterface UI;
-	// Stores the direction the screen is currently being shown at. Key Events are rotated to match, must remain in this order.
-	private final Actions[] ROTATION = new Actions[] { Actions.NORTH, Actions.EAST, Actions.SOUTH, Actions.WEST };
-	private int DIR = 0;
-	
 	private final Actions[] ACTIONS = Actions.values();	// All possible movements the player may make
+	private final Client client;						// Where to send data for the master connection
+	private final RenderPane graphics;
+	private SplashScreen splash;
 	
-	private boolean splashLocked = true;				// Assumes game is displayed, no splash screens.
-	
-	public Listener(UserInterface ui) {
-		this.UI = ui;
-	}
+	private boolean splashLocked = true;				// If false: a splash is open, don't allow key input for the GameWorld
 	
 	/**
-	 * Checks if the user really wants to quit the game. If so, shuts down the system.
+	 * Required to call addSplash(SplashScreen).
 	 */
-	public void exitGame(){
-		int confirm = JOptionPane.showOptionDialog(null,
-				"Are you sure you want to exit the game?\nProgress since last save will be lost.\nConnection to server will be closed.", 
-				"Exit Game", JOptionPane.CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
-		if (confirm == 0) {
-			System.exit(0);
-		}
+	public Listener(Client client, RenderPane graphics) {
+		this.client = client;
+		this.graphics = graphics;
 	}
 	
+	/** Add SplashScreen. */
+	public void addSplash(SplashScreen splash){ this.splash = splash; }
+	
 	/**
-	 * If true, the splash screen will be locked and data will be passed through the server.
+	 * If true, key input will be sent to the game world
 	 * If false, only splash screen actions will be considered.
 	 * Set to true by default.
 	 */
@@ -60,66 +51,98 @@ public class Listener extends JPanel implements KeyListener, ActionListener {
 		
 		/* Splash Screen controls */
 		if (!splashLocked){
-			UI.performKeyPressed(event);
-			return;				// If splash screen is unlocked, prevent any further keys from being used.
+			String ac = splash.performKeyPress(event);
+			actionPerformed(ac);
+			return;				// If splash screen is open, don't check game controls.
 		}
 
 		/* Game controls */
-		// TODO Refactor rotation, change KeyCode inside Action class instead
-		/* First let's check for camera rotations. Does not yet rotate the actual view. */
-		if (Actions.COUNTERCLOCKWISE.getKeyCode() == event){
-			DIR--;
-			if (DIR < 0) DIR = ROTATION.length-1;
-			UI.rotation(Actions.COUNTERCLOCKWISE);
-			return;
-		}
+		
+		// Rotation
 		if (Actions.CLOCKWISE.getKeyCode() == event){
-			DIR++;
-			if (DIR >= ROTATION.length) DIR = 0;
-			UI.rotation(Actions.CLOCKWISE);
+			rotation(true);
+			return;
+		}
+		else if (Actions.COUNTERCLOCKWISE.getKeyCode() == event){
+			rotation(false);
 			return;
 		}
 		
-		/* Change the movement direction (if player has chosen to rotate the screen) */
-		for (int i=0; i<ROTATION.length; i++){
-			if (ROTATION[i].getKeyCode() == event){
-				int send = i + DIR;			// If the screen has not been rotated, the direction will not be changed.
-				if (send > 3){ send -= 4; }
-				if (send < 0){ send += 4; }
-				UI.sendClientAction(ROTATION[send].ordinal());
-				return;
-			}
-		}
-		
-		//TODO Movement keycodes will be changed, they should be checked manually
-		/* All other keys must be sent directly through the server. Find the ordinal and send it. */
+		// All other actions should go directly through the server
 		for (Actions ac : ACTIONS){
 			if (ac.getKeyCode() == event){
-				UI.sendClientAction(ac.ordinal());
+				client.handleAction(ac.ordinal());
 				return;
 			}
 		}
-		// Any other key pressed is not applicable. Ignore it.
 	}
 	
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		String ac = e.getActionCommand();
-		
+	/**
+	 * Override ActionPerformed using a String instead of an ActionEvent.
+	 */
+	public void actionPerformed(String ac){
 		/* Splash screen controls */
 		if (!splashLocked){
-			UI.performSplashActionCommand(ac);
-			return;				// If splash screen is unlocked, prevent any further keys from being used.
+			if (splash.getOpenCard() != SplashScreen.HOST_CARD){ return; }	// Only the splash menu has action listeners.
+			else if (ac.equals("New Game")){
+				splash.showStartup("Creating a new game. Waiting for game state ...");
+				client.handleAction(Actions.NEWGAME.ordinal());
+			}
+			else if (ac.equals("Load Game")){
+				splash.showStartup("Loading a game. Waiting for game state ...");
+				client.handleAction(Actions.LOAD.ordinal());
+			}
+			
+			return;				// If splash screen is unlocked, do not check game controls
 		}
 		
 		/* Game controls */
-		if (ac.equals("Save")){ UI.sendClientAction(Actions.SAVE.ordinal()); }
-		else if (ac.equals("Load")){ UI.sendClientAction(Actions.LOAD.ordinal()); }
+		if (ac.equals("New Game")){ client.handleAction(Actions.NEWGAME.ordinal()); }
+		else if (ac.equals("Save")){ client.handleAction(Actions.SAVE.ordinal()); }
+		else if (ac.equals("Load")){ client.handleAction(Actions.LOAD.ordinal()); }
+		else if (ac.equals("Controls")){ splash.setVisibleCard(SplashScreen.READY_CARD); }
+		else if (ac.equals("About")){ splash.setVisibleCard(SplashScreen.ABOUT_CARD); }
 		else if (ac.equals("Exit")){ exitGame(); }
 	}
+	
+	@Override		// Overload so it takes the action command instead.
+	public void actionPerformed(ActionEvent e) { actionPerformed(e.getActionCommand()); }
 
 	@Override
 	public void keyReleased(KeyEvent e) {}
 	@Override
 	public void keyTyped(KeyEvent e) {}
+	
+	/**
+	 * Checks if the user really wants to quit the game. If so, shuts down the system.
+	 */
+	public static void exitGame(){
+		int confirm = JOptionPane.showOptionDialog(null,
+				"Are you sure you want to exit the game?\nProgress since last save will be lost.\nConnection to server will be closed.", 
+				"Exit Game", JOptionPane.CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
+		if (confirm == 0) {
+			System.exit(0);
+		}
+	}
+	
+	/**
+	 * Rotates the key events and graphics pane then repaints it.
+	 * @param clockwise rotates clockwise if true, counter clockwise if false
+	 */
+	private void rotation(boolean clockwise){
+		int north = Actions.NORTH.getKeyCode();
+		int east = Actions.EAST.getKeyCode();
+		int south = Actions.SOUTH.getKeyCode();
+		int west = Actions.WEST.getKeyCode();
+		
+		Actions.NORTH.setKeyCode( (clockwise) ? west : east );
+		Actions.SOUTH.setKeyCode( (clockwise) ? east : west );
+		Actions.EAST.setKeyCode( (clockwise) ? north : south );
+		Actions.WEST.setKeyCode( (clockwise) ? south : north );
+
+		graphics.rotateViewClockwise(clockwise);
+		graphics.repaint();
+	}
+	
+	private static final long serialVersionUID = 1L;
 }
