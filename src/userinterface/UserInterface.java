@@ -1,183 +1,156 @@
 package userinterface;
 
+import java.awt.Dimension;
+import java.awt.Image;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.io.File;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
 import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.KeyStroke;
+import javax.swing.text.DefaultCaret;
 
 import com.sun.glass.events.KeyEvent;
 
 import renderer.RenderPane;
 import serverclient.Client;
-import userinterface.Action.Actions;
 
 /**
  * Organises the content that is displayed to the user, and passes data between the server and the interface.
  * @author Kirsty
  */
-public class UserInterface {
-	/* Content in the frame */
-	private final JMenu file = new JMenu("File");
+public class UserInterface extends JFrame {
 	private RenderPane graphics = new RenderPane();
-	private Listener listener = new Listener(this);
-	private final SplashScreen splash = new SplashScreen(this, listener);
-	private GameFrame frame = new GameFrame(graphics, listener, file, splash);
-
-	/* For sending data through the connection */
-	private Client client;
-	private boolean playing = false;		// Set true only when the game state and renderer are ready.
+	private Listener listener;
+	private SplashScreen splash;
 	
-	private int keys = 0;		// Number of keys player is holding
-	private int uid = -1;		// this player's ID
+	/* Images */
+	private final ImageIcon iconKey = loadImageIcon("icon-key.png");
+
+	/* Panel content */
+	private final JTextArea messagePane = new JTextArea();
+	private final JLayeredPane contentPane = new JLayeredPane();
+	private final JPanel inventoryPane = new JPanel();
+	private final JMenuBar menuBar = new JMenuBar();
+	private final JMenu file = new JMenu("File");
+	
+	/* Inventory pane */
+	private final JLabel keys = new JLabel("0");
+	private final int contentHeight = 80;			// Height of the inventory pane/message box
+	
+	private boolean playing = false;	// Set true only when the game state and renderer are ready.
+	private int keyCount = 0;				// Number of keys player is currently holding
+	private int uid = -1;				// this player's ID
 	
 	public UserInterface(Client client) {
-		this.client = client;
-		addListeners();
-		frame.setVisible(true);
+		super("Chicken Little");
+		
+		listener = new Listener(client, graphics);
+		splash = new SplashScreen(this, listener);
+		listener.addSplash(splash);
+		setListeners();
+	
+		/* Build panes */
+		buildInventoryPane();
+		buildMenuBar();
+		JScrollPane scrollPane = buildMessagePane();
+		setBounds(scrollPane);
+		
+		/* Add panes to content pane with z coordinate */
+		this.add(contentPane);
+		contentPane.add(graphics, new Integer(0));
+		contentPane.add(menuBar, new Integer(1));
+		contentPane.add(scrollPane, new Integer(2));
+		contentPane.add(inventoryPane, new Integer(3));
+		contentPane.add(splash, new Integer(4));
+		contentPane.add(listener, new Integer(5));
+		listener.setOpaque(false);
+		
+		this.pack();
+		setVisible(true);	// Finished building the frame. Show it and wait until the userID is added.
 	}
 	
-	public void sendClientAction(int action) {
-		client.handleAction(action);
-	}
-
-	/** Sets the unique ID for this user */
+	/** Sets the unique ID for this user and changes the SplashScreen. */
 	public void setUserID(int uid, boolean loadGame){
 		this.uid = uid;
-		if (uid == 101){
-			showHostMenu(loadGame);
-		}
-		else if (uid == 202){
-			setConnected();
-		}
-		frame.setTitle("Chicken Little : User " + this.uid);
+		if (uid == 101){ splash.setVisibleMenu(loadGame); }													// Host Player
+		else if (uid == 202){ splash.showStartup("Successfully connected. Waiting for game state ..."); }	// Remote player
+		this.setTitle("Chicken Little : User " + this.uid);
 	}
 	
-	/* ========================================================
-	 * Methods to modify the contents of the frame.
-	 * ======================================================== */
+	// ========================================================
+	// Methods to modify the game panels
+	// ========================================================
 	
-	/**
-	 * Stores and displays a message to the user. Will display up to the 3 most recent messages.
-	 */
+	/** Stores and displays a message to the user in a scroll pane. */
 	public void addMessage(String message){
-		if (message != null){
-			frame.addMessage(message);
-		}
+		if (message != null){ messagePane.append(message + "\n"); }
 	}
 	
-	/**
-	 * Erases all messages from the text box history.
-	 */
-	public void clearMessageHistory(){
-		frame.clearMessages();
-	}
+	/** Erases all messages from the text box history. */
+	public void clearMessageHistory(){ messagePane.setText(""); }
 	
-	/**
-	 * Increments the number of keys displayed to the user
-	 */
-	public void addKey(){
-		keys++;
-		frame.updateInventory(keys);
-	}
+	/** Increments the number of keys displayed to the user */
+	public void addKey(){ keys.setText(Integer.toString(++keyCount)); }
 	
 	/**
 	 * Attempts to decrement the number of keys displayed to the user.
 	 * @return true if a key was removed, false otherwise.
 	 */
 	public boolean removeKey(){
-		if (keys > 0){
-			keys--;
-			frame.updateInventory(keys);
+		if (keyCount > 0){
+			keys.setText(Integer.toString(--keyCount));
 			return true;
 		}
 		return false;
 	}
 	
-	/**
-	 * Directly set the number of keys that show up on UI.
-	 * @param keys
-	 */
-	public void setKeyCount(int keys){
-		this.keys = keys;
-		frame.updateInventory(keys);
+	/** Directly set the number of keys that show up on UI. */
+	public void setKeyCount(int keyCount){
+		this.keyCount = keyCount;
+		keys.setText(Integer.toString(keyCount));
 	}
 	
-	/**
-	 * Enable or disable frame content. Used to lock content while a SplashScreen is open.
-	 * @param enabled true to enable content, false to disable content
-	 */
-	public void setContentEnabled(boolean enabled){
-		file.setEnabled(enabled);
-		listener.setSplashLocked(enabled);
-	}
-	
-	/* ========================================================
-	 * Methods to change or modify the current splash screen.
-	 * ======================================================== */
-
-	/**
-	 * The player cannot close this screen.
-	 * Set the message displayed on the startup splash screen.
-	 */
-	public void setConnected(){
-		splash.showStartup("Successfully connected. Waiting for game state ...");
-	}
+	// ========================================================
+	// Methods for the Splash Screen.
+	// ========================================================
 	
 	/**
-	 * This screen may be closed by the player.
-	 * This player is the host, show the host menu and let the player choose new game or load game.
-	 * @param loadGame if true, enable the loadGame button, otherwise disable it
-	 */
-	public void showHostMenu(boolean loadGame){
-		splash.setVisibleMenu(loadGame);
-	}
-	
-	/**
-	 * This screen may be closed by the player.
-	 * Requires a game state to be ready to play.
-	 */
-	private void setGameReady(){
-		playing = true;
-		splash.setVisibleCard(SplashScreen.READY_CARD);		// Player can close this card
-	}
-	
-	/**
-	 * Alert the user that their character has died. Sleeps for a short period then allows the user to return to the game.
+	 * Alert the user that their character has died. Allows player to return to the game afterward.
 	 */
 	public void setPlayerDeath(){
 		splash.setVisibleCard(SplashScreen.DEATH_CARD);
 		try {
-			Thread.sleep(1000);		// Freeze the frame for a short time so key spamming doesn't skip the window.
+			Thread.sleep(1000);
 		} catch (InterruptedException e) {}
 	}
 	
 	/**
-	 * Alert the user that they have won the game.
-	 * Player will return to the startup screen from this point.
+	 * Alert the user that they have won the game. User cannot close this screen.
 	 */
 	public void setPlayerWon(){
 		splash.setVisibleCard(SplashScreen.WIN_CARD);
 		try {
-			Thread.sleep(1000);		// Freeze the frame for a short time so key spamming doesn't skip the window.
+			Thread.sleep(1000);
 		} catch (InterruptedException e) {}
-	}
-	
-	/**
-	 * Displays a custom message that the user cannot close. Must call closeGenericScreen() to close it.
-	 */
-	public void showSplashMessage(String message){
-		splash.setVisibleGeneric(message);
-	}
-	
-	/**
-	 * Closes currently open generic screen
-	 */
-	public void closeSplashMessage(){
-		splash.setVisibleCard(SplashScreen.NO_CARD);
 	}
 	
 	/**
@@ -188,49 +161,147 @@ public class UserInterface {
 		playing = false;
 		splash.showStartup(message);
 	}
+
+	/** Displays a custom message that the user cannot close. Must call closeGenericScreen() to close it. */
+	public void showSplashMessage(String message){ splash.setVisibleGeneric(message); }
 	
-	/** Handles splash screen key presses, and passes through that a key has been pressed. */
-	public void performKeyPressed(int event){
-		String ac = splash.performKeyPress(event);
-		performSplashActionCommand(ac);
-	}
-	
-	/**
-	 * If the splash screen menu is open, respond the button pressed.
-	 * Returns the player to the startup splash screen.
-	 * Ignores an empty string.
-	 */
-	public void performSplashActionCommand(String ac){
-		if (splash.getOpenCard() != SplashScreen.HOST_CARD){ return; }	// Only the host's menu card has action listeners.
-		else if (ac.equals("New Game")){
-			splash.showStartup("Creating a new game. Waiting for game state ...");
-			sendClientAction(Actions.NEWGAME.ordinal());
-		}
-		else if (ac.equals("Load Game")){
-			splash.showStartup("Loading a game. Waiting for game state ...");
-			sendClientAction(Actions.LOAD.ordinal());
-		}
-	}
-	
-	/* ========================================================
-	 * Methods for the renderer.
-	 * ======================================================== */
+	/** Closes currently open generic screen */
+	public void closeSplashMessage(){ splash.setVisibleCard(SplashScreen.NO_CARD); }
 	
 	/**
-	 * Rotates the graphics pane either clockwise or counterclockwise
+	 * Enable or disable frame content. Used to lock content while a SplashScreen is open.
+	 * @param enabled true to enable content, false to disable content
 	 */
-	public void rotation(Actions direction){
-		if (direction == Actions.CLOCKWISE){ 
-			this.graphics.rotateViewClockwise(true);
-		}
-		else if (direction == Actions.COUNTERCLOCKWISE){
-			this.graphics.rotateViewClockwise(false);
-		}
+	public void setContentEnabled(boolean enabled){
+		file.setEnabled(enabled);
+		listener.setSplashLocked(enabled);
+	}
+	
+	// ========================================================
+	// Methods for building the frame
+	// ========================================================
+	
+	/**
+	 * Set the sizes and positions of all items in the frame.
+	 */
+	private void setBounds(JScrollPane scrollPane){
+		Dimension dim = graphics.getPreferredSize();
+		int menuHeight = 20;
+		int renderWidth = (int) dim.getWidth();
+		int renderHeight = (int) dim.getHeight();
+
+		int frameWidth = (renderWidth + 16);		// Needs extra width for border
+		int frameHeight = (renderHeight + contentHeight + menuHeight + 16);
+		setPreferredSize(new Dimension(frameWidth, frameHeight));
 		
-		graphics.repaint();
+		// Position Frame in screen
+		Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+		int frameX = (int) ((screen.getWidth()/2)-(frameWidth/2));
+		int frameY = (int) ((screen.getHeight()/2)-(frameHeight/2));
+		setLocation(frameX, frameY);	// Position in centre of screen
+		
+		// Set position and size of items inside frame
+		graphics.setBounds(0, menuHeight, renderWidth, renderHeight);
+		splash.setBounds(0, 0, frameWidth, frameHeight);
+		inventoryPane.setBounds((renderWidth-contentHeight), renderHeight, contentHeight, contentHeight);
+		scrollPane.setBounds(0, renderHeight, (renderWidth-contentHeight), contentHeight);
+		menuBar.setBounds(0, 0, frameWidth, menuHeight);
 	}
 	
+	/**
+	 * Create the inventory panel to display number of keys the player is carrying
+	 * and whether the player is carrying a boulder.
+	 */
+	private void buildInventoryPane(){
+		Dimension dim = new Dimension(contentHeight, 25);
+		inventoryPane.setLayout(new BoxLayout(inventoryPane, BoxLayout.Y_AXIS));
+		inventoryPane.setBorder(BorderFactory.createTitledBorder("Inventory"));
+		//Keys
+		if (iconKey != null){ keys.setIcon(iconKey); }
+		keys.setMaximumSize(dim);
+		keys.setToolTipText("Keys");
+		inventoryPane.add(keys);
+		
+		inventoryPane.setOpaque(false);
+	}
 	
+	/**
+	 * Build the pane to display messages to the player
+	 */
+	private JScrollPane buildMessagePane(){
+		JScrollPane scrollPane = new JScrollPane(messagePane,
+				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		messagePane.setOpaque(false);
+		messagePane.setEditable(false);
+		// Set the pane to always be scrolled to the end
+		((DefaultCaret)messagePane.getCaret()).setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+		return scrollPane;
+	}
+	
+	/**
+	 * Create all items inside the menu bar. MenuItems are created using CTRL+(key event)
+	 */
+	private void buildMenuBar(){
+		menuBar.add(file);
+		// File menu
+		file.add(createMenuItem("Save", KeyEvent.VK_S));
+		file.add(createMenuItem("Load", KeyEvent.VK_L));
+		file.addSeparator();
+		file.add(createMenuItem("Exit", KeyEvent.VK_X));
+	}
+	
+	/**
+	 * Create a menu item with a listener, and a Ctrl+KeyEvent accelerator.
+	 */
+	private JMenuItem createMenuItem(String name, int keyEvent){
+		JMenuItem item = new JMenuItem(name);
+		item.addActionListener(listener);
+		item.setAccelerator(KeyStroke.getKeyStroke(keyEvent, ActionEvent.CTRL_MASK));
+		return item;
+	}
+	
+	/**
+	 * Require the listener pane to maintain focus.
+	 * Set a window closing listener to the frame.
+	 */
+	private void setListeners(){
+		listener.setFocusable(true);
+		listener.addKeyListener(listener);
+		listener.addFocusListener(new FocusAdapter() {		// Reclaim focus when lost
+	          public void focusLost(FocusEvent ev) {
+	        	  listener.requestFocusInWindow();
+	          }
+	        });
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);		// Use a new window listener to close the game.
+		WindowListener exitListener = new WindowAdapter() {
+		    @Override
+		    public void windowClosing(WindowEvent e) {				// Override closing event.
+		        Listener.exitGame();
+		    }
+		};
+		addWindowListener(exitListener);
+	}
+	
+	// ========================================================
+	// ImageIcon loader
+	// ========================================================
+	
+	/**
+	 * Loads the image given by the String name. If failed, will return null.
+	 */
+	public static ImageIcon loadImageIcon(String imageAddress){
+		Image img = null;
+		ImageIcon icon = null;
+		try {
+			img = ImageIO.read(new File(imageAddress));
+			icon = new ImageIcon(img);
+		} catch (IOException e) {}// e.printStackTrace(); }
+		return icon;
+	}
+	
+	// ========================================================
+	// Methods for the renderer.
+	// ========================================================
 	
 	/**
 	 * Redraws the renderer from 3 char layers
@@ -239,37 +310,14 @@ public class UserInterface {
 	 * @param moveables
 	 */
 	public void redrawFromLayers(char[][]level, char[][]objects, char[][]moveables){
-    	
 		graphics.setLayers(level, objects, moveables);
-		
-		if (!playing){ setGameReady(); }
-		frame.repaint();
+		if (!playing){
+			playing = true;
+			splash.setVisibleCard(SplashScreen.READY_CARD);		// Show player key bindings and allow them to start
+		}
+		this.repaint();
 	}
 	
-	/* ========================================================
-	 * Helper methods to build the user interface.
-	 * ======================================================== */
-	
-	/**
-	 * Require rendering window to maintain focus, and assign all listeners to it.
-	 * Requests confirmation and closes the system if player tries to close the window.
-	 */
-	private void addListeners() {
-		listener.setFocusable(true);
-		listener.addKeyListener(listener);
-		listener.addFocusListener(new FocusAdapter() {		// Reclaim focus when lost
-	          public void focusLost(FocusEvent ev) {
-	        	  listener.requestFocusInWindow();
-	          }
-	        });
-		
-		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);		// Use a window listener to close the game
-		WindowListener exitListener = new WindowAdapter() {
-		    @Override
-		    public void windowClosing(WindowEvent e) {				// Override closing event. If OK is not selected, don't do anything.
-		        listener.exitGame();
-		    }
-		};
-		frame.addWindowListener(exitListener);
-	}
+	private static final long serialVersionUID = 1L;
+
 }
