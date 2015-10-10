@@ -31,7 +31,6 @@ public class UserInterface {
 	private Client client;
 	private boolean playing = false;		// Set true only when the game state and renderer are ready.
 	
-	private int action = 99;
 	private int keys = 0;		// Number of keys player is holding
 	private int uid = -1;		// this player's ID
 	
@@ -39,12 +38,6 @@ public class UserInterface {
 		this.client = client;
 		addListeners();
 		frame.setVisible(true);
-	}
-	
-	public int getAction() {
-		int temp = action;
-		action = 99;
-		return temp;
 	}
 	
 	public void sendUIAction(int action) {

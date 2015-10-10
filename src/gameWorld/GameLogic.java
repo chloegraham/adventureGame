@@ -2,7 +2,7 @@ package gameWorld;
 
 import java.awt.Point;
 
-import convertors.Messages;
+import convertors.Msgs;
 import movable.Boulder;
 import movable.Player;
 import tiles.Chest;
@@ -50,33 +50,48 @@ public class GameLogic {
 		Point current = player.getLocation();
 		Point newLocation = null;
 		
-		if(Actions.NORTH.ordinal() == ordinal){
+		if(Actions.NORTH.ordinal() == ordinal) {
 			player.setDirection(Direction.NORTH);
 			newLocation = new Point(current.x, current.y-1);
 		}
-		else if (Actions.EAST.ordinal() == ordinal){
+		else if (Actions.EAST.ordinal() == ordinal) {
 			player.setDirection(Direction.EAST);
 			newLocation = new Point(current.x+1, current.y);
 		}
-		else if (Actions.SOUTH.ordinal() == ordinal){
+		else if (Actions.SOUTH.ordinal() == ordinal) {
 			player.setDirection(Direction.SOUTH);
 			newLocation = new Point(current.x, current.y+1);
 		}
-		else if (Actions.WEST.ordinal() == ordinal){
+		else if (Actions.WEST.ordinal() == ordinal) {
 			player.setDirection(Direction.WEST);
 			newLocation = new Point(current.x-1, current.y);
 	   }
-		else if (Actions.INTERACT.ordinal() == ordinal){ 
+		else if (Actions.INTERACT.ordinal() == ordinal) { 
 			message = interact(player, level, current);
+		}
+		else if (Actions.NEWGAME.ordinal() == ordinal) {
+		}
+		else if (Actions.LOAD.ordinal() == ordinal) {
+	    }
+		else {
+			throw new IllegalArgumentException("GameLogic:  received an unexpected ordinal. It might be 'Inspect' which we have't coded yet.");
 		}
 		
 		// Only for Move not Interact
 		if (ordinal == Actions.NORTH.ordinal() || ordinal == Actions.SOUTH.ordinal() || ordinal == Actions.WEST.ordinal() || ordinal == Actions.EAST.ordinal()) {
 			boolean success = move(player, level, newLocation);
-			message = Messages.moveMsg(player.getDirection(), success);
+			message = Msgs.moveMsg(player.getDirection(), success);
 		}
 		
-		return message;
+		boolean hasBoulder = player.hasBoulder();
+		int keyNumber = player.getNumberOfKeys();
+		int playerX = player.getLocation().x;
+		int playerY = player.getLocation().y;
+		String bouldersKeysLocation = hasBoulder + Msgs.DELIM_DETAILS + keyNumber + Msgs.DELIM_DETAILS +
+									  playerX + Msgs.DELIM_DETAILS + playerY + Msgs.DELIM_DETAILS +
+									  Msgs.DELIM_SPLIT;
+		
+		return bouldersKeysLocation + message;
 	}
 	
 	

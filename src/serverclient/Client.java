@@ -7,7 +7,7 @@ import java.net.InetAddress;
 import java.net.Socket;
 
 import convertors.Layers;
-import convertors.Messages;
+import convertors.Msgs;
 import userinterface.Action.Actions;
 import userinterface.UserInterface;
 
@@ -71,15 +71,20 @@ public class Client implements Runnable {
 	    	 *  If doesn't contain "host" if will be a game render
 	    	 */
 	    	hostORguest = input.readUTF();
+	    	boolean isLoadValid = false;
 	    	
-	    	if (hostORguest.equals("host"))
-	    		userID = Server.PLAYER_ONE;
-	    	else if (hostORguest.equals("guest")) 
-	    		userID = Server.PLAYER_TWO;
-	    	else 
+	    	if (hostORguest.equals(Msgs.DELIM_HOST)) {
+	    		userID = Msgs.PLAYER_ONE;
+	    	} else if (hostORguest.equals(Msgs.DELIM_HOSTLOAD)) {
+	    		userID = Msgs.PLAYER_ONE;
+	    		isLoadValid = true;
+	    	} else if (hostORguest.equals(Msgs.DELIM_GUEST)) {
+	    		userID = Msgs.PLAYER_TWO;
+	    	} else {
 	    		throw new IllegalArgumentException("Expected host or guest");
+	    	}
 	    	
-	    	ui.setUserID(userID, false);
+	    	ui.setUserID(userID, isLoadValid);
     		output.writeUTF(hostORguest);
 	    	
     
@@ -119,9 +124,9 @@ public class Client implements Runnable {
 	// Manage some rules before sending to the Server
 	private void handleAction(int ordinal, int userID) throws IOException {
 		if (ordinal == Actions.LOAD.ordinal() || ordinal == Actions.NEWGAME.ordinal())
-			if (userID != Server.PLAYER_ONE && this.userID != Server.PLAYER_ONE)
+			if (userID != Msgs.PLAYER_ONE && this.userID != Msgs.PLAYER_ONE)
 				throw new IllegalArgumentException("Only player one should be able to Start a NewGame or Load a Game.");
-		output.writeUTF("<action>" + ordinal);
+		output.writeUTF(Msgs.DELIM_ACTION + ordinal);
 	}
 	
 	
@@ -133,27 +138,36 @@ public class Client implements Runnable {
 			String[] encodedSplit = encodedInput.split("<Split>");
 			
 			String encodedLayers = encodedSplit[0];
+			String encodedPlayer;
 			String encodedMessages;
-			String encodedKeys;
 			
 			Layers layers;
-			Messages msgs;
+			Msgs msgs;
+			
+			int playerX = 0;
+			int playerY = 0;
+			
+			if (encodedSplit.length > 1) {
+				encodedPlayer = encodedSplit[1];
+				String[] details = encodedPlayer.split(Msgs.DELIM_DETAILS);
+//				ui.setBoulder(details[0].equals("true"));
+				ui.setKeyCount(Integer.parseInt(details[1]));
+//				playerX = Integer.parseInt(details[2]);
+//				playerY = Integer.parseInt(details[3]);
+			}
 			
 			layers = new Layers();
 			layers.decode(encodedLayers);
 			ui.redrawFromLayers(layers.getDecodedLevel(), layers.getDecodedObjects(), layers.getDecodedMovables());
+//			ui.redrawFromLayers(layers.getDecodedLevel(), layers.getDecodedObjects(), layers.getDecodedMovables(), playerX, playerY);
 			
-			if (encodedSplit.length > 1) {
-				encodedMessages = encodedSplit[1];
-				msgs = new Messages();
+			if (encodedSplit.length > 2) {
+				encodedMessages = encodedSplit[2];
+				msgs = new Msgs();
 				msgs.decode(encodedMessages);
 				ui.addMessage(msgs.getDecoded());
 			}
-			
-			if (encodedSplit.length == 3) {
-				encodedKeys = encodedSplit[2];
-				ui.setKeyCount(Integer.parseInt(encodedKeys));
-			}			
+		
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

@@ -6,7 +6,7 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 
-import convertors.Messages;
+import convertors.Msgs;
 
 public class Player extends Moveable{
 
@@ -79,7 +79,7 @@ public class Player extends Moveable{
 		
 		str += userID + "%";
 		str += levelID + "%";
-		str += numberOfKeys() + "%";
+		str += getNumberOfKeys() + "%";
 		int boulder = hasBoulder() ? 1 : 0;
 		str += boulder + "%";
 		str += direction.ordinal() + "%";
@@ -90,7 +90,7 @@ public class Player extends Moveable{
 		int y = point.y;
 		str += y + "%";
 		
-		str += Messages.DELIM_PLAYER;
+		str += Msgs.DELIM_PLAYER;
 		return str;
 	}
 	
@@ -143,7 +143,7 @@ public class Player extends Moveable{
 		}
 	}
 	
-	public int numberOfKeys() {
+	public int getNumberOfKeys() {
 		int amount = 0;
 		for(Item i: inventory)
 			if(i instanceof Key)
