@@ -6,127 +6,161 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 
+import testconvert.Messages;
+
 public class Player extends Moveable{
 
-	private Direction direction = Direction.NORTH; //String representing which direction player is facing
-	private List<Item> inventory = new ArrayList<Item>();
-	private boolean onPressurePad = false;
-	private boolean hasBoulder = false;
 	private int userID;
 	private int levelID;
+	private Direction direction = Direction.NORTH; 	//String representing which direction player is facing
+	private List<Item> inventory = new ArrayList<Item>();
+	private boolean hasBoulder = false;
 	
+	
+	
+	/*
+	 *  Basic constructor
+	 */
 	public Player(Point location) {
-		this(location, "i");
-	}
-	
-	public Player(Point location, String c) {
 		super(location);
 	}
 	
-	//open a saved game
-	public Player(int userID, int levelID, int keyAmount, boolean boulder,
-			Direction direction2, Point point) {
+	
+	
+	/*
+	 *  For opening a Saved/Stored Game
+	 */
+	public Player(int userID, int levelID, int keyAmount, boolean boulder, Direction dir, Point point) {
 		super(point);
 		this.userID = userID;
 		this.levelID = levelID;
+		this.direction = dir;
 		createKeys(keyAmount);
 		this.hasBoulder = boulder;
-		this.direction = direction2;
 	}
 
+	
+	
+	/*
+	 *  
+	 */
+	public Player(String encodedPlayer) {
+		super(new Point(1,1));
+		String[] parts = encodedPlayer.split("%");
+		
+		userID = Integer.parseInt(parts[0]);
+		levelID = Integer.parseInt(parts[1]);
+		int keyAmount = Integer.parseInt(parts[2]);
+		createKeys(keyAmount);
+		hasBoulder = Integer.parseInt(parts[3]) == 1;
+		direction = Direction.getMsg( Integer.parseInt(parts[4]) );
+		
+		int x = Integer.parseInt(parts[5]);
+		int y = Integer.parseInt(parts[6]);
+		Point point = new Point(x, y);
+		setLocation(point);
+	}
+	
+	
+	
+	/*
+	 *  Get UserID & Get LevelID
+	 */
+	public int getUserID() { return this.userID; }
 	public int getLevelID() { return levelID; }
 	
-	public Direction getDirection() {
-		return direction;
-	}
 	
+	
+	/*
+	 *  Encoded a Player object in to a String for sending through Server of Saving Game
+	 */
 	public String getEncodedPlayer() {
-		// TODO Auto-generated method stub
-		return null;
+		String str = "";
+		
+		str += userID + "%";
+		str += levelID + "%";
+		str += numberOfKeys() + "%";
+		int boulder = hasBoulder() ? 1 : 0;
+		str += boulder + "%";
+		str += direction.ordinal() + "%";
+		
+		Point point = getLocation();
+		int x = point.x;
+		str += x + "%";
+		int y = point.y;
+		str += y + "%";
+		
+		str += Messages.DELIM_PLAYER;
+		return str;
 	}
 	
-	public int getUserID() {
-		return this.userID;
-	}
-
-	public Key getKey(){
-		for(Item i: this.inventory){
-			if(i instanceof Key){
-				return (Key) i;
-			}
-		}
-		return null;
-	}
 	
 	
+	/*
+	 *  Direction
+	 */
+	public Direction getDirection() { return direction; }
 	
-	public void createKeys(int amount){
-		for(int i = 0; i < amount; i++){
-			addToInventory(new Key("110", "I'm a good key"));
-		}
-	}
-
 	public void setDirection(Direction direction) {
 		this.direction = direction;
 	}
-	
-	public void removeBoulder(){
-		
-		List<Item> listCopy = new ArrayList<Item>(inventory);
-		for(Item i: this.inventory){
-			if(i instanceof Boulder){
-				listCopy.remove(i);
-				this.inventory = listCopy;
-			}
-		}
-		this.hasBoulder = false;
-	}
-	
-	public boolean containsBoulder(){
-		for(Item i: this.inventory){
-			if(i instanceof Boulder){
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	public void addToInventory(Item item){
-		inventory.add(item);
-		if(item instanceof Boulder) this.hasBoulder = true;
-	}
-	
-	public List<Item> getInventory(){
-		return inventory;
-	}
-	
-	public void testInventory(){
-		for (Item s : inventory){
-			System.out.println(s.toString());
-		}
-	}
-	
-	public void togglePressurePad(){
-		if(onPressurePad){
-			this.onPressurePad = false;
-		} else {
-			this.onPressurePad = true;
-		}
-	}
-	
-	public boolean onPressurePad(){
-		return onPressurePad;
-	}
 
+	
+	
+	/*
+	 *  Key
+	 */
+	public Key getKey(){
+		if (inventory.isEmpty())
+			return null;
+		Key key =  (Key) inventory.remove(0);
+		return key;
+	}
+	
+	public void createKeys(int amount){
+		for(int i = 0; i < amount; i++){
+			inventory.add(new Key());
+		}
+	}
+	
 	public int numberOfKeys() {
 		int amount = 0;
-		for(Item i: this.inventory){
-			if(i instanceof Key){ amount++;	}
-		}
+		for(Item i: inventory)
+			if(i instanceof Key)
+				amount++;	
 		return amount;
 	}
 
+	
+	
+	/*
+	 *  Boulder
+	 */
+	public boolean addBoulder() {
+		if (hasBoulder)
+			return false;
+		hasBoulder = true;
+		return hasBoulder;
+	}
+	
+	public boolean removeBoulder(){
+		if (!hasBoulder)
+			return false;
+		hasBoulder = false;
+		return true;
+	}
+	
+	public boolean hasBoulder(){
+		return hasBoulder;
+	}
+	
+	
 
+	
+
+	/*
+	 *  Change Level
+	 */
 	public void nextLevel() {
 		levelID++;
 		setLocation(new Point(1, 1));
@@ -136,6 +170,8 @@ public class Player extends Moveable{
 		levelID--; 
 		setLocation(new Point(1, 1));
 	}
+	
+	
 	
 	@Override
 	public String toString() {

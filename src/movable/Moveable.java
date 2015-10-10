@@ -14,8 +14,8 @@ public abstract class Moveable {
 		return this.location;
 	}
 	
-	public boolean setLocation(Point myLocation) {
-		this.location = myLocation;
+	public boolean setLocation(Point location) {
+		this.location = location;
 		return true;
 	}
 }

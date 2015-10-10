@@ -1,22 +1,19 @@
 package tiles;
 
-import movable.Key;
 
 public class Chest extends Unmoveable implements Tile {
 	
-	private Key myKey = new Key("1234", "I'm the key to your heart");
-	private String character = "c";
+	private boolean hasKey;
+	
+	public Chest() {
+		hasKey = true;
+	}
+	
+	
+	
 	
 	@Override
 	public String toString() {
-		return character;
+		return "c";
 	}
-	
-	public Key openChest(){
-		this.character = "C";
-		Key key = myKey;
-		myKey = null;
-		return key;
-	}
-	
 }

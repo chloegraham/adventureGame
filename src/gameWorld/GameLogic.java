@@ -172,13 +172,35 @@ public class GameLogic {
 		}
 		
 		if (interactWith.y < 0 || interactWith.y > level.getTiles().length-1 || interactWith.x < 0 || interactWith.x > level.getTiles()[0].length-1){
-			System.out.println("Stay inside bounds pls");
 			return "Stay inside bounds";
 		}	
 		
 		Tile tile = level.getTiles()[interactWith.y][interactWith.x];
 		
 		if (tile instanceof Chest){
+			Chest chest = (Chest) tile;
+			// is chest open?
+			boolean open = chest.isOpen();
+			// if chest is open - "chest already open"
+			// if chest is closed - "you opened chest"
+			
+			// [chest should now be open]
+			if (open) {
+				boolean isKey = chest.isKey();
+				if (isKey) {
+					player.addKey();
+					chest.removeKey();
+				} else {
+					// no key inside the chest
+				}		
+			} else {
+				// chest is closed and you can't open it and you can't look inside
+			}
+				
+				
+			// is there a key in the chest?
+			// if yes - add the key to player - "you picked up a key"
+			// if no - add NOTHING to the player - "chest is empty"
 			Key key = ((Chest)tile).openChest();
 			if(key != null){
 				player.addToInventory(key);

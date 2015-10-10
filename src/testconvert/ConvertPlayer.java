@@ -39,7 +39,7 @@ public class ConvertPlayer {
 		int keyAmount = player.numberOfKeys();
 		str += keyAmount + "%";
 		
-		int boulder = player.containsBoulder() ? 1 : 0;
+		int boulder = player.hasBoulder() ? 1 : 0;
 		str += boulder + "%";
 		
 		Direction direction = player.getDirection();
