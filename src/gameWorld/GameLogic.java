@@ -53,37 +53,52 @@ public class GameLogic {
 		if(Actions.NORTH.ordinal() == ordinal) {
 			player.setDirection(Direction.NORTH);
 			newLocation = new Point(current.x, current.y-1);
+			boolean success = move(player, level, newLocation);
+			message = Msgs.moveMsg(player.getDirection(), success);
+			
 		}
 		else if (Actions.EAST.ordinal() == ordinal) {
 			player.setDirection(Direction.EAST);
 			newLocation = new Point(current.x+1, current.y);
+			boolean success = move(player, level, newLocation);
+			message = Msgs.moveMsg(player.getDirection(), success);
+			
 		}
 		else if (Actions.SOUTH.ordinal() == ordinal) {
 			player.setDirection(Direction.SOUTH);
 			newLocation = new Point(current.x, current.y+1);
+			boolean success = move(player, level, newLocation);
+			message = Msgs.moveMsg(player.getDirection(), success);
+			
 		}
 		else if (Actions.WEST.ordinal() == ordinal) {
 			player.setDirection(Direction.WEST);
 			newLocation = new Point(current.x-1, current.y);
-	   }
+			boolean success = move(player, level, newLocation);
+			message = Msgs.moveMsg(player.getDirection(), success);
+			
+		}
 		else if (Actions.INTERACT.ordinal() == ordinal) { 
 			message = interact(player, level, current);
+			
+		}
+		else if (Actions.INSPECT.ordinal() == ordinal) { 
+			// TODO need to write inspect()
+			
+			// message = 
+			
+			
 		}
 		else if (Actions.NEWGAME.ordinal() == ordinal) {
 		}
 		else if (Actions.LOAD.ordinal() == ordinal) {
-	    }
+		}
 		else if (Actions.SAVE.ordinal() == ordinal) {
 	    }
 		else {
 			throw new IllegalArgumentException("GameLogic:  received an unexpected ordinal. It might be 'Inspect' which we have't coded yet.");
 		}
 		
-		// Only for Move NOT Interact
-		if (ordinal == Actions.NORTH.ordinal() || ordinal == Actions.SOUTH.ordinal() || ordinal == Actions.WEST.ordinal() || ordinal == Actions.EAST.ordinal()) {
-			boolean success = move(player, level, newLocation);
-			message = Msgs.moveMsg(player.getDirection(), success);
-		}
 		
 		boolean hasBoulder = player.hasBoulder();
 		int keyNumber = player.getNumberOfKeys();
