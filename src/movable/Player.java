@@ -41,7 +41,6 @@ public class Player extends Moveable{
 	}
 	
 	public String getEncodedPlayer() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 	
@@ -57,8 +56,6 @@ public class Player extends Moveable{
 		}
 		return null;
 	}
-	
-	
 	
 	public void createKeys(int amount){
 		for(int i = 0; i < amount; i++){
