@@ -23,7 +23,7 @@ public class Level {
 	
 	private Tile[][] tiles;
 	private Set<Boulder> boulders;
-	private Player[] players;
+	private Set<Player> players;
 	
 	public Level(String encodedLevel) {
 		// Split String up in to x3 Strings which will be converted to char[][]
@@ -133,16 +133,18 @@ public class Level {
 	/*
 	 *  Getter to Remove Players from a Level
 	 */
-	public void removePlayers() {
-		players = null;
+	public void removePlayer(Player player) {
+		boolean success = players.remove(player);
 	}
 	
 	
 	/*
 	 *  Method to Transfer Players between Levels
 	 */
-	public void addPlayers(Player[] players) {
-		this.players = players;
+	public void addPlayer(Player player) {
+		boolean success = players.add(player);
+		if (!success)
+			throw new IllegalArgumentException("Should never be able to add two of the same player to one Level.");
 	}
 	
 	
@@ -200,6 +202,7 @@ public class Level {
 	}
 	
 	private void buildMovables(char[][] movables) {
+		players = new HashSet<>();
 		boulders = new HashSet<>();
 		for (int y = 0; y < height; y++) {
 			for (int x = 0; x < width; x++) {
@@ -259,13 +262,9 @@ public class Level {
 			array[p.y][p.x] = b.toString().charAt(0);
 		}
 		
-		if (players != null) {
-			for (int i = 0; i != players.length; i++) {
-				if (players[i] != null) {
-					Point p = players[i].getLocation();
-					array[p.y][p.x] = players[i].toString().charAt(0);
-				}
-			}
+		for (Player player : players) {
+			Point p = player.getLocation();
+			array[p.y][p.x] = player.toString().charAt(0);
 		}
 		
 		return array;

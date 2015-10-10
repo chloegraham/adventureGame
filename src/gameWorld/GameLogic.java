@@ -109,9 +109,9 @@ public class GameLogic {
 			Door door = (Door) tile;
 			if (!door.isLocked() && door.isLevelChanger()) {
 				if (door.isNextLevel()) {
-					moveNextLevel();
+					moveNextLevel(player);
 				} else {
-					movePrevLevel();
+					movePrevLevel(player);
 				}
 				return true;
 			}
@@ -308,27 +308,29 @@ public class GameLogic {
 		return "temp - tried to interact but came up short - ERROR in game logic";
 	}
 	
-	private void moveNextLevel() {
-		for (int i = 0; i != players.length; i++) {
-			players[i].nextLevel();
-		}
+	private void moveNextLevel(Player p) {
+		int pastLevel = p.getLevelID();
+		p.nextLevel();
+		
 		for (int i = 0; i != levels.length; i++) {
-			if (levels[i].getLevelID() == players[0].getLevelID())
-				levels[i].addPlayers(players);
-			else
-				levels[i].removePlayers();
+			if (levels[i].getLevelID() == p.getLevelID())
+				levels[i].addPlayer(p);
+			
+			if (levels[i].getLevelID() == pastLevel)
+				levels[i].removePlayer(p);
 		}
 	}
 	
-	private void movePrevLevel() {
-		for (int i = 0; i != players.length; i++) {
-			players[i].prevLevel();
-		}
+	private void movePrevLevel(Player p) {
+		int pastLevel = p.getLevelID();
+		p.prevLevel();
+		
 		for (int i = 0; i != levels.length; i++) {
-			if (levels[i].getLevelID() == players[0].getLevelID())
-				levels[i].addPlayers(players);
-			else
-				levels[i].removePlayers();
+			if (levels[i].getLevelID() == p.getLevelID())
+				levels[i].addPlayer(p);
+			
+			if (levels[i].getLevelID() == pastLevel)
+				levels[i].removePlayer(p);
 		}
 	}
 }

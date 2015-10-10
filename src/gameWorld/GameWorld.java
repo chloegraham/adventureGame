@@ -46,8 +46,15 @@ public class GameWorld {
 			}
 		}
 		
-		// TODO testing 
-		levels[0].addPlayers(players);
+		int playerOnelvlID = players[0].getLevelID();
+		int playerTwolvlID = players[1].getLevelID();
+		for (Level l : levels) {
+			if (l.getLevelID() == playerOnelvlID)
+				l.addPlayer(players[0]);
+			if (l.getLevelID() == playerTwolvlID)
+				l.addPlayer(players[1]);
+		}
+			
 		logic = new GameLogic(levels, players);
 	}
 	
@@ -56,25 +63,25 @@ public class GameWorld {
 	
 	public String getEncodedGameWorld(int userID){
 		String str = "";
-		//player.getLevel
+		
+		// Find player using userid
 		Player currentPlayer = null;
-		for(Player p: this.players){
-			if(p.getUserID() == userID){
+		for (Player p : players)
+			if (p.getUserID() == userID)
 				currentPlayer = p;
-			}
-		}
-		if(currentPlayer == null){
+				
+		if(currentPlayer == null)
 			throw new IllegalArgumentException("Passed in userID doesn't belong to a player");
-		}
 
+		// Find level using players levelid
 		int levelID = currentPlayer.getLevelID();
-		for(int i = 0; i < levels.length; i++){
-			if(levels[i].getLevelID() == levelID){
+		
+		// return the encoded level which the player is on
+		for(int i = 0; i < levels.length; i++)
+			if(levels[i].getLevelID() == levelID)
 				return str += levels[i].getEncodedLevel();
-			}
-		} 
+			
 		throw new IllegalArgumentException("No such level that matches player's level");
-		//get the level that the player's on
 	}
 	
 	
