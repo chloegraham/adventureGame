@@ -6,6 +6,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 import userinterface.Action.Actions;
 
@@ -14,7 +15,11 @@ import userinterface.Action.Actions;
  * Organises camera rotation.
  * @author Kirsty
  */
-public class Listener implements KeyListener, ActionListener {
+public class Listener extends JPanel implements KeyListener, ActionListener {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private final UserInterface UI;
 	// Stores the direction the screen is currently being shown at. Key Events are rotated to match, must remain in this order.
 	private final Actions[] ROTATION = new Actions[] { Actions.NORTH, Actions.EAST, Actions.SOUTH, Actions.WEST };
@@ -22,14 +27,16 @@ public class Listener implements KeyListener, ActionListener {
 	
 	private final Actions[] ACTIONS = Actions.values();	// All possible movements the player may make
 	
+	private boolean splashLocked = true;				// Assumes game is displayed, no splash screens.
+	
 	public Listener(UserInterface ui) {
 		this.UI = ui;
 	}
 	
 	/**
-	 * Checks if the user really wants to quit the game and ends the function.
+	 * Checks if the user really wants to quit the game. If so, shuts down the system.
 	 */
-	private void exitGame(){
+	public void exitGame(){
 		int confirm = JOptionPane.showOptionDialog(null,
 				"Are you sure you want to exit the game?\nProgress since last save will be lost.\nConnection to server will be closed.", 
 				"Exit Game", JOptionPane.CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
@@ -38,20 +45,27 @@ public class Listener implements KeyListener, ActionListener {
 		}
 	}
 	
+	/**
+	 * If true, the splash screen will be locked and data will be passed through the server.
+	 * If false, only splash screen actions will be considered.
+	 * Set to true by default.
+	 */
+	public void setSplashLocked(boolean locked){
+		this.splashLocked = locked;
+	}
+	
 	@Override
 	public void keyPressed(KeyEvent e) {
 		int event = e.getKeyCode();
 		
-		// TODO Test code
-		if (event == Actions.TESTA.getKeyCode()){ UI.TESTMETHOD(); }		// Start splash screen test cycle
-		else if (event == Actions.TESTB.getKeyCode()){ UI.setConnectionOpen(); }
-		else if (event == Actions.TESTC.getKeyCode()){ UI.setWaitForPlayer(); }
-		else if (event == Actions.TESTD.getKeyCode()){ UI.setReadyToPlay(); }
-		else if (event == Actions.TESTE.getKeyCode()){ UI.setPlayerDeath(); }
-		
-		
-		if (SplashScreen.getSplashOpen()){ return; }	// Don't do anything if the splash screen is open.
-		
+		/* Splash Screen controls */
+		if (!splashLocked){
+			UI.performKeyPressed(event);
+			return;				// If splash screen is unlocked, prevent any further keys from being used.
+		}
+
+		/* Game controls */
+		// TODO Refactor rotation, change KeyCode inside Action class instead
 		/* First let's check for camera rotations. Does not yet rotate the actual view. */
 		if (Actions.COUNTERCLOCKWISE.getKeyCode() == event){
 			DIR--;
@@ -77,6 +91,7 @@ public class Listener implements KeyListener, ActionListener {
 			}
 		}
 		
+		//TODO Movement keycodes will be changed, they should be checked manually
 		/* All other keys must be sent directly through the server. Find the ordinal and send it. */
 		for (Actions ac : ACTIONS){
 			if (ac.getKeyCode() == event){
@@ -89,12 +104,18 @@ public class Listener implements KeyListener, ActionListener {
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if (SplashScreen.getSplashOpen()){ return; }	// Don't do anything if the splash screen is open.
-		
 		String ac = e.getActionCommand();
+		
+		/* Splash screen controls */
+		if (!splashLocked){
+			UI.performSplashActionCommand(ac);
+			return;				// If splash screen is unlocked, prevent any further keys from being used.
+		}
+		
+		/* Game controls */
 		if (ac.equals("Save")){ UI.sendUIAction(Actions.SAVE.ordinal()); }
 		else if (ac.equals("Load")){ UI.sendUIAction(Actions.LOAD.ordinal()); }
-		if (ac.equals("Exit")){ exitGame(); }
+		else if (ac.equals("Exit")){ exitGame(); }
 	}
 
 	@Override
