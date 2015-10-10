@@ -47,7 +47,19 @@ public final class Iso {
         char[][] ret = new char[N][M];
         for (int r = 0; r < M; r++) {
             for (int c = 0; c < N; c++) {
-                ret[c][M-1-r] = mat[r][c];
+            	   	
+                ret[c][M-1-r] = mat[r][c];           
+                
+                //Rotating the player dirrection tiles as well
+                if(mat[r][c] == 'I'){ ret[c][M-1-r] = 'L';}
+            	if(mat[r][c] == 'L'){ ret[c][M-1-r] = 'K';}
+            	if(mat[r][c] == 'K'){ ret[c][M-1-r] = 'J';}
+            	if(mat[r][c] == 'J'){ ret[c][M-1-r] = 'I';}
+            	
+            	if(mat[r][c] == 'i'){ ret[c][M-1-r] = 'l';}
+            	if(mat[r][c] == 'l'){ ret[c][M-1-r] = 'k';}
+            	if(mat[r][c] == 'k'){ ret[c][M-1-r] = 'j';}
+            	if(mat[r][c] == 'j'){ ret[c][M-1-r] = 'i';}
             }
         }
         return ret;
