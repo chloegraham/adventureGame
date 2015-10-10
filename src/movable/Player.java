@@ -110,11 +110,15 @@ public class Player extends Moveable{
 	/*
 	 *  Key
 	 */
+	public boolean addKey() {
+		return inventory.add(new Key());
+	}
+	
 	public Key getKey(){
-		if (inventory.isEmpty())
-			return null;
-		Key key =  (Key) inventory.remove(0);
-		return key;
+		for(Item i: inventory)
+			if(i instanceof Key)
+				return (Key) i;
+		return null;
 	}
 	
 	public void createKeys(int amount){

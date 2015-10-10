@@ -183,13 +183,13 @@ public class GameLogic {
 			boolean open = chest.isOpen();
 			// if chest is open - "chest already open"
 			// if chest is closed - "you opened chest"
-			
+			chest.open();
 			// [chest should now be open]
 			if (open) {
-				boolean isKey = chest.isKey();
+				boolean isKey = chest.hasKey();
 				if (isKey) {
 					player.addKey();
-					chest.removeKey();
+					chest.takeKey();
 				} else {
 					// no key inside the chest
 				}		
