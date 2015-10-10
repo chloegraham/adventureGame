@@ -8,7 +8,7 @@ public class Door extends Unmoveable implements Tile {
 	private boolean levelChanger = false;
 	private boolean nextLevel = true;
 	
-	private Key key = new Key("1234", "I'm the key to your heart");
+	private Key key = new Key();
 
 	public boolean isLocked(){
 		return locked;

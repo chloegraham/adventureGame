@@ -72,7 +72,28 @@ public class Level {
 	 *  Getters for GameLogic
 	 */
 	public Tile[][] getTiles() { return tiles; }
+	
+	
+	
+	/*
+	 *  Boulder methods
+	 */
 	public Set<Boulder> getBoulders(){ return boulders;}
+	
+	public void addBoulder(Boulder boulder) {
+		boolean success = boulders.add(boulder);
+		if (!success)
+			throw new IllegalArgumentException("Invalid to add a Boulder that is already in Boulder set. Investigate how this was possible.");
+	}
+	
+	public boolean removeBoulder(Boulder boulder) {
+		return boulders.remove(boulder);
+	}
+	
+	public boolean containsBoulder(Boulder boulder) {
+		return boulders.contains(boulder);
+	}
+	
 	
 	
 	/*
@@ -249,7 +270,4 @@ public class Level {
 		
 		return array;
 	}
-
-
-	
 }

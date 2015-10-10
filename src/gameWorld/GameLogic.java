@@ -3,8 +3,6 @@ package gameWorld;
 import java.awt.Point;
 
 import movable.Boulder;
-import movable.Item;
-import movable.Key;
 import movable.Player;
 import testconvert.ConvertAction;
 import tiles.Chest;
@@ -117,6 +115,7 @@ public class GameLogic {
 				}
 				return true;
 			}
+			// TODO something missing here. a return false????
 		}
 		
 		
@@ -138,10 +137,6 @@ public class GameLogic {
 			}
 		}
 		else if (tile instanceof Spikes){
-		//player can't walk onto spikes if active
-		  /*if(((Spikes)tile).isActive()){
-			  return false;
-		  } */
 			((Spikes)tile).activate();
 		}
 		return player.setLocation(newLoc);		
@@ -172,20 +167,29 @@ public class GameLogic {
 		}
 		
 		if (interactWith.y < 0 || interactWith.y > level.getTiles().length-1 || interactWith.x < 0 || interactWith.x > level.getTiles()[0].length-1){
-			return "Stay inside bounds";
+			return "temp - you are trying to interact with a tile outside the bounds of the game.";
 		}	
 		
 		Tile tile = level.getTiles()[interactWith.y][interactWith.x];
 		
+		
+		/*
+		 *  Chest interaction code & messages
+		 */
 		if (tile instanceof Chest){
 			Chest chest = (Chest) tile;
 			// is chest open?
 			boolean open = chest.isOpen();
 			// if chest is open - "chest already open"
 			// if chest is closed - "you opened chest"
+			
+			// try open is not opened already (if is open already nothing bad will happen)
 			chest.open();
-			// [chest should now be open]
-			if (chest.isOpen()) {
+			
+			// [chest should now be open unless we add more game logic/chest logic in the future]
+			boolean opened = chest.isOpen();
+			
+			if (opened) {
 				boolean isKey = chest.hasKey();
 				if (isKey) {
 					player.addKey();
@@ -193,75 +197,88 @@ public class GameLogic {
 				} else {
 					// no key inside the chest
 				}		
-			} else {
-				// chest is closed and you can't open it and you can't look inside
 			}
 				
 			// OPEN
-			// Chest already open
-			// You opened the Chest
+			// true - "Chest already open"
+			// false - "You opened the Chest"
 				
+			// OPENED
+			// true - no comment needed
+			// false - chest is closed and you can't open it and you can't look inside
 			
 			
-			
-			
-			// is there a key in the chest?
-			// if yes - add the key to player - "you picked up a key"
-			// if no - add NOTHING to the player - "chest is empty"
-			Key key = ((Chest)tile).openChest();
-			if(key != null){
-				player.addToInventory(key);
-				return ConvertAction.openChestMsg(false, true, player.numberOfKeys());
-			}
-			return ConvertAction.openChestMsg(false, false, player.numberOfKeys());
+			// ISKEY
+			// true - "there is a key inside & player has picked it up"
+			// false - "there is no key inside this chest"	
+			return "temp chest message";
 		} 
-		else if (tile instanceof Door){
+		
+		
+		/*
+		 *  Door interaction code & message
+		 */
+		if (tile instanceof Door){
 			((Door) tile).openDoor(player.getKey());
-			return ConvertAction.openDoorMsg(false, true, player.numberOfKeys());
+			return "temp Somthing happened with a Door? I hope?";
 		}
 		
-		if (player.containsBoulder()){
-			if(tile instanceof EmptyTile || tile instanceof PressurePad){
-				System.out.println("Trying to drop a boulder on an empty tile or pressure pad..");
-				for(Item i: player.getInventory()){
-					if(i instanceof Boulder){
-						if(level.getTiles()[interactWith.y][interactWith.x] instanceof EmptyTile || level.getTiles()[interactWith.y][interactWith.x] instanceof PressurePad){
-							for (Boulder j : level.getBoulders()){
-								if (j.getLocation().equals(interactWith)){
-									System.out.println("Boulders don't do incest");
-									return ConvertAction.boulderMsg(false, player.containsBoulder());
-								}
-							}
-							if(tile instanceof PressurePad){
-								((PressurePad) tile).activate();
-							}
-							((Boulder) i).setLocation(interactWith);
-							level.getBoulders().add((Boulder) i);
-							player.removeBoulder();
-							System.out.println("dropped boulder");
-							return ConvertAction.boulderMsg(false, player.containsBoulder());
-						}
-					}
-				}
-				System.out.println("shame you aint got no boulder bitch");
+		
+		/*
+		 *  Boulder interaction code & message
+		 */
+		
+		// BOULDER SITUATIONS
+		
+		if (!player.hasBoulder()) {
+			boolean facingBoulder = level.removeBoulder(new Boulder(interactWith));
+			if (!facingBoulder)
+				return "";
+			player.addBoulder();
+			return "temp pickup a boulder";
+		}
+			
+		if (player.hasBoulder()) {
+			boolean facingBoulder = level.containsBoulder(new Boulder(interactWith));
+			if (facingBoulder) {
+				return "you already have a boulder and can't pick up another";
+			}
+			if (tile instanceof EmptyTile) {
+				level.addBoulder(new Boulder(interactWith));
+				player.removeBoulder();
+				return "you dropped a boulder on an empty tile";
+			}
+			if (tile instanceof PressurePad) {
+				level.addBoulder(new Boulder(interactWith));
+				player.removeBoulder();
+				PressurePad pad = (PressurePad) tile;
+				pad.activate();
+				return "you dropped a boulder on a pressurepad";
 			}
 		}
+			
+		// standing facing a boulder
+		// HASBOULDER 
+		// true - "you already have a Boulder, you can't pick up another" [do nothing]
+		// false - "You picked up a boulder" [pick up boulder]
 		
-		if (player.containsBoulder()){
-			return "boulder";
-		} else {
-			//pick up boulder if one is in front of player
-			for(Boulder b: level.getBoulders()){
-				if(b.getLocation().equals(interactWith)){
-					System.out.println("picking up boulder, id = " + b.getId());
-					player.addToInventory(b);
-					//now remove the boulder from the list so that it can't be redrawn/picked up again
-					level.getBoulders().remove(b);
-					return ConvertAction.boulderMsg(true, player.containsBoulder());
-				}
-			}
-		}	
-		return ConvertAction.inspectMsg();
+		
+		// standing facing a wall
+		// HASBOULDER
+		// true -  "you can't put a boulder in a wall / you have no room to put boulder down" [do nothing]
+		// false - [do nothing]
+		
+		
+		// standing facing empty tile
+		// HASBOULDER
+		// true - "you put a boulder down" [put boulder down]
+		// false - [do nothing]
+		
+		
+		// can only put boulder down on:
+		// empty, pressure pad
+		
+		return "temp - tried to interact but came up short - ERROR in game logic";
 	}
 	
 	private void moveNextLevel() {
