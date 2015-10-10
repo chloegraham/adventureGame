@@ -3,6 +3,7 @@ package convertors;
 import gameWorld.Direction;
 
 public class Msgs {
+	
 	private String decodedMessages;
 	
 	public String getDecoded() { return decodedMessages; }
@@ -32,6 +33,7 @@ public class Msgs {
 			decodedMessages += line4 + "\n";
 		}
 	}
+	
 	
 	
 	public static final int PLAYER_ONE = 101;
@@ -80,6 +82,8 @@ public class Msgs {
 		return str;
 	}
 	
+	
+	
 	public static String boulderMsg(boolean pickup, boolean carrying) {
 		String str = "";
 		if (pickup) {
@@ -93,6 +97,8 @@ public class Msgs {
 		str += Msgs.DELIM_SPLIT;
 		return str;
 	}
+	
+	
 	
 	public static String doorMsg(boolean isLocked, boolean hasKey) {
 		String str = "";
