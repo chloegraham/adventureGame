@@ -33,7 +33,8 @@ public class Action {
 		NORTH (KeyEvent.VK_W),
 		EAST (KeyEvent.VK_D),
 		SOUTH (KeyEvent.VK_S),
-		WEST (KeyEvent.VK_A);
+		WEST (KeyEvent.VK_A),
+		NEW (KeyEvent.VK_N);
 
 		private int keyCode;			// KeyEvent.VK_EVENT
 		

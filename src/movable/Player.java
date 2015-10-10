@@ -6,68 +6,47 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 
-import testenums.MsgDirection;
-
 public class Player extends Moveable{
 
 	private Direction direction = Direction.NORTH; //String representing which direction player is facing
 	private List<Item> inventory = new ArrayList<Item>();
 	private boolean onPressurePad = false;
 	private boolean hasBoulder = false;
-	private int UID;
+	private int userID;
+	private int levelID;
 	
 	public Player(Point location) {
 		this(location, "i");
 	}
 	
 	public Player(Point location, String c) {
-		super(location, c);
+		super(location);
 	}
 	
 	//open a saved game
-	public Player(int uid, int keyAmount, boolean boulder,
+	public Player(int userID, int levelID, int keyAmount, boolean boulder,
 			Direction direction2, Point point) {
-		super(point, "i");
-		this.UID = uid;
+		super(point);
+		this.userID = userID;
+		this.levelID = levelID;
 		createKeys(keyAmount);
 		this.hasBoulder = boulder;
 		this.direction = direction2;
 	}
 
-	@Override
-	public String toString() {
-		switch (this.direction) {
-		case NORTH:
-			if(hasBoulder) return "I";
-			else return "i";
-		case SOUTH:
-			if(hasBoulder) return "K";
-			else return "k";
-		case EAST:
-			if(hasBoulder) return "L";
-			else return "l";
-		default:
-			if(hasBoulder) return "J";
-			else return "j";
-		}
-	}
+	public int getLevelID() { return levelID; }
 	
 	public Direction getDirection() {
 		return direction;
 	}
 	
-	public void createKeys(int amount){
-		for(int i = 0; i < amount; i++){
-			addToInventory(new Key("110", "I'm a good key"));
-		}
-	}
-
-	public void setDirection(Direction direction) {
-		this.direction = direction;
+	public String getEncodedPlayer() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
-	public int getUID() {
-		return this.UID;
+	public int getUserID() {
+		return this.userID;
 	}
 
 	public Key getKey(){
@@ -77,6 +56,18 @@ public class Player extends Moveable{
 			}
 		}
 		return null;
+	}
+	
+	
+	
+	public void createKeys(int amount){
+		for(int i = 0; i < amount; i++){
+			addToInventory(new Key("110", "I'm a good key"));
+		}
+	}
+
+	public void setDirection(Direction direction) {
+		this.direction = direction;
 	}
 	
 	public void removeBoulder(){
@@ -133,5 +124,34 @@ public class Player extends Moveable{
 			if(i instanceof Key){ amount++;	}
 		}
 		return amount;
+	}
+
+
+	public void nextLevel() {
+		levelID++;
+		setLocation(new Point(1, 1));
+	}
+	
+	public void prevLevel() {
+		levelID--; 
+		setLocation(new Point(1, 1));
+	}
+	
+	@Override
+	public String toString() {
+		switch (this.direction) {
+		case NORTH:
+			if(hasBoulder) return "I";
+			else return "i";
+		case SOUTH:
+			if(hasBoulder) return "K";
+			else return "k";
+		case EAST:
+			if(hasBoulder) return "L";
+			else return "l";
+		default:
+			if(hasBoulder) return "J";
+			else return "j";
+		}
 	}
 }

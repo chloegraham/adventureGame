@@ -1,20 +1,12 @@
 package gameWorld;
 
 import java.awt.Point;
-import java.io.File;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Scanner;
 import java.util.Set;
 
-import javax.management.RuntimeErrorException;
-
 import movable.Boulder;
-import movable.Item;
-import movable.Key;
-import movable.Moveable;
 import movable.Player;
+import testconvert.Messages;
 import tiles.Chest;
 import tiles.Door;
 import tiles.EmptyTile;
@@ -25,199 +17,239 @@ import tiles.Unmoveable;
 import tiles.Wall;
 
 public class Level {
-	
+	private int levelID;
 	private int width;
 	private int height;	
-	private Player player;
+	
 	private Tile[][] tiles;
 	private Set<Boulder> boulders;
+	private Player[] players;
 	
-	public Level(int height, int width, Scanner sc) {
+	public Level(String encodedLevel) {
+		// Split String up in to x3 Strings which will be converted to char[][]
+		String[] layers = encodedLevel.split("@");
+			
+		// Split up the 2d-char[][] in to 1d-char[] (they are still Strings at the moment)
+		String[] subLayers1 = layers[0].split("%");
+		String[] subLayers2 = layers[1].split("%");
+		String[] subLayers3 = layers[2].split("%");
+		levelID = Integer.parseInt(layers[3]);
+			
+		char[][] level;
+		char[][] objects;
+		char[][] movables;
 		
-		this.width = width;
-		this.height = height;
-		this.tiles = new Tile[width][height];
-		this.boulders = new HashSet<Boulder>();
-		setupTiles(sc);
-		setupMovables();
-		joinObjects();
-		//System.out.println(tiles.toString());
-	}
-
-	private void joinObjects() {
-		List<PressurePad> pads = new ArrayList<PressurePad>();
-		List<Door> doors = new ArrayList<Door>();
-		// Link pressure pads to their doors
-		for(int i = 0; i < tiles.length; i++) {
-			for(int j = 0; j < tiles[0].length; j++) {
-				Tile tile = tiles[i][j];
-				if (tile instanceof PressurePad) {
-					pads.add((PressurePad) tile);
-				} else if(tile instanceof Door){
-					doors.add((Door)tile);
-				}
-			}
-		}
-		for(PressurePad p: pads){
-			if(doors.size() > 0){
-				p.setDoor(doors.remove(doors.size()-1));
-			}
-		}
-	}
-
-	@SuppressWarnings("resource")
-	public static Level parseLevel(String filename) {
+		// Now build the actual 2d-char[][] from the broken down Strings
+		level = new char[subLayers1.length][];
+		for (int x = 0; x < level.length; x++)
+			level[x] = subLayers1[x].toCharArray();
 		
-		Scanner sc;
-		//InputStream input = Board.class.getClassLoader().getResourceAsStream(filename);
-		try {
-			sc = new Scanner(new File(filename));
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new RuntimeException(
-					"Dun dun dunnn, could not parse: File not found!!");
-		}
-		//sc.useDelimiter(";");		
-		int width;
-		int height;
-		try{
-			height = sc.nextInt();
-			width = sc.nextInt();
-			System.out.println(width + " - width ; " + height + " height" );
-		} catch (RuntimeException e1){
-			throw new RuntimeErrorException(
-					null, "Couldn't parse dimensions of board");
-		}
-		Level level = new Level(width, height, sc);
-		sc.close();	
-		return level;
-	}
-	
-	private void setupTiles(Scanner sc) {
+		objects = new char[subLayers2.length][];
+		for (int x = 0; x < objects.length; x++)
+			objects[x] = subLayers2[x].toCharArray();
 		
-		for (int i = 0; i < this.width; i++){
-			for(int j = 0; j < this.height; j++){
-				if(sc.hasNext()){
-					String temp = sc.next();
-					if(temp.equals("e")){
-						tiles[i][j] = new EmptyTile();
-					}
-					else if(temp.equals("w")){
-						tiles[i][j] = new Wall();
-					}
-					else if(temp.equals("d")){
-						tiles[i][j] = new Door();
-					}
-					else if(temp.equals("c")){
-						tiles[i][j] = new Chest();
-					}
-					else if(temp.equals("z")){
-						tiles[i][j] = new PressurePad(); 
-					}
-					else if(temp.equals("s")){
-						tiles[i][j] = new Spikes();
-					}
+		movables = new char[subLayers3.length][];
+		for (int x = 0; x < movables.length; x++)
+			movables[x] = subLayers3[x].toCharArray();
+		
+		setupTiles(level);
+		
+		buildLevel(level);
+		buildObjects(objects);
+		buildMovables(movables);
+	}
+	
+	
+	/*
+	 *  Getter LevelID
+	 */
+	public int getLevelID() {
+		return levelID;
+	}
+	
+	
+	/*
+	 *  Getters for GameLogic
+	 */
+	public Tile[][] getTiles() { return tiles; }
+	public Set<Boulder> getBoulders(){ return boulders;}
+	
+	
+	/*
+	 *  Getter for GameWorld
+	 */
+	public String getEncodedLevel() {
+		char[][] level = getLevel();
+		char[][] objects = getObjects();
+		char[][] movables= getMovables();
+		
+		StringBuilder sb = new StringBuilder();
+		for (int x = 0; x < level.length; x++) {
+			sb.append(level[x]);
+			sb.append('%');
+		}
+		sb.append('@');
+		
+		for (int x = 0; x < objects.length; x++) {
+			sb.append(objects[x]);
+			sb.append('%');
+		}
+		sb.append('@');
+		
+		for (int x = 0; x < movables.length; x++) {
+			sb.append(movables[x]);
+			sb.append('%');
+		}
+		sb.append('@');
+		sb.append(levelID);
+		sb.append('@');
+		return sb.toString() +
+			   Messages.DELIM_LEVEL +
+			   Messages.DELIM_SPLIT;
+	}
+	
+	
+	/*
+	 *  Getter to Remove Players from a Level
+	 */
+	public void removePlayers() {
+		players = null;
+	}
+	
+	
+	/*
+	 *  Method to Transfer Players between Levels
+	 */
+	public void addPlayers(Player[] players) {
+		this.players = players;
+	}
+	
+	
+	/*
+	 *  Initialization methods in Level Constructor
+	 */
+	private void setupTiles(char[][] level) {
+		width = level[0].length;
+		height = level.length;
+		tiles = new Tile[height][width];
+	}
+	
+	private void buildLevel(char[][] level) {
+		for (int y = 0; y < height; y++) {
+			for (int x = 0; x < width; x++) {
+				String temp = Character.toString((level[y][x]));
+				if(temp.equals("e")){
+					tiles[y][x] = new EmptyTile();
 				}
-			}
-		}
-	}
-	
-	private void setupMovables() {
-		this.player = new Player(new Point (2, 2));
-		this.boulders.add(new Boulder(new Point(2,4), "i'm mr boul", "not so special"));
-		//this.boulders.add(new Boulder(new Point(0,3), "i'm mr boul", "i'm a very special lady"));
-	}
-	
-	public String toStringss() {
-		String rtn = "";
-		for (int i = 0; i < tiles.length; i++) {
-			for (int j = 0; j < tiles[i].length; j++) {
-				try {
-					rtn += tiles[i][j] + " ";
-				} catch (NullPointerException e) {
+				else if(temp.equals("w")) {
+					tiles[y][x] = new Wall();
 				}
+				else if(temp.equals("n")) {
+					// 'n' is fine because it is a substitute for null
+				}
+				else
+					throw new RuntimeException();
 			}
-			rtn += "\n";
 		}
-		return rtn;
 	}
 	
-	public Player getPlayer(){
-		return this.player;
-	}
-	
-	public Tile[][] getTiles(){
-		return this.tiles;
-	}
-	
-	public Set<Boulder> getBoulders(){
-		return this.boulders;
-	}
-	
-	public char[][] getCharArray() {
-		char[][] newArray = new char[tiles.length][tiles[0].length];
-		for (int i = 0; i < tiles.length; i++) {
-			for (int j = 0; j < tiles[0].length; j++) {
-				newArray[i][j] = tiles[i][j].toString().charAt(0);
+	private void buildObjects(char[][] objects) {
+		for (int y = 0; y < height; y++) {
+			for (int x = 0; x < width; x++) {
+				String temp = Character.toString((objects[y][x]));
+				if (temp.equals("d")){
+					tiles[y][x] = new Door();
+				}
+				else if (temp.equals("c")) {
+					tiles[y][x] = new Chest();
+				}
+				else if (temp.equals("z")){
+					tiles[y][x] = new PressurePad();
+				}
+				else if (temp.equals("s")) {
+					tiles[y][x] = new Spikes();
+				}
+				else if (temp.equals("n")) {
+					// 'n' is fine because it is a substitute for null
+				}
+				else
+					throw new RuntimeException();
 			}
-		}		
-		//overwrite char in array with boulder
-		for(Boulder b: this.boulders){
-			Point boulderPoint = b.getLocation();
-			newArray[boulderPoint.y][boulderPoint.x] = b.toString().charAt(0);
 		}
-		Point loc = this.player.getLocation();
-		newArray[loc.y][loc.x] = this.player.toString().charAt(0);
-		return newArray;
 	}
-
-	public char[][] getStaticLevel() {
-		char[][] staticTiles = new char[this.tiles.length][this.tiles[0].length];
-		for (int i = 0; i < tiles.length; i++) {
-			for (int j = 0; j < tiles[0].length; j++) {
-				Tile temp = this.tiles[i][j];
+	
+	private void buildMovables(char[][] movables) {
+		boulders = new HashSet<>();
+		for (int y = 0; y < height; y++) {
+			for (int x = 0; x < width; x++) {
+				String temp = Character.toString((movables[y][x]));
+				if(temp.equals("b"))
+					boulders.add(new Boulder(new Point(x, y)));
+			}
+		}
+	}
+	
+	
+	
+	/*
+	 *  Helper methods for 'getLevelState()'
+	 */
+	private char[][] getLevel() {
+		char[][] array = new char[height][width];
+		for (int i = 0; i < height; i++) {
+			for (int j = 0; j < width; j++) {
+				Tile temp = tiles[i][j];
 				if(temp instanceof EmptyTile || temp instanceof Wall){
-					staticTiles[i][j] = temp.toString().charAt(0);
+					array[i][j] = temp.toString().charAt(0);
 				}
 				else{
-					staticTiles[i][j] = 'e';
+					array[i][j] = 'e';
 				}
 			}
 		}
-		return staticTiles;
+		return array;
 	}
 
-	public char[][] getStateLevel() {
-		
-		char[][] unmoveableTiles = new char[this.tiles.length][this.tiles[0].length];
-		for (int i = 0; i < tiles.length; i++) {
-			for (int j = 0; j < tiles[0].length; j++) {
-				Tile temp = this.tiles[i][j];
+	private char[][] getObjects() {
+		char[][] array = new char[height][width];
+		for (int i = 0; i < height; i++) {
+			for (int j = 0; j < width; j++) {
+				Tile temp = tiles[i][j];
 				if(temp instanceof Unmoveable){
-					unmoveableTiles[i][j] = temp.toString().charAt(0);
+					array[i][j] = temp.toString().charAt(0);
 				}
 				else{
-					unmoveableTiles[i][j] = 'n';
+					array[i][j] = 'n';
 				}
 			}
 		}	
-		return unmoveableTiles;
+		return array;
 	}
 
-	public char[][] getMoveableLevel() {
-		
-		char[][] moveableTiles = new char[this.tiles.length][this.tiles[0].length];
-		for (int i = 0; i < tiles.length; i++) {
-			for (int j = 0; j < tiles[0].length; j++) {
-				moveableTiles[i][j] = 'n';
+	private char[][] getMovables() {
+		char[][] array = new char[height][width];
+		for (int i = 0; i < height; i++) {
+			for (int j = 0; j < width; j++) {
+				array[i][j] = 'n';
 			}
 		}	
 		for (Boulder b : boulders) {
 			Point p = b.getLocation();
-			moveableTiles[p.y][p.x] = b.toString().charAt(0);
+			array[p.y][p.x] = b.toString().charAt(0);
 		}
-		Point p = player.getLocation();
-		moveableTiles[p.y][p.x] = player.toString().charAt(0);
-		return moveableTiles;
+		
+		if (players != null) {
+			for (int i = 0; i != players.length; i++) {
+				if (players[i] != null) {
+					Point p = players[i].getLocation();
+					array[p.y][p.x] = players[i].toString().charAt(0);
+				}
+			}
+		}
+		
+		return array;
 	}
+
+
+	
 }

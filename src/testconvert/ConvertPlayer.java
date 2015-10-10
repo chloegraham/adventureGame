@@ -11,26 +11,30 @@ public class ConvertPlayer {
 	public static Player toPlayer(String stmt) {
 		String[] parts = stmt.split("%");
 		
-		int uid = Integer.parseInt(parts[0]);
-		int keyAmount = Integer.parseInt(parts[1]);
-		boolean boulder = Integer.parseInt(parts[2]) == 1;
+		int userID = Integer.parseInt(parts[0]);
+		int levelID = Integer.parseInt(parts[1]);
+		int keyAmount = Integer.parseInt(parts[2]);
+		boolean boulder = Integer.parseInt(parts[3]) == 1;
 		
-		Direction direction = Direction.getMsg( Integer.parseInt(parts[3]) );
+		Direction direction = Direction.getMsg( Integer.parseInt(parts[4]) );
 		
-		int x = Integer.parseInt(parts[4]);
-		int y = Integer.parseInt(parts[5]);
+		int x = Integer.parseInt(parts[5]);
+		int y = Integer.parseInt(parts[6]);
 		Point point = new Point(x, y);
 		
-		System.out.println(uid + " " + keyAmount + " " + boulder + " " +  direction + " " + point);
-		Player player = new Player(uid, keyAmount, boulder, direction, point);
+		System.out.println(userID + " " + levelID + " " + keyAmount + " " + boulder + " " +  direction + " " + point);
+		Player player = new Player(userID, levelID, keyAmount, boulder, direction, point);
 		return player;
 	}
 	
 	public static String fromPlayer(Player player) {
 		String str = "";
 		
-		int uid = player.getUID();
-		str += uid + "%";
+		int userID = player.getUserID();
+		str += userID + "%";
+		
+		int levelID = player.getLevelID();
+		str += levelID + "%";
 		
 		int keyAmount = player.numberOfKeys();
 		str += keyAmount + "%";
@@ -48,14 +52,7 @@ public class ConvertPlayer {
 		int y = point.y;
 		str += y + "%";
 		
-		str += "<Play>";
+		str += Messages.DELIM_PLAYER;
 		return str;
-	}
-	
-	private static String gobble(String stmt, String prefix) {
-		if (stmt.startsWith(prefix)) 
-			return stmt.substring(prefix.length());
-		else 
-			throw new IllegalArgumentException("gobble(stmt,prefix) - Grammer of " + stmt + " suppose to contain " + prefix + " but didn't.");
 	}
 }

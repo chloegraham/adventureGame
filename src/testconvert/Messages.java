@@ -33,6 +33,8 @@ public class Messages {
 	
 	public static final String DELIM_SPLIT = "<Split>";
 	public static final String DELIM_MSG = "<Msg>";
+	public static final String DELIM_PLAYER = "<Player>";
+	public static final String DELIM_LEVEL = "<Level>";
 	
 	public static final String PICK = "You picked up a ";
 	public static final String NOPICK = "You can't pick up a ";

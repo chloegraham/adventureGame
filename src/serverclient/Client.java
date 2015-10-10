@@ -8,75 +8,127 @@ import java.net.Socket;
 
 import testconvert.Layers;
 import testconvert.Messages;
+import userinterface.Action.Actions;
 import userinterface.UserInterface;
 
+/**
+ * Opens the Users UserInterface and connects to the Game Server.
+ * 
+ * @author benscully
+ */
 public class Client implements Runnable {
-	private String host;
-	private int port;
-	private Socket connection;
-	private InetAddress address;
 	
+	// Server address details
+	private String host = "localhost";
+	private int  port = 19999;
+	private InetAddress address; 
+	
+	// Socket & Streams for sending/receiving data to the Server
+	private Socket clientSocket;
 	private DataOutputStream output;
 	private DataInputStream input;
 	
+	// UserID of both the Client and the UI - Server sets UserID later on
+	private int userID;
 	private UserInterface ui;
 	
-	public Client() {
-		ui = new UserInterface(this);
+	
+	// TODO just for testing
+	private String hostORguest = "n/a";  	// TODO put this inside run() once it's no longer used for testing
+	private int testID;						// TODO remove 'testID' field & @param once testing finished
+	public Client(int test) {
+		testID = test;
 	}
+	
+
 	
 	public void run() {
-	    host = "localhost";  // Define a host server
-	    port = 19999;	// Define a port
-	 
 	    try {
-	    	System.out.println("CLIENT: SocketClient initialized");	// Try and connect to the Server
-	        address = InetAddress.getByName(host);	// Obtain an address object of the server
-	        connection = new Socket(address, port); // Establish a socket connection 
-	        System.out.println("CLIENT: I've connected to the Server :)"); 
-	        
-	    	output = new DataOutputStream(connection.getOutputStream());
-	    	input = new DataInputStream(connection.getInputStream());
- 
-	    	while (input.available() == 0) {
-	    	}
-	    	// Get initial GameState from Server
-	    	System.out.println("CLIENT: Waiting for initial GameState from Server");
-			clientDecode();
-			System.out.println("CLIENT: I should have printed the initial GameState by now.");
+	    	// Open the UserInterface and tell the User/Player they are "waiting to connect to Server"
+	    	ui = new UserInterface(this);
+	    	System.out.println(toString());
 	    	
-	   } catch (IOException f) {
-		   System.out.println("IOException: " + f);
-	   } 
+	    	
+	    	
+	    	// Try and connect to Server
+	    	address = InetAddress.getByName(host);	
+	    	clientSocket = new Socket(address, port); 
+	    	System.out.println(toString());
+	    	
+	    	
+	    	
+	    	// create DataStream for communicating with the Server
+	    	output = new DataOutputStream(clientSocket.getOutputStream());
+	    	input = new DataInputStream(clientSocket.getInputStream());
+	    	System.out.println(toString());
+	    	
+	    	
+	    	
+	    	/*
+	    	 *  Server will send one Client "host".
+	    	 *  If Client receives "host" then they are Player ONE and the host with access to the menu
+	    	 *  BUT need to handle the fact that "host" message might never come
+	    	 *  If doesn't contain "host" if will be a game render
+	    	 */
+	    	hostORguest = input.readUTF();
+	    	
+	    	if (hostORguest.equals("host"))
+	    		userID = Server.PLAYER_ONE;
+	    	else if (hostORguest.equals("guest")) 
+	    		userID = Server.PLAYER_TWO;
+	    	else 
+	    		throw new IllegalArgumentException("Expected host or guest");
+	    	
+	    	ui.setUserID(userID);
+    		output.writeUTF(hostORguest);
+	    	
+    
+	    	
+	    	/*
+	    	 *  Listen for Renders of the GameWorld
+	    	 */
+	    	while (true)
+		    	decodePassGameToUI();
+	    	
+	    	
+	   } catch (IOException e) {
+		   e.printStackTrace();
+	   } finally {
+		   System.out.println(toString() + " finally.");
+		   try {
+			   clientSocket.close();
+		   } catch (IOException e) { e.printStackTrace(); }
+	   }
 	}
 	
-	public void passClientAction(int action) {
+	
+	
+	/**
+	 * @param ordinal of the Actions Enum (e.g. Move.West, Interact)
+	 */
+	public void handleAction(int ordinal) {
 		try {
-			while (output == null) {
-			}
-			
-			output.writeInt(action);
-			System.out.println("CLIENT: -- Action sent --- It was (" + action + ") now wait");
-			
-			System.out.println("CLIENT: Waiting for Game State from the Server");
-			clientDecode();
-			System.out.println("CLIENT: ------------ Here is the Game State from the Server");
-		
-		} catch (IOException f) {
-			System.out.println("IOException: " + f);
+			handleAction(ordinal, userID);
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 	
-	private void clientDecode() {
+	
+	
+	// Manage some rules before sending to the Server
+	private void handleAction(int ordinal, int userID) throws IOException {
+		if (ordinal == Actions.LOAD.ordinal() || ordinal == Actions.NEW.ordinal())
+			if (userID != Server.PLAYER_ONE && this.userID != Server.PLAYER_ONE)
+				throw new IllegalArgumentException("Only player one should be able to Start a NewGame or Load a Game.");
+		output.writeUTF("<action>" + ordinal);
+	}
+	
+	
+	
+	private void decodePassGameToUI() {
 		try {
 			String encodedInput = input.readUTF();
-			// I'll receive an ENCODED String from the Server
-			// ENCODED either: levelImage & message
-			//				   levelImage & message & keyUpdate	
-			// Client decode
-			// x3 splits = levelImage & message & keyUpdate
-			// x2 splits = levelImage & message
-			// x1 splits = levelImage
 			
 			String[] encodedSplit = encodedInput.split("<Split>");
 			
@@ -105,5 +157,14 @@ public class Client implements Runnable {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	
+	
+	@Override
+	public String toString() {
+		if (clientSocket == null)
+			return "*** Client( testid-" +testID+ "  userid-" +userID+ "):    socketStatus- null    isHost?- " +hostORguest;
+		return "*** Client( testid-" +testID+ "  userid-" +userID+ "):    socketStatus- " +clientSocket.getPort()+"/"+clientSocket.getLocalPort()+ "    isHost?- " +hostORguest;
 	}
 }
