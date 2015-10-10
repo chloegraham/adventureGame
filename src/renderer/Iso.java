@@ -15,10 +15,12 @@ public final class Iso {
     	cameraOffset = camPoint;
     }
 
-    public static void isoTo2d(Point iso){
-
-    }
-
+    
+    /**
+     * Converts a 2d Cartesian Coordinate into a 2d isometric
+     * @param twoDee
+     * @return
+     */
     public static Point twoDToIso(Point twoDee){
         Point tempPoint = new Point(0,0);
         
@@ -28,8 +30,6 @@ public final class Iso {
         //Camera Offset
         twoDee.x -= camX;
         twoDee.y -= camY;
-        
-      
         
         tempPoint.x = (twoDee.x - twoDee.y) + 400; // Half the screen width, to center 0,0.
         tempPoint.y = ((twoDee.x + twoDee.y) / 2) + 300; // Half the screen height
@@ -50,7 +50,7 @@ public final class Iso {
             	   	
                 ret[c][M-1-r] = mat[r][c];           
                 
-                //Rotating the player dirrection tiles as well
+                //Rotating the player direction tiles as well
                 if(mat[r][c] == 'I'){ ret[c][M-1-r] = 'L';}
             	if(mat[r][c] == 'L'){ ret[c][M-1-r] = 'K';}
             	if(mat[r][c] == 'K'){ ret[c][M-1-r] = 'J';}

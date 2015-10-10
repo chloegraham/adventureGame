@@ -79,7 +79,7 @@ public class Client implements Runnable {
 	    	else 
 	    		throw new IllegalArgumentException("Expected host or guest");
 	    	
-	    	ui.setUserID(userID);
+	    	ui.setUserID(userID, false);
     		output.writeUTF(hostORguest);
 	    	
     
@@ -118,7 +118,7 @@ public class Client implements Runnable {
 	
 	// Manage some rules before sending to the Server
 	private void handleAction(int ordinal, int userID) throws IOException {
-		if (ordinal == Actions.LOAD.ordinal() || ordinal == Actions.NEW.ordinal())
+		if (ordinal == Actions.LOAD.ordinal() || ordinal == Actions.NEWGAME.ordinal())
 			if (userID != Server.PLAYER_ONE && this.userID != Server.PLAYER_ONE)
 				throw new IllegalArgumentException("Only player one should be able to Start a NewGame or Load a Game.");
 		output.writeUTF("<action>" + ordinal);

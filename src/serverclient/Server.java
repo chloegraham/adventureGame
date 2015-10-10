@@ -105,10 +105,10 @@ public class Server implements Runnable {
 			    	System.out.println(ordinal);
 			    	
 			    	if (gameWorld == null)
-		    			if (ordinal != Actions.NEW.ordinal() && ordinal != Actions.LOAD.ordinal())
+		    			if (ordinal != Actions.NEWGAME.ordinal() && ordinal != Actions.LOAD.ordinal())
 		    				throw new IllegalArgumentException("GameWorld still null and Client is trying to send Actions that aren't New or Load");
 			    	
-			    	if (ordinal == Actions.NEW.ordinal())
+			    	if (ordinal == Actions.NEWGAME.ordinal())
 			    		newGame();
 			    	else if (ordinal == Actions.LOAD.ordinal())
 			    		load();
@@ -124,7 +124,7 @@ public class Server implements Runnable {
 			    	int ordinal = Integer.parseInt(action.substring("<action>".length()));
 			    	System.out.println(ordinal);
 			    	
-			    	if (gameWorld == null || ordinal == Actions.NEW.ordinal() || ordinal == Actions.LOAD.ordinal())
+			    	if (gameWorld == null || ordinal == Actions.NEWGAME.ordinal() || ordinal == Actions.LOAD.ordinal())
 			    			throw new IllegalArgumentException("Player TWO should never be able to send Action with null GameWorld. Also Player TWO should never be able to New or Load Game.");
 			    	handleAction(ordinal, Server.PLAYER_TWO);
 		    	}
