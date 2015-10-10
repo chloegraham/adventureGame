@@ -95,19 +95,19 @@ public class XML {
 		//					   101 % 1234 % 2 % 1 % 2 % 3 % 3 %@<Player>
 		
 		String level900 = "wwwweww%weeeeee%weeeeee%weeeeee%weeeeee%@nnnndnn%nnnnnnn%nnnnnnn%nnnnnnn%ncnnnnn%@nnnnnnn%nnnnnnn%nnnlnnn%nnnnnnn%nnnnnnn%@900@<Level><Split>";
-		String level901 = "wwwweww%weeeeee%weeeeee%weeeeee%weeeeee%@nnnndnn%nnnnnnn%nnnnnnn%nnnnnnn%nnnncnn%@nnnnnnn%nnnnnnn%nnnlnnn%nnnnnnn%nnnnnnn%@901@<Level><Split>";
-		String level902 = "wwwweww%weeeeee%weeeeee%weeeeee%weeeeee%@nnnndnn%nnnnnnn%nnnnnnn%nnnnnnn%nnnnnnz%@nnnnnnn%nnnnnnn%nnnlnnn%nnnnnnn%nnbnnnn%@902@<Level><Split>";
+		String level901 = "wwwweww%weeeeee%weeeeee%weeeeee%weeeeee%@nnnndnn%nnnnnnn%nnnnnnn%nnnnnnn%nnnncnn%@nnnnnnn%nnnnnnn%nnnlnnb%nnnnnnn%nnnnnnn%@901@<Level><Split>";
+		String level902 = "wwwweww%weeeeee%weeeeee%weeeeee%weeeeee%@nnnndnn%nnnnnnn%nnnnnnn%nnnnnnn%nnnnnnz%@nnnnnnn%nnbnnnn%nnnlnnn%nnnnnnn%nnbnnnn%@902@<Level><Split>";
 		String level903 = "wwwweww%weeeeee%weeeeee%weeeeee%weeeeee%@nnnndnn%nnnsnnn%nnnnnnn%nnnnnnn%nnnncnz%@nnnnnnn%nnnnnnn%nnnlnnn%nnnnnnn%nnbnnnn%@903@<Level><Split>";
 		
 		
-		String playerOne = "101%900%1%0%1%3%3%@<Player><Split>";
-		String playerTwo = "202%900%1%0%1%2%2%@<Player><Split>";
+		String playerOne = "101%901%0%0%1%3%3%@<Player><Split>";
+		String playerTwo = "202%901%1%1%1%2%2%@<Player><Split>";
 		
 		String playerTwoDiffLvl = "202%901%0%0%1%2%2%@<Player><Split>";
 		
 		String testLevel = "wwwweww%weeeeee%weeeeee%weeeeee%weeeeee%@nnnndnn%nnnsnnn%nnnnnnn%nnnnnnn%nnnncnz%@nnnnnnn%nnnnnnn%nnnlnnn%nnnnnnn%nnbnnnn%@1234@<Level><Split>101%1234%1%0%2%3%3%@<Player><Split>202%1234%5%1%2%2%2%@<Player><Split>";
 		
-		String demo = level900 + level901 + playerOne + playerTwo;
+		String demo = level901 + level902 + level903 + playerOne + playerTwo;
 		
 		return demo;
 	}

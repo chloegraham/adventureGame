@@ -95,8 +95,7 @@ public class Msgs {
 			str += "You already have a Boulder, so can't pick up another." + "%";
 
 		} else {
-			if (emptyORpressure) str += "You dropped a Boulder on an Empty Tile." + "%";
-			else		 	     str += "You dropped a Boulder on a Pressure Pad." + "%";
+			if (emptyORpressure) str += "You dropped a Boulder on an Empty Tile or Pressure Pad." + "%";
 		}
 			
 		return str += Msgs.DELIM_SPLIT;

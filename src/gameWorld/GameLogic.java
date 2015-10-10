@@ -269,14 +269,15 @@ public class GameLogic {
 			}
 			else if (tile instanceof EmptyTile) {
 				level.addBoulder(new Boulder(interactWith));
-				player.dropBoulder();						// "You dropped a Boulder on an Empty Tile."
+				player.dropBoulder();
+				emptyORpressure = true;						// "You dropped a Boulder on an Empty Tile or Pressure Pad."
 			}
 			else if (tile instanceof PressurePad) {
 				level.addBoulder(new Boulder(interactWith));
 				player.dropBoulder();
 				PressurePad pad = (PressurePad) tile;
 				pad.activate();
-				emptyORpressure = true;						// "You dropped a Boulder on a Pressure Pad"
+				emptyORpressure = true;						// "You dropped a Boulder on an Empty Tile or Pressure Pad."
 			}
 		}
 			
