@@ -15,11 +15,8 @@ public class Chest extends Unmoveable implements Tile {
 		return isOpen;
 	}
 	
-	public boolean open() {
-		if (isOpen)
-			return false;
+	public void open() {
 		isOpen = true;
-		return isOpen;
 	}
 	
 	public boolean hasKey() {
@@ -27,7 +24,7 @@ public class Chest extends Unmoveable implements Tile {
 	}
 	
 	public boolean takeKey() {
-		if (hasKey)
+		if (!hasKey)
 			return false;
 		hasKey = false;
 		return true;

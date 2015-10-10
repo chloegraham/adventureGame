@@ -56,15 +56,15 @@ public class Msgs {
 	public static final String NOMOVE = "You couldn't move ";
 	
 	public static final String DOOR_CLOSED = "The Door is Locked & Closed ";
-	public static final String DOOR_OPEN = "The Door is Unlocked & Open. You may pass.";
+	public static final String DOOR_OPEN = "The Door is Unlocked & Open. You may enter.";
 	public static final String DOOR_USED_KEY = "You have a Key & you used it to Unlock the Door ";
-	public static final String DOOR_NO_KEY = "You don't have a Key to Unlock the Door ";
+	public static final String DOOR_NO_KEY = "You don't have a Key. You can't unlock the door. You can't enter.";
 	
-	public static final String CHEST_OPEN = "The Chest is already Open ";
-	public static final String CHEST_CLOSED = "You Opened the Chest ";
-	
-	public static final String CHEST_KEY_INSDE = "You collected a Key from inside the Chest.";
-	public static final String CHEST_KEY_NOT_INSDE = "There is no Key inside the Chest.";
+	public static final String CHEST_OPEN = "Chest already open ";
+	public static final String CHEST_CLOSED = "You opened the Chest ";
+	public static final String CHEST_OPENED = "Chest is closed and you can't open it and you can't look inside.";
+	public static final String CHEST_KEY = "There is a Key inside & you have picked it up.";
+	public static final String CHEST_NO_KEY = "There is no Key inside this chest. It may have already been taken.";
 	
 	
 	
@@ -94,47 +94,43 @@ public class Msgs {
 		return str;
 	}
 	
-	public static String openDoorMsg(boolean initiallyOpen, boolean finallyOpen, int keyAmount) {
+	public static String doorMsg(boolean isLocked, boolean hasKey) {
 		String str = "";
-		if (initiallyOpen) {
-			str += Msgs.DOOR_OPEN + "%";
-			str += Msgs.DELIM_SPLIT;
-			return str;
-		}
-			
 		
-		str += Msgs.DOOR_CLOSED + "%";	
-		if (finallyOpen) {
-			str += Msgs.DOOR_USED_KEY + Msgs.DOOR_OPEN + "%";
-			str += Msgs.DELIM_SPLIT;
-			
-			str += keyAmount;
-			str += Msgs.DELIM_SPLIT;
-			return str;
-		}
+		// ISLOCKED
+		if (isLocked) str += Msgs.DOOR_CLOSED + "%";							// true - "The Door is locked"
+		else	      return str += Msgs.DOOR_OPEN + "%" + Msgs.DELIM_SPLIT;	// false - "The Door is unlocked. You may enter." RETURN
 		
-		str += Msgs.DOOR_NO_KEY + Msgs.DOOR_CLOSED + "%";
-		str += Msgs.DELIM_SPLIT;
-		return str;
+		// HASKEY
+		if (hasKey) str += Msgs.DOOR_USED_KEY + "%" + Msgs.DOOR_OPEN + "%";		// true - "You used a Key" + "The Door is unlocked. You may enter."
+		else	    str += Msgs.DOOR_NO_KEY + "%";								// false - "You don't have a Key. You can't unlock the door. You can't enter."
+		
+		return str += Msgs.DELIM_SPLIT;
 	}
 	
-	public static String openChestMsg(boolean alreadyOpen, boolean isKeyInside, int keyAmount) {
+	
+	
+	public static String chestMsg(boolean open, boolean opened, boolean isKey) {
 		String str = "";
-		if (alreadyOpen) str += Msgs.CHEST_OPEN + "%";
-		else 			 str += Msgs.CHEST_CLOSED + "%";
 		
-		if (isKeyInside) {
-			str += Msgs.CHEST_KEY_INSDE;
-			str += Msgs.DELIM_SPLIT;
-			
-			str += keyAmount;
-			str += Msgs.DELIM_SPLIT;
-			return str;
-		} else {
-			str += Msgs.CHEST_KEY_NOT_INSDE;
-			return str;
-		}
+		// OPEN
+		if (open) str += Msgs.CHEST_OPEN + "%";			// true - "Chest already open"
+		else 	  str += Msgs.CHEST_CLOSED + "%";		// false - "You opened the Chest"
+		
+		
+		// OPENED
+		if (opened) str += "";							// true - no comment needed
+		else		return str += Msgs.CHEST_OPENED + "%" + Msgs.DELIM_SPLIT;	// false - chest is closed and you can't open it and you can't look inside
+					
+					
+		// ISKEY		
+		if (isKey) str += Msgs.CHEST_KEY + "%";			// true - "there is a key inside & player has picked it up"
+		else 	   str += Msgs.CHEST_NO_KEY + "%";		// false - "there is no key inside this chest"
+		
+		return str += Msgs.DELIM_SPLIT;
 	}
+	
+	
 	
 	public static String inspectMsg() {
 		String str = "";
