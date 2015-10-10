@@ -185,7 +185,7 @@ public class GameLogic {
 			// if chest is closed - "you opened chest"
 			chest.open();
 			// [chest should now be open]
-			if (open) {
+			if (chest.isOpen()) {
 				boolean isKey = chest.hasKey();
 				if (isKey) {
 					player.addKey();
@@ -197,7 +197,14 @@ public class GameLogic {
 				// chest is closed and you can't open it and you can't look inside
 			}
 				
+			// OPEN
+			// Chest already open
+			// You opened the Chest
 				
+			
+			
+			
+			
 			// is there a key in the chest?
 			// if yes - add the key to player - "you picked up a key"
 			// if no - add NOTHING to the player - "chest is empty"
