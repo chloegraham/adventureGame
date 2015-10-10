@@ -2,19 +2,19 @@ package tiles;
 
 public class PressurePad extends Unmoveable implements Tile {
 	
-	private boolean notActivated = true;
+	private boolean isActivated = true;
 	
 	public void activate(){		
-		notActivated = !notActivated;
+		isActivated = !isActivated;
 	}
 	
 	public boolean isActivated(){
-		return notActivated;
+		return isActivated;
 	}
 	
 	@Override
 	public String toString() {
-		if(notActivated){
+		if(isActivated){
 			return "z";
 		}
 		return "Z";

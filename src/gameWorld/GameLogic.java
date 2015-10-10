@@ -73,11 +73,13 @@ public class GameLogic {
 		}
 		else if (Actions.LOAD.ordinal() == ordinal) {
 	    }
+		else if (Actions.SAVE.ordinal() == ordinal) {
+	    }
 		else {
 			throw new IllegalArgumentException("GameLogic:  received an unexpected ordinal. It might be 'Inspect' which we have't coded yet.");
 		}
 		
-		// Only for Move not Interact
+		// Only for Move NOT Interact
 		if (ordinal == Actions.NORTH.ordinal() || ordinal == Actions.SOUTH.ordinal() || ordinal == Actions.WEST.ordinal() || ordinal == Actions.EAST.ordinal()) {
 			boolean success = move(player, level, newLocation);
 			message = Msgs.moveMsg(player.getDirection(), success);
@@ -134,25 +136,16 @@ public class GameLogic {
 		
 		
 		
-		if (tile instanceof PressurePad){	//activate pressure pad if moved onto one
-			((PressurePad)tile).activate();
-			//TODO: THIS IS TEMPORARY LOGIC
-			Tile[][]doors = level.getTiles();
-			for (int i = 0; i < doors.length; i++) {
-				for (int j = 0; j < doors[0].length; j++) {
-					if(doors[i][j] instanceof Door){
-						if(!((PressurePad)tile).isActivated()){
-							((Door)doors[i][j]).unlock();
-						} else {
-							((Door)doors[i][j]).lock();
-						}
-					}
-				}
-			}
+		if (tile instanceof PressurePad){
+			PressurePad pad = (PressurePad) tile;
+			pad.activate();
+			
 		}
 		else if (tile instanceof Spikes){
-			((Spikes)tile).activate();
+			Spikes spikes = (Spikes) tile;
+			spikes.activate();
 		}
+		
 		return player.setLocation(newLoc);		
 	}	
 	
@@ -212,7 +205,6 @@ public class GameLogic {
 			// false - "there is no key inside this chest"	
 			boolean isKey = chest.hasKey();
 			
-			
 			// [chest should now be open unless we add more game logic/chest logic in the future]
 			if (opened) {
 				if (isKey) {
@@ -254,63 +246,59 @@ public class GameLogic {
 		}
 		
 		
+		
 		/*
 		 *  Boulder interaction code & message
 		 */
-		
-		// BOULDER SITUATIONS
+		boolean hadBoulder = player.hasBoulder();
+		boolean isBoulderRelavent = true;
+		boolean infrontBoulder = false;
+		boolean emptyORpressure = false;
 		
 		if (!player.hasBoulder()) {
 			boolean facingBoulder = level.removeBoulder(new Boulder(interactWith));
-			if (!facingBoulder)
-				return "";
-			player.addBoulder();
-			return "temp pickup a boulder";
+			if (facingBoulder)
+				player.addBoulder();		// true - "You picked up a Boulder"
+			else
+				isBoulderRelavent = false;	// false - [do nothing]
 		}
-			
-		if (player.hasBoulder()) {
+		else if (player.hasBoulder()) {
 			boolean facingBoulder = level.containsBoulder(new Boulder(interactWith));
 			if (facingBoulder) {
-				return "you already have a boulder and can't pick up another";
+				infrontBoulder = true; 						// "You already have a Boulder, so can't pick up another."
 			}
-			if (tile instanceof EmptyTile) {
+			else if (tile instanceof EmptyTile) {
 				level.addBoulder(new Boulder(interactWith));
-				player.dropBoulder();
-				return "you dropped a boulder on an empty tile";
+				player.dropBoulder();						// "You dropped a Boulder on an Empty Tile."
 			}
-			if (tile instanceof PressurePad) {
+			else if (tile instanceof PressurePad) {
 				level.addBoulder(new Boulder(interactWith));
 				player.dropBoulder();
 				PressurePad pad = (PressurePad) tile;
 				pad.activate();
-				return "you dropped a boulder on a pressurepad";
+				emptyORpressure = true;						// "You dropped a Boulder on a Pressure Pad"
 			}
 		}
 			
-		// standing facing a boulder
-		// HASBOULDER 
-		// true - "you already have a Boulder, you can't pick up another" [do nothing]
-		// false - "You picked up a boulder" [pick up boulder]
+		if (hadBoulder) {
+			return Msgs.boulderPutDownMsg(infrontBoulder, emptyORpressure);
+		} else {
+			if (isBoulderRelavent)
+				return Msgs.boulderPickUpMsg();
+		}
 		
 		
-		// standing facing a wall
-		// HASBOULDER
-		// true -  "you can't put a boulder in a wall / you have no room to put boulder down" [do nothing]
-		// false - [do nothing]
-		
-		
-		// standing facing empty tile
-		// HASBOULDER
-		// true - "you put a boulder down" [put boulder down]
-		// false - [do nothing]
-		
-		
-		// can only put boulder down on:
-		// empty, pressure pad
-		
-		return "temp - tried to interact but came up short - ERROR in game logic";
+		/*
+		 *  //TODO I think should only reach here is there is nothing to interact with.
+		 */
+		return "Testing - No valid interaction. Player should be infront of a Wall or EmptyTile else this is an ERROR." + Msgs.DELIM_SPLIT;
 	}
 	
+	
+	
+	/*
+	 *  // TODO need to add some sort of message for changing level
+	 */
 	private void moveNextLevel(Player p) {
 		int pastLevel = p.getLevelID();
 		p.nextLevel();

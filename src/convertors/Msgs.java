@@ -84,18 +84,22 @@ public class Msgs {
 	
 	
 	
-	public static String boulderMsg(boolean pickup, boolean carrying) {
+	public static String boulderPickUpMsg() {
+		return "You picked up a Boulder " + Msgs.DELIM_SPLIT;
+	}
+	
+	public static String boulderPutDownMsg(boolean infrontBoulder, boolean emptyORpressure) {
 		String str = "";
-		if (pickup) {
-			
-			if (carrying) str += Msgs.PICK + Msgs.BOULDER + "%";
-			else		  str += Msgs.NOPICK + Msgs.BOULDER + "becuase you're already carrying one." + "%";
 		
-		} else {    
-			str += Msgs.DOWN + Msgs.BOULDER + "%";
+		if (infrontBoulder) {
+			str += "You already have a Boulder, so can't pick up another." + "%";
+
+		} else {
+			if (emptyORpressure) str += "You dropped a Boulder on an Empty Tile." + "%";
+			else		 	     str += "You dropped a Boulder on a Pressure Pad." + "%";
 		}
-		str += Msgs.DELIM_SPLIT;
-		return str;
+			
+		return str += Msgs.DELIM_SPLIT;
 	}
 	
 	
