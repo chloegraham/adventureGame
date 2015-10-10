@@ -73,7 +73,7 @@ public class GameLogic {
 		}
 		
 		// Only for Move not Interact
-		if (ordinal >= 6 && ordinal <= 9) {
+		if (ordinal == Actions.NORTH.ordinal() || ordinal == Actions.SOUTH.ordinal() || ordinal == Actions.WEST.ordinal() || ordinal == Actions.EAST.ordinal()) {
 			boolean success = move(player, level, newLocation);
 			message = ConvertAction.moveMsg(player.getDirection(), success);
 		}

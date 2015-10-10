@@ -48,7 +48,7 @@ public class UserInterface {
 	}
 	
 	public void sendUIAction(int action) {
-		//client.passClientAction(action);
+		client.handleAction(action);
 	}
 
 	/** Sets the unique ID for this user */

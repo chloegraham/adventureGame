@@ -143,6 +143,8 @@ public class RenderPane extends JPanel {
         	rotatedObjects = Iso.rotate180(this.objects);
         	rotatedMoveables = Iso.rotate180(this.moveables);
         }
+        else
+        	throw new RuntimeException("Invalid direction.");
         
         int numberOfRows = rotatedLevel.length;
         int numberOfColums = rotatedLevel[0].length;
