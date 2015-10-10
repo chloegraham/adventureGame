@@ -22,12 +22,13 @@ import com.sun.glass.events.KeyEvent;
 public class SplashScreen extends JPanel {
 	public static final int NO_CARD = 0;
 	public static final int STARTUP_CARD = 1;		// Initial card. Displayed message changes.
-	public static final int HOST_CARD = 2;			// Only the host player sees this. After player clicks a button, show startup.
-	public static final int READY_CARD = 3;			// Player may close this screen and play the game.
+	public static final int HOST_CARD = 2;			// Only the host player sees this. Returns to Startup while building level
+	public static final int READY_CARD = 3;			// Display when the game is ready. Shows Key Bindings.
 	public static final int DEATH_CARD = 4;			// Show on player death. Player may close this screen and return to the game.
 	public static final int WIN_CARD = 5;			// Show when the game is won. Player cannot return to the game from this card.
-	public static final int GENERIC_CARD = 6;		// Displays any message to the player.
-	private final JPanel[] allPanels = new JPanel[7];
+	public static final int ABOUT_CARD = 6;			// Shows information about the game to the user.
+	public static final int GENERIC_CARD = 7;		// Displays any message to the player.
+	private final JPanel[] allPanels = new JPanel[8];
 	
 	/* Menu buttons and the key events for each */
 	private final int LOAD_GAME = 1;		// Position of the Load Game button in array, to disable/enable
@@ -57,6 +58,7 @@ public class SplashScreen extends JPanel {
 		createReadyCard();
 		createDeathCard();
 		createWinCard();
+		createAboutCard();
 		createGenericCard();
 		
 		/* Add cards to the panel */
@@ -66,6 +68,7 @@ public class SplashScreen extends JPanel {
 		this.add(allPanels[READY_CARD], Integer.toString(READY_CARD));
 		this.add(allPanels[DEATH_CARD], Integer.toString(DEATH_CARD));
 		this.add(allPanels[WIN_CARD], Integer.toString(WIN_CARD));
+		this.add(allPanels[ABOUT_CARD], Integer.toString(ABOUT_CARD));
 		this.add(allPanels[GENERIC_CARD], Integer.toString(GENERIC_CARD));
 		
 		setVisibleCard(openCard);
@@ -125,7 +128,7 @@ public class SplashScreen extends JPanel {
 				if (menuMnemonics[i] == event){ return menuButtons[i].getActionCommand(); }
 			}
 		}
-		else if (openCard == READY_CARD || openCard == DEATH_CARD){				// Cards that can be closed by key press
+		else if (openCard == READY_CARD || openCard == DEATH_CARD || openCard == ABOUT_CARD){	// Cards that can be closed by key press
 			setVisibleCard(NO_CARD);
 		}
 		return "";
@@ -237,6 +240,41 @@ public class SplashScreen extends JPanel {
 		
 		allPanels[WIN_CARD].add(Box.createVerticalGlue());
 
+	}
+	
+	/**
+	 * Build the card that shows information about the game to the user.
+	 * Partially transparent, expects a game behind this card.
+	 */
+	private void createAboutCard(){
+		allPanels[ABOUT_CARD] = new JPanel();
+		allPanels[ABOUT_CARD].setLayout(new BoxLayout(allPanels[GENERIC_CARD], BoxLayout.Y_AXIS));
+		allPanels[ABOUT_CARD].setBackground(new Color(200, 200, 200, 200));		// slightly transparent.
+		
+		allPanels[ABOUT_CARD].add(Box.createVerticalGlue());
+		
+		addImage(ABOUT_CARD, "img-game-logo.png");
+		
+		allPanels[ABOUT_CARD].add(Box.createVerticalGlue());
+		
+		aboutHelper("Chicken Little");
+		aboutHelper("SWEN222 Group Project 2015");
+		
+		allPanels[ABOUT_CARD].add(Box.createVerticalGlue());
+		
+		aboutHelper("Chloe Graham");
+		aboutHelper("Chris Jacques");
+		aboutHelper("Benjamin Scully");
+		aboutHelper("Eliot Slevin");
+		aboutHelper("Kirsty Thorburn");
+		
+		allPanels[ABOUT_CARD].add(Box.createVerticalGlue());
+	}
+	
+	private void aboutHelper(String msg){
+		JLabel message = new JLabel(msg);
+		message.setAlignmentX(CENTER_ALIGNMENT);
+		allPanels[ABOUT_CARD].add(message);
 	}
 	
 	/**

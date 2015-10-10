@@ -6,6 +6,7 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
@@ -28,8 +29,6 @@ import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 import javax.swing.text.DefaultCaret;
 
-import com.sun.glass.events.KeyEvent;
-
 import renderer.RenderPane;
 import serverclient.Client;
 
@@ -44,6 +43,8 @@ public class UserInterface extends JFrame {
 	
 	/* Images */
 	private final ImageIcon iconKey = loadImageIcon("icon-key.png");
+	private final ImageIcon iconBoulT = loadImageIcon("icon-boulder-true.png");
+	private final ImageIcon iconBoulF = loadImageIcon("icon-boulder-false.png");
 
 	/* Panel content */
 	private final JTextArea messagePane = new JTextArea();
@@ -51,9 +52,11 @@ public class UserInterface extends JFrame {
 	private final JPanel inventoryPane = new JPanel();
 	private final JMenuBar menuBar = new JMenuBar();
 	private final JMenu file = new JMenu("File");
+	private final JMenu help = new JMenu("Help");
 	
 	/* Inventory pane */
 	private final JLabel keys = new JLabel("0");
+	private final JLabel boulder = new JLabel();
 	private final int contentHeight = 80;			// Height of the inventory pane/message box
 	
 	private boolean playing = false;	// Set true only when the game state and renderer are ready.
@@ -129,6 +132,15 @@ public class UserInterface extends JFrame {
 		keys.setText(Integer.toString(keyCount));
 	}
 	
+	/** If true, show a boulder being carried in inventory. Otherwise, show no boulder. */
+	public void setBoulder(boolean carrying){
+		if (carrying){
+			if (iconBoulT != null){ boulder.setIcon(iconBoulT); }
+		}
+		else{ if (iconBoulF != null){ boulder.setIcon(iconBoulF); } }
+		
+	}
+	
 	// ========================================================
 	// Methods for the Splash Screen.
 	// ========================================================
@@ -174,6 +186,7 @@ public class UserInterface extends JFrame {
 	 */
 	public void setContentEnabled(boolean enabled){
 		file.setEnabled(enabled);
+		help.setEnabled(enabled);
 		listener.setSplashLocked(enabled);
 	}
 	
@@ -221,6 +234,11 @@ public class UserInterface extends JFrame {
 		keys.setMaximumSize(dim);
 		keys.setToolTipText("Keys");
 		inventoryPane.add(keys);
+		//Boulder
+		if (iconBoulF != null){ boulder.setIcon(iconBoulF); }
+		boulder.setMaximumSize(dim);
+		inventoryPane.add(boulder);
+		boulder.setToolTipText("Boulder");
 		
 		inventoryPane.setOpaque(false);
 	}
@@ -243,11 +261,15 @@ public class UserInterface extends JFrame {
 	 */
 	private void buildMenuBar(){
 		menuBar.add(file);
+		menuBar.add(help);
 		// File menu
 		file.add(createMenuItem("Save", KeyEvent.VK_S));
 		file.add(createMenuItem("Load", KeyEvent.VK_L));
 		file.addSeparator();
 		file.add(createMenuItem("Exit", KeyEvent.VK_X));
+		// Help menu
+		help.add(createMenuItem("Controls", KeyEvent.VK_C));
+		help.add(createMenuItem("About", KeyEvent.VK_A));
 	}
 	
 	/**

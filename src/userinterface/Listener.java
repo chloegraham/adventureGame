@@ -100,6 +100,8 @@ public class Listener extends JPanel implements KeyListener, ActionListener {
 		if (ac.equals("New Game")){ client.handleAction(Actions.NEWGAME.ordinal()); }
 		else if (ac.equals("Save")){ client.handleAction(Actions.SAVE.ordinal()); }
 		else if (ac.equals("Load")){ client.handleAction(Actions.LOAD.ordinal()); }
+		else if (ac.equals("Controls")){ splash.setVisibleCard(SplashScreen.READY_CARD); }
+		else if (ac.equals("About")){ splash.setVisibleCard(SplashScreen.ABOUT_CARD); }
 		else if (ac.equals("Exit")){ exitGame(); }
 	}
 	
