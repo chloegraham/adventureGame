@@ -5,11 +5,12 @@ import java.awt.event.KeyEvent;
 public class Action {
 	
 	/**
-	 * Possible actions by player. Send through network connection using ordinal, holds key event.
-	 * Any new action added here will be available to the server immediately. Make sure to add the key to the readme file.
-	 * Do not overwrite any existing keys (check in the README file), Do not use CTRL or ALT at all.
+	 * Possible actions by player. Send through network connection using ordinal, holds key event (other key events may
+	 * refer to the same action, and not all actions have a single key event).
 	 * 
-	 * INSTRUCTIONS FOR USE:
+	 * Neither Ctrl nor Alt will be sent through.
+	 * Please don't use the same key twice.
+	 * 
 	 * Import the Actions enum to the class that needs to use it:
 	 * 		import chickenlittle.control.Action.Actions;
 	 * Use the server input to retrieve the action type. Input will be an int.
@@ -21,32 +22,41 @@ public class Action {
 	 */
 	public enum Actions {
 		// Add extra events here...
-		INSPECT (KeyEvent.VK_R),
-		INTERACT (KeyEvent.VK_E),
-		SAVE (KeyEvent.VK_Q),
-		LOAD (KeyEvent.VK_L),
-		NEWGAME (-1),
-		/* Adding new events below this line will increase the number of unnecessary checks.
-		 * Better to place above instead. */
-		COUNTERCLOCKWISE (KeyEvent.VK_O),		// Graphics rotation
-		CLOCKWISE (KeyEvent.VK_P),
 		NORTH (KeyEvent.VK_W),
 		EAST (KeyEvent.VK_D),
 		SOUTH (KeyEvent.VK_S),
 		WEST (KeyEvent.VK_A),
-		NEW (KeyEvent.VK_N);
+		INSPECT (KeyEvent.VK_R),
+		INTERACT (KeyEvent.VK_E),
+		LOAD (-1),
+		SAVE (-1),
+		NEWGAME (-1),
+		/* Events for the User Interface. Add events for the Server or Game World above. */
+		COUNTERCLOCKWISE (KeyEvent.VK_O),		// Graphics rotation
+		CLOCKWISE (KeyEvent.VK_P);
 
 		private int keyCode;			// KeyEvent.VK_EVENT
 		
+		/**
+		 * @param keyCode KeyEvent.VK_EVENT, or -1 if no key event associated with this key.
+		 */
 		Actions(int keyCode){
 			this.keyCode = keyCode;
 		}
 		
 		/**
-		 * @return keyCode matching KeyEvent.VK_EVENT
+		 * @return keyCode matching KeyEvent.VK_EVENT, or -1 if no key code associated with this Action
 		 */
 		public int getKeyCode(){
 			return keyCode;
+		}
+		
+		/**
+		 * USE WITH CAUTION.
+		 * Sets a new keyCode for this Action.
+		 */
+		public void setKeyCode(int keyCode){
+			this.keyCode = keyCode;
 		}
 		
 		public static String getName(int ordinal) {
