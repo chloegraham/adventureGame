@@ -3,6 +3,7 @@ package convertors;
 import gameWorld.Direction;
 
 public class Msgs {
+	
 	private String decodedMessages;
 	
 	public String getDecoded() { return decodedMessages; }
@@ -32,6 +33,7 @@ public class Msgs {
 			decodedMessages += line4 + "\n";
 		}
 	}
+	
 	
 	
 	public static final int PLAYER_ONE = 101;
@@ -80,19 +82,26 @@ public class Msgs {
 		return str;
 	}
 	
-	public static String boulderMsg(boolean pickup, boolean carrying) {
-		String str = "";
-		if (pickup) {
-			
-			if (carrying) str += Msgs.PICK + Msgs.BOULDER + "%";
-			else		  str += Msgs.NOPICK + Msgs.BOULDER + "becuase you're already carrying one." + "%";
-		
-		} else {    
-			str += Msgs.DOWN + Msgs.BOULDER + "%";
-		}
-		str += Msgs.DELIM_SPLIT;
-		return str;
+	
+	
+	public static String boulderPickUpMsg() {
+		return "You picked up a Boulder " + Msgs.DELIM_SPLIT;
 	}
+	
+	public static String boulderPutDownMsg(boolean infrontBoulder, boolean emptyORpressure) {
+		String str = "";
+		
+		if (infrontBoulder) {
+			str += "You already have a Boulder, so can't pick up another." + "%";
+
+		} else {
+			if (emptyORpressure) str += "You dropped a Boulder on an Empty Tile or Pressure Pad." + "%";
+		}
+			
+		return str += Msgs.DELIM_SPLIT;
+	}
+	
+	
 	
 	public static String doorMsg(boolean isLocked, boolean hasKey) {
 		String str = "";

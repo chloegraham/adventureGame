@@ -150,7 +150,7 @@ public class Client implements Runnable {
 			if (encodedSplit.length > 1) {
 				encodedPlayer = encodedSplit[1];
 				String[] details = encodedPlayer.split(Msgs.DELIM_DETAILS);
-//				ui.setBoulder(details[0].equals("true"));
+				ui.setBoulder(details[0].equals("true"));
 				ui.setKeyCount(Integer.parseInt(details[1]));
 //				playerX = Integer.parseInt(details[2]);
 //				playerY = Integer.parseInt(details[3]);
