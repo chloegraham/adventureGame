@@ -48,12 +48,18 @@ public class UserInterface {
 	}
 	
 	public void sendUIAction(int action) {
-		client.passClientAction(action);
+		//client.passClientAction(action);
 	}
 
 	/** Sets the unique ID for this user */
-	public void setUserID(int uid){
+	public void setUserID(int uid, boolean loadGame){
 		this.uid = uid;
+		if (uid == 101){
+			showHostMenu(loadGame);
+		}
+		else if (uid == 202){
+			setConnected();
+		}
 		frame.setTitle("Chicken Little : User " + this.uid);
 	}
 	
