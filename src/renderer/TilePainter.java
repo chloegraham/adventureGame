@@ -71,10 +71,7 @@ public class TilePainter {
     }
 
     protected void drawCharachter(Graphics2D g2, int x, int y){
-        // First draw a floor tile
-        drawFloorTile(g2, x, y);
-
-
+      
         int xrPoints[] = {x, x + (tilesize / 4), x};
         int yrPoints[] = {y + ((tilesize / 2) - (tilesize / 8)), y + (tilesize / 4), y - (tilesize / 4)};
 
@@ -247,18 +244,7 @@ protected void drawCharachterNorth(Graphics2D g2, int x, int y){
     g2.setPaint(new Color(200,200,255));
     g2.fillPolygon(xPoints, yPoints, 4);
 
-    int xrPoints[] = {x, x + (tilesize / 4), x};
-    int yrPoints[] = {y + ((tilesize / 2) - (tilesize / 8)), y + (tilesize / 4), y - (tilesize / 4)};
-
-    int xlPoints[] = {x, x - (tilesize / 4), x};
-    int ylPoints[] = {y + ((tilesize / 2) - (tilesize / 8)), y + (tilesize / 4), y - (tilesize / 4)};
-
-
-    g2.setPaint(new Color(70, 142, 255));
-    g2.fillPolygon(xrPoints, yrPoints, 3);
-
-    g2.setPaint(new Color(63, 113, 213));
-    g2.fillPolygon(xlPoints, ylPoints, 3);
+    drawCharachter(g2, x, y);
 }
 
 protected void drawCharachterEast(Graphics2D g2, int x, int y){
@@ -270,20 +256,7 @@ protected void drawCharachterEast(Graphics2D g2, int x, int y){
     g2.setPaint(new Color(200,200,255));
     g2.fillPolygon(xPoints, yPoints, 4);
     	
-	
-
-    int xrPoints[] = {x, x + (tilesize / 4), x};
-    int yrPoints[] = {y + ((tilesize / 2) - (tilesize / 8)), y + (tilesize / 4), y - (tilesize / 4)};
-
-    int xlPoints[] = {x, x - (tilesize / 4), x};
-    int ylPoints[] = {y + ((tilesize / 2) - (tilesize / 8)), y + (tilesize / 4), y - (tilesize / 4)};
-
-
-    g2.setPaint(new Color(255, 120, 120));
-    g2.fillPolygon(xrPoints, yrPoints, 3);
-
-    g2.setPaint(new Color(63, 113, 213));
-    g2.fillPolygon(xlPoints, ylPoints, 3);
+    drawCharachter(g2, x, y);
 }
 
 protected void drawCharachterWest(Graphics2D g2, int x, int y){
@@ -294,19 +267,7 @@ protected void drawCharachterWest(Graphics2D g2, int x, int y){
     g2.setPaint(new Color(200,200,255));
     g2.fillPolygon(xPoints, yPoints, 4);
 	
-
-    int xrPoints[] = {x, x + (tilesize / 4), x};
-    int yrPoints[] = {y + ((tilesize / 2) - (tilesize / 8)), y + (tilesize / 4), y - (tilesize / 4)};
-
-    int xlPoints[] = {x, x - (tilesize / 4), x};
-    int ylPoints[] = {y + ((tilesize / 2) - (tilesize / 8)), y + (tilesize / 4), y - (tilesize / 4)};
-
-
-    g2.setPaint(new Color(70, 142, 255));
-    g2.fillPolygon(xrPoints, yrPoints, 3);
-
-    g2.setPaint(new Color(63, 113, 213));
-    g2.fillPolygon(xlPoints, ylPoints, 3);
+    drawCharachter(g2, x, y);
 }
 
 protected void drawCharachterSouth(Graphics2D g2, int x, int y){
@@ -318,19 +279,7 @@ protected void drawCharachterSouth(Graphics2D g2, int x, int y){
     g2.setPaint(new Color(200,200,255));
     g2.fillPolygon(xPoints, yPoints, 4);
     
-
-    int xrPoints[] = {x, x + (tilesize / 4), x};
-    int yrPoints[] = {y + ((tilesize / 2) - (tilesize / 8)), y + (tilesize / 4), y - (tilesize / 4)};
-
-    int xlPoints[] = {x, x - (tilesize / 4), x};
-    int ylPoints[] = {y + ((tilesize / 2) - (tilesize / 8)), y + (tilesize / 4), y - (tilesize / 4)};
-
-
-    g2.setPaint(new Color(70, 142, 255));
-    g2.fillPolygon(xrPoints, yrPoints, 3);
-
-    g2.setPaint(new Color(255, 100, 100));
-    g2.fillPolygon(xlPoints, ylPoints, 3);
+    drawCharachter(g2, x, y);
 }
 
 protected void drawCharachterSouthWithBoulder(Graphics2D g2, int x, int y){
