@@ -4,6 +4,10 @@ import java.awt.*;
 
 /**
  * Created by Eliot on 21/09/15.
+ * 
+ * This class only does one thing, you give it a graphics context, an X and a Y, and it paints a tile onto that spot.
+ * 
+ * This class holds all the info about how to paint every tile. Everything is draw manually, we don't use any images.
  */
 public class TilePainter {
     private int tilesize;
@@ -92,7 +96,7 @@ public class TilePainter {
         int eigth = tilesize / 8;
         int forth = tilesize / 4;
         
-     // top bit
+        // top bit
         int xPoints[] = {x, x + forth, x, x - forth};
         int yPoints[] = {y + eigth, y, y - eigth, y};
 
@@ -119,7 +123,7 @@ public class TilePainter {
         int eigth = tilesize / 8;
         int forth = tilesize / 4;
         
-     // top bit
+        // top bit
         int xPoints[] = {x, x + forth, x, x - forth};
         int yPoints[] = {y + eigth, y, y - eigth, y};
 
@@ -305,7 +309,7 @@ protected void drawCharachterEastWithBoulder(Graphics2D g2, int x, int y){
 }
 
 
-
+/* Draws a single spike at a position */
 private void drawSpike(Graphics2D g2, int x, int y){
 	int sixteen = tilesize / 16; 
 	
@@ -315,6 +319,7 @@ private void drawSpike(Graphics2D g2, int x, int y){
     g2.fillPolygon(xrPoints, yrPoints, 4);
 }
 
+/* Draws a single in-active spike at a position */
 private void drawSpikeDown(Graphics2D g2, int x, int y){
 	int sixteen = tilesize / 16; 
 	
@@ -324,6 +329,8 @@ private void drawSpikeDown(Graphics2D g2, int x, int y){
     g2.fillPolygon(xrPoints, yrPoints, 4);
 }
 
+
+/* Draws a tiny boulder, for when a player is carrying a boulder on their head*/
 private void drawTinyBoulder(Graphics2D g2, int x, int y){
 	int sixth = tilesize / 8;
 	
