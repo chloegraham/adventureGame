@@ -14,7 +14,7 @@ public class Player extends Moveable{
 	private int levelID;
 	private Direction direction = Direction.NORTH; 	//String representing which direction player is facing
 	private List<Item> inventory = new ArrayList<Item>();
-	private boolean hasBoulder = false;
+	private boolean hasBoulder;
 	
 	
 	
@@ -23,6 +23,7 @@ public class Player extends Moveable{
 	 */
 	public Player(Point location) {
 		super(location);
+		hasBoulder = false;
 	}
 	
 	
