@@ -4,7 +4,7 @@ import java.awt.Point;
 import java.util.HashSet;
 import java.util.Set;
 
-import convertors.Messages;
+import convertors.Msgs;
 import movable.Boulder;
 import movable.Player;
 import tiles.Chest;
@@ -155,8 +155,8 @@ public class Level {
 		sb.append(levelID);
 		sb.append('@');
 		return sb.toString() +
-			   Messages.DELIM_LEVEL +
-			   Messages.DELIM_SPLIT;
+			   Msgs.DELIM_LEVEL +
+			   Msgs.DELIM_SPLIT;
 	}
 	
 	

@@ -1,7 +1,7 @@
 package gameWorld;
 
 import movable.Player;
-import convertors.Messages;
+import convertors.Msgs;
 
 public class GameWorld {
 	private GameLogic logic;
@@ -9,16 +9,16 @@ public class GameWorld {
 	private Player[] players;
 	
 	public GameWorld(String encodedGameWorld){
-		String[] split = encodedGameWorld.split(Messages.DELIM_SPLIT);
+		String[] split = encodedGameWorld.split(Msgs.DELIM_SPLIT);
 		
 		int levelAmount = 0;
 		int playerAmount = 0;
 		
 		for (String s : split) {
-			if (s.contains(Messages.DELIM_LEVEL)) {
+			if (s.contains(Msgs.DELIM_LEVEL)) {
 				levelAmount++;
 			}
-			else if (s.contains(Messages.DELIM_PLAYER)) {
+			else if (s.contains(Msgs.DELIM_PLAYER)) {
 				playerAmount++;
 			}
 			else {
@@ -32,11 +32,11 @@ public class GameWorld {
 		int levelIndex = 0;
 		int playerIndex = 0;
 		for (String s  : split) {
-			if (s.contains(Messages.DELIM_LEVEL)) {
+			if (s.contains(Msgs.DELIM_LEVEL)) {
 				String encodedLevel = s;
 				levels[levelIndex++] = new Level(encodedLevel);
 			}
-			else if (s.contains(Messages.DELIM_PLAYER)) {
+			else if (s.contains(Msgs.DELIM_PLAYER)) {
 				String encodedPlayer = s;
 				players[playerIndex++] = new Player(encodedPlayer);
 			}

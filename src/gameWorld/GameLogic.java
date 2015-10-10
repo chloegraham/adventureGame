@@ -2,7 +2,7 @@ package gameWorld;
 
 import java.awt.Point;
 
-import convertors.Messages;
+import convertors.Msgs;
 import movable.Boulder;
 import movable.Player;
 import tiles.Chest;
@@ -24,7 +24,7 @@ public class GameLogic {
 	}
 	
 	
-	public String handleAction(int ordinal, int userID){
+	public String handleAction(int ordinal, int userID) {
 		Player player = null;
 		Level level = null;
 		
@@ -50,33 +50,48 @@ public class GameLogic {
 		Point current = player.getLocation();
 		Point newLocation = null;
 		
-		if(Actions.NORTH.ordinal() == ordinal){
+		if(Actions.NORTH.ordinal() == ordinal) {
 			player.setDirection(Direction.NORTH);
 			newLocation = new Point(current.x, current.y-1);
 		}
-		else if (Actions.EAST.ordinal() == ordinal){
+		else if (Actions.EAST.ordinal() == ordinal) {
 			player.setDirection(Direction.EAST);
 			newLocation = new Point(current.x+1, current.y);
 		}
-		else if (Actions.SOUTH.ordinal() == ordinal){
+		else if (Actions.SOUTH.ordinal() == ordinal) {
 			player.setDirection(Direction.SOUTH);
 			newLocation = new Point(current.x, current.y+1);
 		}
-		else if (Actions.WEST.ordinal() == ordinal){
+		else if (Actions.WEST.ordinal() == ordinal) {
 			player.setDirection(Direction.WEST);
 			newLocation = new Point(current.x-1, current.y);
 	   }
-		else if (Actions.INTERACT.ordinal() == ordinal){ 
+		else if (Actions.INTERACT.ordinal() == ordinal) { 
 			message = interact(player, level, current);
+		}
+		else if (Actions.NEWGAME.ordinal() == ordinal) {
+		}
+		else if (Actions.LOAD.ordinal() == ordinal) {
+	    }
+		else {
+			throw new IllegalArgumentException("GameLogic:  received an unexpected ordinal. It might be 'Inspect' which we have't coded yet.");
 		}
 		
 		// Only for Move not Interact
 		if (ordinal == Actions.NORTH.ordinal() || ordinal == Actions.SOUTH.ordinal() || ordinal == Actions.WEST.ordinal() || ordinal == Actions.EAST.ordinal()) {
 			boolean success = move(player, level, newLocation);
-			message = Messages.moveMsg(player.getDirection(), success);
+			message = Msgs.moveMsg(player.getDirection(), success);
 		}
 		
-		return message;
+		boolean hasBoulder = player.hasBoulder();
+		int keyNumber = player.getNumberOfKeys();
+		int playerX = player.getLocation().x;
+		int playerY = player.getLocation().y;
+		String bouldersKeysLocation = hasBoulder + Msgs.DELIM_DETAILS + keyNumber + Msgs.DELIM_DETAILS +
+									  playerX + Msgs.DELIM_DETAILS + playerY + Msgs.DELIM_DETAILS +
+									  Msgs.DELIM_SPLIT;
+		
+		return bouldersKeysLocation + message;
 	}
 	
 	
@@ -172,46 +187,43 @@ public class GameLogic {
 		Tile tile = level.getTiles()[interactWith.y][interactWith.x];
 		
 		
+		
 		/*
 		 *  Chest interaction code & messages
 		 */
 		if (tile instanceof Chest){
 			Chest chest = (Chest) tile;
-			// is chest open?
-			boolean open = chest.isOpen();
-			// if chest is open - "chest already open"
-			// if chest is closed - "you opened chest"
 			
-			// try open is not opened already (if is open already nothing bad will happen)
-			chest.open();
-			
-			// [chest should now be open unless we add more game logic/chest logic in the future]
-			boolean opened = chest.isOpen();
-			
-			if (opened) {
-				boolean isKey = chest.hasKey();
-				if (isKey) {
-					player.addKey();
-					chest.takeKey();
-				} else {
-					// no key inside the chest
-				}		
-			}
-				
 			// OPEN
 			// true - "Chest already open"
 			// false - "You opened the Chest"
-				
+			boolean open = chest.isOpen();
+			
+			// Open it either way
+			chest.open();
+			
 			// OPENED
 			// true - no comment needed
 			// false - chest is closed and you can't open it and you can't look inside
-			
+			boolean opened = chest.isOpen();
 			
 			// ISKEY
 			// true - "there is a key inside & player has picked it up"
 			// false - "there is no key inside this chest"	
-			return "temp chest message";
+			boolean isKey = chest.hasKey();
+			
+			
+			// [chest should now be open unless we add more game logic/chest logic in the future]
+			if (opened) {
+				if (isKey) {
+					player.addKey();
+					chest.takeKey();
+				}		
+			}
+			
+			return Msgs.chestMsg(open, opened, isKey);
 		} 
+		
 		
 		
 		/*
@@ -221,33 +233,24 @@ public class GameLogic {
 			
 			Door door = (Door) tile;
 			
-			// is the door locked or not?
+			// ISLOCKED
+			// true - "The Door is locked"
+			// false - "The Door is unlocked. You may enter." RETURN
 			boolean isLocked = door.isLocked();
 			
-			// does the player have a key?
+			// HASKEY
+			// true - [move on to try unlock the door]
+			// false - "you don't have a key so you can't unlock the door. go find one."
 			boolean hasKey = player.hasKey();
 			
-			// if isLocked try and unlock the Door
-			// if !isLocked that means the door is open [do nothing]
 			if (isLocked) {
 				if (hasKey) {
 					door.unlock();
 					player.useKey();
-				}
-				return "The door is locked but you don't have a key to unlock it. Go find a key.";
+				}	
 			}
-			return "The Door is unlocked. You may enter.";
-			// ISLOCKED
-			// true - "The Door is locked"
-			// false - "The Door is unlocked. You may enter." RETURN
 			
-			// HAVEKEY
-			// true - [move on to try unlock the door]
-			// false - "you don't have a key so you can't unlock the door. go find one."
-			
-			// TRYUNLOCK
-			// true - "You have unlocked the Door. You may enter now." [remove a player key && unlock the door]
-			// false - "sdafnsdjfa"
+			return Msgs.doorMsg(isLocked, hasKey);
 		}
 		
 		

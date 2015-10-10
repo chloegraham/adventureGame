@@ -86,7 +86,7 @@ public class Listener extends JPanel implements KeyListener, ActionListener {
 				int send = i + DIR;			// If the screen has not been rotated, the direction will not be changed.
 				if (send > 3){ send -= 4; }
 				if (send < 0){ send += 4; }
-				UI.sendUIAction(ROTATION[send].ordinal());
+				UI.sendClientAction(ROTATION[send].ordinal());
 				return;
 			}
 		}
@@ -95,7 +95,7 @@ public class Listener extends JPanel implements KeyListener, ActionListener {
 		/* All other keys must be sent directly through the server. Find the ordinal and send it. */
 		for (Actions ac : ACTIONS){
 			if (ac.getKeyCode() == event){
-				UI.sendUIAction(ac.ordinal());
+				UI.sendClientAction(ac.ordinal());
 				return;
 			}
 		}
@@ -113,8 +113,8 @@ public class Listener extends JPanel implements KeyListener, ActionListener {
 		}
 		
 		/* Game controls */
-		if (ac.equals("Save")){ UI.sendUIAction(Actions.SAVE.ordinal()); }
-		else if (ac.equals("Load")){ UI.sendUIAction(Actions.LOAD.ordinal()); }
+		if (ac.equals("Save")){ UI.sendClientAction(Actions.SAVE.ordinal()); }
+		else if (ac.equals("Load")){ UI.sendClientAction(Actions.LOAD.ordinal()); }
 		else if (ac.equals("Exit")){ exitGame(); }
 	}
 
