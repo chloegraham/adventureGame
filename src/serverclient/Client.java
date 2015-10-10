@@ -6,8 +6,8 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
 
-import testconvert.Layers;
-import testconvert.Messages;
+import convertors.Layers;
+import convertors.Messages;
 import userinterface.Action.Actions;
 import userinterface.UserInterface;
 

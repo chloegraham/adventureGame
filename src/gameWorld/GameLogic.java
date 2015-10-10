@@ -2,11 +2,9 @@ package gameWorld;
 
 import java.awt.Point;
 
+import convertors.Messages;
 import movable.Boulder;
-import movable.Item;
-import movable.Key;
 import movable.Player;
-import testconvert.ConvertAction;
 import tiles.Chest;
 import tiles.Door;
 import tiles.EmptyTile;
@@ -75,7 +73,7 @@ public class GameLogic {
 		// Only for Move not Interact
 		if (ordinal == Actions.NORTH.ordinal() || ordinal == Actions.SOUTH.ordinal() || ordinal == Actions.WEST.ordinal() || ordinal == Actions.EAST.ordinal()) {
 			boolean success = move(player, level, newLocation);
-			message = ConvertAction.moveMsg(player.getDirection(), success);
+			message = Messages.moveMsg(player.getDirection(), success);
 		}
 		
 		return message;
@@ -111,9 +109,9 @@ public class GameLogic {
 			Door door = (Door) tile;
 			if (!door.isLocked() && door.isLevelChanger()) {
 				if (door.isNextLevel()) {
-					moveNextLevel();
+					moveNextLevel(player);
 				} else {
-					movePrevLevel();
+					movePrevLevel(player);
 				}
 				return true;
 			}
@@ -129,19 +127,15 @@ public class GameLogic {
 				for (int j = 0; j < doors[0].length; j++) {
 					if(doors[i][j] instanceof Door){
 						if(!((PressurePad)tile).isActivated()){
-							((Door)doors[i][j]).openWithPad();
+							((Door)doors[i][j]).unlock();
 						} else {
-							((Door)doors[i][j]).closeWithPad();
+							((Door)doors[i][j]).lock();
 						}
 					}
 				}
 			}
 		}
 		else if (tile instanceof Spikes){
-		//player can't walk onto spikes if active
-		  /*if(((Spikes)tile).isActive()){
-			  return false;
-		  } */
 			((Spikes)tile).activate();
 		}
 		return player.setLocation(newLoc);		
@@ -172,90 +166,171 @@ public class GameLogic {
 		}
 		
 		if (interactWith.y < 0 || interactWith.y > level.getTiles().length-1 || interactWith.x < 0 || interactWith.x > level.getTiles()[0].length-1){
-			System.out.println("Stay inside bounds pls");
-			return "Stay inside bounds";
+			return "temp - you are trying to interact with a tile outside the bounds of the game.";
 		}	
 		
 		Tile tile = level.getTiles()[interactWith.y][interactWith.x];
 		
+		
+		/*
+		 *  Chest interaction code & messages
+		 */
 		if (tile instanceof Chest){
-			Key key = ((Chest)tile).openChest();
-			if(key != null){
-				player.addToInventory(key);
-				return ConvertAction.openChestMsg(false, true, player.numberOfKeys());
+			Chest chest = (Chest) tile;
+			// is chest open?
+			boolean open = chest.isOpen();
+			// if chest is open - "chest already open"
+			// if chest is closed - "you opened chest"
+			
+			// try open is not opened already (if is open already nothing bad will happen)
+			chest.open();
+			
+			// [chest should now be open unless we add more game logic/chest logic in the future]
+			boolean opened = chest.isOpen();
+			
+			if (opened) {
+				boolean isKey = chest.hasKey();
+				if (isKey) {
+					player.addKey();
+					chest.takeKey();
+				} else {
+					// no key inside the chest
+				}		
 			}
-			return ConvertAction.openChestMsg(false, false, player.numberOfKeys());
+				
+			// OPEN
+			// true - "Chest already open"
+			// false - "You opened the Chest"
+				
+			// OPENED
+			// true - no comment needed
+			// false - chest is closed and you can't open it and you can't look inside
+			
+			
+			// ISKEY
+			// true - "there is a key inside & player has picked it up"
+			// false - "there is no key inside this chest"	
+			return "temp chest message";
 		} 
-		else if (tile instanceof Door){
-			((Door) tile).openDoor(player.getKey());
-			return ConvertAction.openDoorMsg(false, true, player.numberOfKeys());
+		
+		
+		/*
+		 *  Door interaction code & message
+		 */
+		if (tile instanceof Door){
+			
+			Door door = (Door) tile;
+			
+			// is the door locked or not?
+			boolean isLocked = door.isLocked();
+			
+			// does the player have a key?
+			boolean hasKey = player.hasKey();
+			
+			// if isLocked try and unlock the Door
+			// if !isLocked that means the door is open [do nothing]
+			if (isLocked) {
+				if (hasKey) {
+					door.unlock();
+					player.useKey();
+				}
+				return "The door is locked but you don't have a key to unlock it. Go find a key.";
+			}
+			return "The Door is unlocked. You may enter.";
+			// ISLOCKED
+			// true - "The Door is locked"
+			// false - "The Door is unlocked. You may enter." RETURN
+			
+			// HAVEKEY
+			// true - [move on to try unlock the door]
+			// false - "you don't have a key so you can't unlock the door. go find one."
+			
+			// TRYUNLOCK
+			// true - "You have unlocked the Door. You may enter now." [remove a player key && unlock the door]
+			// false - "sdafnsdjfa"
 		}
 		
-		if (player.containsBoulder()){
-			if(tile instanceof EmptyTile || tile instanceof PressurePad){
-				System.out.println("Trying to drop a boulder on an empty tile or pressure pad..");
-				for(Item i: player.getInventory()){
-					if(i instanceof Boulder){
-						if(level.getTiles()[interactWith.y][interactWith.x] instanceof EmptyTile || level.getTiles()[interactWith.y][interactWith.x] instanceof PressurePad){
-							for (Boulder j : level.getBoulders()){
-								if (j.getLocation().equals(interactWith)){
-									System.out.println("Boulders don't do incest");
-									return ConvertAction.boulderMsg(false, player.containsBoulder());
-								}
-							}
-							if(tile instanceof PressurePad){
-								((PressurePad) tile).activate();
-							}
-							((Boulder) i).setLocation(interactWith);
-							level.getBoulders().add((Boulder) i);
-							player.removeBoulder();
-							System.out.println("dropped boulder");
-							return ConvertAction.boulderMsg(false, player.containsBoulder());
-						}
-					}
-				}
-				System.out.println("shame you aint got no boulder bitch");
-			}
-		}
 		
-		if (player.containsBoulder()){
-			return "boulder";
-		} else {
-			//pick up boulder if one is in front of player
-			for(Boulder b: level.getBoulders()){
-				if(b.getLocation().equals(interactWith)){
-					System.out.println("picking up boulder, id = " + b.getId());
-					player.addToInventory(b);
-					//now remove the boulder from the list so that it can't be redrawn/picked up again
-					level.getBoulders().remove(b);
-					return ConvertAction.boulderMsg(true, player.containsBoulder());
-				}
+		/*
+		 *  Boulder interaction code & message
+		 */
+		
+		// BOULDER SITUATIONS
+		
+		if (!player.hasBoulder()) {
+			boolean facingBoulder = level.removeBoulder(new Boulder(interactWith));
+			if (!facingBoulder)
+				return "";
+			player.addBoulder();
+			return "temp pickup a boulder";
+		}
+			
+		if (player.hasBoulder()) {
+			boolean facingBoulder = level.containsBoulder(new Boulder(interactWith));
+			if (facingBoulder) {
+				return "you already have a boulder and can't pick up another";
 			}
-		}	
-		return ConvertAction.inspectMsg();
+			if (tile instanceof EmptyTile) {
+				level.addBoulder(new Boulder(interactWith));
+				player.dropBoulder();
+				return "you dropped a boulder on an empty tile";
+			}
+			if (tile instanceof PressurePad) {
+				level.addBoulder(new Boulder(interactWith));
+				player.dropBoulder();
+				PressurePad pad = (PressurePad) tile;
+				pad.activate();
+				return "you dropped a boulder on a pressurepad";
+			}
+		}
+			
+		// standing facing a boulder
+		// HASBOULDER 
+		// true - "you already have a Boulder, you can't pick up another" [do nothing]
+		// false - "You picked up a boulder" [pick up boulder]
+		
+		
+		// standing facing a wall
+		// HASBOULDER
+		// true -  "you can't put a boulder in a wall / you have no room to put boulder down" [do nothing]
+		// false - [do nothing]
+		
+		
+		// standing facing empty tile
+		// HASBOULDER
+		// true - "you put a boulder down" [put boulder down]
+		// false - [do nothing]
+		
+		
+		// can only put boulder down on:
+		// empty, pressure pad
+		
+		return "temp - tried to interact but came up short - ERROR in game logic";
 	}
 	
-	private void moveNextLevel() {
-		for (int i = 0; i != players.length; i++) {
-			players[i].nextLevel();
-		}
+	private void moveNextLevel(Player p) {
+		int pastLevel = p.getLevelID();
+		p.nextLevel();
+		
 		for (int i = 0; i != levels.length; i++) {
-			if (levels[i].getLevelID() == players[0].getLevelID())
-				levels[i].addPlayers(players);
-			else
-				levels[i].removePlayers();
+			if (levels[i].getLevelID() == p.getLevelID())
+				levels[i].addPlayer(p);
+			
+			if (levels[i].getLevelID() == pastLevel)
+				levels[i].removePlayer(p);
 		}
 	}
 	
-	private void movePrevLevel() {
-		for (int i = 0; i != players.length; i++) {
-			players[i].prevLevel();
-		}
+	private void movePrevLevel(Player p) {
+		int pastLevel = p.getLevelID();
+		p.prevLevel();
+		
 		for (int i = 0; i != levels.length; i++) {
-			if (levels[i].getLevelID() == players[0].getLevelID())
-				levels[i].addPlayers(players);
-			else
-				levels[i].removePlayers();
+			if (levels[i].getLevelID() == p.getLevelID())
+				levels[i].addPlayer(p);
+			
+			if (levels[i].getLevelID() == pastLevel)
+				levels[i].removePlayer(p);
 		}
 	}
 }

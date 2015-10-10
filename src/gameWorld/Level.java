@@ -4,9 +4,9 @@ import java.awt.Point;
 import java.util.HashSet;
 import java.util.Set;
 
+import convertors.Messages;
 import movable.Boulder;
 import movable.Player;
-import testconvert.Messages;
 import tiles.Chest;
 import tiles.Door;
 import tiles.EmptyTile;
@@ -23,7 +23,7 @@ public class Level {
 	
 	private Tile[][] tiles;
 	private Set<Boulder> boulders;
-	private Player[] players;
+	private Set<Player> players;
 	
 	public Level(String encodedLevel) {
 		// Split String up in to x3 Strings which will be converted to char[][]
@@ -57,6 +57,8 @@ public class Level {
 		buildLevel(level);
 		buildObjects(objects);
 		buildMovables(movables);
+		
+		System.out.println(toString());
 	}
 	
 	
@@ -72,7 +74,56 @@ public class Level {
 	 *  Getters for GameLogic
 	 */
 	public Tile[][] getTiles() { return tiles; }
+	
+	
+	
+	/*
+	 *  Boulder methods
+	 */
 	public Set<Boulder> getBoulders(){ return boulders;}
+	
+	public void addBoulder(Boulder boulder) {
+		boolean success = boulders.add(boulder);
+		if (!success)
+			throw new IllegalArgumentException("Invalid to add a Boulder that is already in Boulder set. Investigate how this was possible.");
+		System.out.println(toString());
+	}
+	
+	public boolean removeBoulder(Boulder boulder) {
+		boolean success = boulders.remove(boulder);
+		System.out.println(toString());
+		return success;
+	}
+	
+	public boolean containsBoulder(Boulder boulder) {
+		return boulders.contains(boulder);
+	}
+	
+	
+	
+
+	/*
+	 *  Getter to Remove Players from a Level
+	 */
+	public void removePlayer(Player player) {
+		boolean success = players.remove(player);
+		System.out.println(toString() + "  removed a player");
+	}
+	
+	
+	/*
+	 *  Method to Transfer Players between Levels
+	 */
+	public void addPlayer(Player player) {
+		boolean success = players.add(player);
+		if (!success)
+			throw new IllegalArgumentException("Should never be able to add two of the same player to one Level.");
+		System.out.println(toString() + "  added a player");
+	}
+	
+	
+	
+	
 	
 	
 	/*
@@ -108,21 +159,6 @@ public class Level {
 			   Messages.DELIM_SPLIT;
 	}
 	
-	
-	/*
-	 *  Getter to Remove Players from a Level
-	 */
-	public void removePlayers() {
-		players = null;
-	}
-	
-	
-	/*
-	 *  Method to Transfer Players between Levels
-	 */
-	public void addPlayers(Player[] players) {
-		this.players = players;
-	}
 	
 	
 	/*
@@ -179,6 +215,7 @@ public class Level {
 	}
 	
 	private void buildMovables(char[][] movables) {
+		players = new HashSet<>();
 		boulders = new HashSet<>();
 		for (int y = 0; y < height; y++) {
 			for (int x = 0; x < width; x++) {
@@ -238,18 +275,16 @@ public class Level {
 			array[p.y][p.x] = b.toString().charAt(0);
 		}
 		
-		if (players != null) {
-			for (int i = 0; i != players.length; i++) {
-				if (players[i] != null) {
-					Point p = players[i].getLocation();
-					array[p.y][p.x] = players[i].toString().charAt(0);
-				}
-			}
+		for (Player player : players) {
+			Point p = player.getLocation();
+			array[p.y][p.x] = player.toString().charAt(0);
 		}
 		
 		return array;
 	}
-
-
 	
+	@Override
+	public String toString() {
+		return "   Level( levelID- " + levelID + "):   #players:  " + players.size() + "    #boulders:  " + boulders.size();
+	}
 }

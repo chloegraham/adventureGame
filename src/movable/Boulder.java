@@ -2,34 +2,27 @@ package movable;
 
 import java.awt.Point;
 
-public class Boulder extends Moveable implements Item{
-	
-	private String description;
-	private String id;
-	private String character = "b";
+public class Boulder extends Moveable implements Item {
 
-	public Boulder(Point location, String description, String id) {
-		this(location);
-		this.description = description;
-		this.id = id;
-		this.character = "b";
-	}
-	
 	public Boulder(Point location) {
 		super(location);
-	}
-
-	@Override
-	public String getDescription() {
-		return this.description;
-	}
-	
-	public String getId() {
-		return this.id;
 	}
 	
 	@Override
 	public String toString(){
-		return this.character;
+		return "b";
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof Boulder)
+			if (((Boulder) o).getLocation().equals(this.getLocation()))
+				return true;
+		return false;
+	}
+	
+	@Override
+	public int hashCode() {
+		return getLocation().hashCode();
 	}
 }

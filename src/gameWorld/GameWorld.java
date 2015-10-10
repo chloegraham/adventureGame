@@ -1,8 +1,7 @@
 package gameWorld;
 
 import movable.Player;
-import testconvert.ConvertPlayer;
-import testconvert.Messages;
+import convertors.Messages;
 
 public class GameWorld {
 	private GameLogic logic;
@@ -39,16 +38,25 @@ public class GameWorld {
 			}
 			else if (s.contains(Messages.DELIM_PLAYER)) {
 				String encodedPlayer = s;
-				players[playerIndex++] = ConvertPlayer.toPlayer(encodedPlayer);
+				players[playerIndex++] = new Player(encodedPlayer);
 			}
 			else {
 				throw new IllegalArgumentException();
 			}
 		}
 		
-		// TODO testing 
-		levels[0].addPlayers(players);
+		int playerOnelvlID = players[0].getLevelID();
+		int playerTwolvlID = players[1].getLevelID();
+		for (Level l : levels) {
+			if (l.getLevelID() == playerOnelvlID)
+				l.addPlayer(players[0]);
+			if (l.getLevelID() == playerTwolvlID)
+				l.addPlayer(players[1]);
+		}
+			
 		logic = new GameLogic(levels, players);
+		
+		System.out.println(toString());
 	}
 	
 	public GameLogic getLogic() { return logic; }
@@ -56,25 +64,25 @@ public class GameWorld {
 	
 	public String getEncodedGameWorld(int userID){
 		String str = "";
-		//player.getLevel
+		
+		// Find player using userid
 		Player currentPlayer = null;
-		for(Player p: this.players){
-			if(p.getUserID() == userID){
+		for (Player p : players)
+			if (p.getUserID() == userID)
 				currentPlayer = p;
-			}
-		}
-		if(currentPlayer == null){
+				
+		if(currentPlayer == null)
 			throw new IllegalArgumentException("Passed in userID doesn't belong to a player");
-		}
 
+		// Find level using players levelid
 		int levelID = currentPlayer.getLevelID();
-		for(int i = 0; i < levels.length; i++){
-			if(levels[i].getLevelID() == levelID){
+		
+		// return the encoded level which the player is on
+		for(int i = 0; i < levels.length; i++)
+			if(levels[i].getLevelID() == levelID)
 				return str += levels[i].getEncodedLevel();
-			}
-		} 
+			
 		throw new IllegalArgumentException("No such level that matches player's level");
-		//get the level that the player's on
 	}
 	
 	
@@ -88,5 +96,10 @@ public class GameWorld {
 			str += players[0].getEncodedPlayer();
 		
 		return str;
+	}
+	
+	@Override
+	public String toString() {
+		return "   GameWorld:   #levels:  " + levels.length + "   #players:  " + players.length;
 	}
 }
