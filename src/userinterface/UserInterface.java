@@ -40,7 +40,7 @@ public class UserInterface {
 		frame.setVisible(true);
 	}
 	
-	public void sendUIAction(int action) {
+	public void sendClientAction(int action) {
 		client.handleAction(action);
 	}
 
@@ -204,11 +204,11 @@ public class UserInterface {
 		if (splash.getOpenCard() != SplashScreen.HOST_CARD){ return; }	// Only the host's menu card has action listeners.
 		else if (ac.equals("New Game")){
 			splash.showStartup("Creating a new game. Waiting for game state ...");
-			sendUIAction(Actions.NEWGAME.ordinal());
+			sendClientAction(Actions.NEWGAME.ordinal());
 		}
 		else if (ac.equals("Load Game")){
 			splash.showStartup("Loading a game. Waiting for game state ...");
-			sendUIAction(Actions.LOAD.ordinal());
+			sendClientAction(Actions.LOAD.ordinal());
 		}
 	}
 	

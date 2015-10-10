@@ -161,6 +161,9 @@ public class Server implements Runnable {
 	 *  Ask Logic to handle users action & then Broadcast the results back to the Clients
 	 */
 	private void handleAction(int ordinal, int userID) throws IOException {
+//		if (ordinal == Actions.SAVE.ordinal())
+//			if (save())
+//				// tell the game to stop
 		String message = logic.handleAction(ordinal, userID);
 		broadcast(userID, message);
 	}
@@ -207,6 +210,7 @@ public class Server implements Runnable {
 		handleAction(Actions.NEWGAME.ordinal(), Msgs.PLAYER_ONE);
 	}
 	
+	
 	private void load() throws IOException {
 		// Get encoded gameWorld of the standard new game
 		String encodedGameWorld = XML.load();
@@ -219,11 +223,13 @@ public class Server implements Runnable {
 		handleAction(Actions.LOAD.ordinal(), Msgs.PLAYER_ONE);
 	}
 	
+	
 	private boolean save() {
 		System.out.println("--- Server:    attempting to Save Game.");
 		return XML.save(gameWorld.getEncodedGameSave());
 	}
 
+	
 	private boolean isLoadValid() {
 		return XML.load() != null;
 	}
