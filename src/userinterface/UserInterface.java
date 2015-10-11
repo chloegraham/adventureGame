@@ -29,6 +29,7 @@ import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 import javax.swing.text.DefaultCaret;
 
+import renderer.IsoHelper;
 import renderer.RenderPane;
 import serverclient.Client;
 
@@ -339,6 +340,27 @@ public class UserInterface extends JFrame {
 		}
 		this.repaint();
 	}
+	
+	
+	
+	/**
+	 * 
+	 * @param level
+	 * @param objects
+	 * @param moveables
+	 */
+	public void redrawFromLayersWithCoordinate(char[][]level, char[][]objects, char[][]moveables, int x, int y){
+		graphics.setCamOffset(x, y);
+		graphics.setLayers(level, objects, moveables);
+		if (!playing){
+			playing = true;
+			splash.setVisibleCard(SplashScreen.READY_CARD);		// Show player key bindings and allow them to start
+		}
+		this.repaint();
+	}
+	
+	
+	
 	
 	private static final long serialVersionUID = 1L;
 
