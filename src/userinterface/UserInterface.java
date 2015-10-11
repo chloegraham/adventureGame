@@ -318,7 +318,7 @@ public class UserInterface extends JFrame {
 		try {
 			img = ImageIO.read(new File(imageAddress));
 			icon = new ImageIcon(img);
-		} catch (IOException e) {}// e.printStackTrace(); }
+		} catch (IOException e) { e.printStackTrace(); }
 		return icon;
 	}
 	
