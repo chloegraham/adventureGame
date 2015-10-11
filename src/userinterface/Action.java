@@ -22,16 +22,16 @@ public class Action {
 	 */
 	public enum Actions {
 		// Add extra events here...
-		NORTH (KeyEvent.VK_W),
-		EAST (KeyEvent.VK_D),
-		SOUTH (KeyEvent.VK_S),
-		WEST (KeyEvent.VK_A),
 		INSPECT (KeyEvent.VK_R),
 		INTERACT (KeyEvent.VK_E),
 		LOAD (-1),
 		SAVE (-1),
 		NEWGAME (-1),
 		/* Events for the User Interface. Add events for the Server or Game World above. */
+		NORTH (KeyEvent.VK_W),
+		EAST (KeyEvent.VK_D),
+		SOUTH (KeyEvent.VK_S),
+		WEST (KeyEvent.VK_A),
 		COUNTERCLOCKWISE (KeyEvent.VK_O),		// Graphics rotation
 		CLOCKWISE (KeyEvent.VK_P);
 
@@ -51,20 +51,49 @@ public class Action {
 			return keyCode;
 		}
 		
-		/**
-		 * USE WITH CAUTION.
-		 * Sets a new keyCode for this Action.
-		 */
-		public void setKeyCode(int keyCode){
-			this.keyCode = keyCode;
-		}
-		
 		public static String getName(int ordinal) {
 			for (Actions a : values())
 				if (a.ordinal() == ordinal)
 					return a.toString();
 			throw new IllegalArgumentException("Invalid ordinal. No enum with that ordinal.");
 		}
+	}
+	
+	// ============================================================
+	// Directions need to be kept separate when there are multiple
+	// windows on one screen. Stored directions for rotation.
+	// ============================================================
+	
+	private int NORTH = Actions.NORTH.getKeyCode();
+	private int EAST = Actions.EAST.getKeyCode();
+	private int SOUTH = Actions.SOUTH.getKeyCode();
+	private int WEST = Actions.WEST.getKeyCode();
+	
+	/**
+	 * Rotates keycodes for actions. If param is true, rotates clockwise. Else rotates aticlockwise.
+	 */
+	public void rotate(boolean clockwise){
+		int north = NORTH;
+		int east = EAST;
+		int south = SOUTH;
+		int west = WEST;
+		
+		NORTH = (clockwise) ? west : east;
+		SOUTH = (clockwise) ? east : west;
+		EAST = (clockwise) ? north : south;
+		WEST = (clockwise) ? south : north;
+	}
+	
+	/**
+	 * Returns the ordinal associated with the given key code.
+	 * If key code is not a match, returns -1.
+	 */
+	public int getDirectionOrdinal(int keyCode){
+		if (NORTH == keyCode){ return Actions.NORTH.ordinal(); }
+		else if (EAST == keyCode){ return Actions.EAST.ordinal(); }
+		else if (SOUTH == keyCode){ return Actions.SOUTH.ordinal(); }
+		else if (WEST == keyCode){ return Actions.WEST.ordinal(); }
+		return -1;	// This keyCode is not a direction.
 	}
 
 }
