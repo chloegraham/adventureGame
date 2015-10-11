@@ -58,7 +58,7 @@ public class UserInterface extends JFrame {
 	/* Inventory pane */
 	private final JLabel keys = new JLabel("0");
 	private final JLabel boulder = new JLabel();
-	private final int contentHeight = 80;			// Height of the inventory pane/message box
+	private final int contentHeight = 82;			// Height of the inventory pane/message box
 	
 	private boolean playing = false;	// Set true only when the game state and renderer are ready.
 	private int keyCount = 0;				// Number of keys player is currently holding
