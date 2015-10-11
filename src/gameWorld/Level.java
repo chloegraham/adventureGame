@@ -21,6 +21,9 @@ public class Level {
 	private int width;
 	private int height;	
 	
+	private Point prev;
+	private Point next;
+	
 	private Tile[][] tiles;
 	private Set<Boulder> boulders;
 	private Set<Player> players;
@@ -78,6 +81,18 @@ public class Level {
 	
 	
 	/*
+	 *  Getters for Prev & Next level locations.
+	 */
+	public Point getPrev() {
+		return prev;
+	}
+	public Point getNext() {
+		return next;
+	}
+	
+	
+	
+	/*
 	 *  Boulder methods
 	 */
 	public Set<Boulder> getBoulders(){ return boulders;}
@@ -109,7 +124,6 @@ public class Level {
 		boolean success = players.remove(player);
 		System.out.println(toString() + "  removed a player");
 	}
-	
 	
 	/*
 	 *  Method to Transfer Players between Levels
@@ -162,74 +176,7 @@ public class Level {
 	
 	
 	/*
-	 *  Initialization methods in Level Constructor
-	 */
-	private void setupTiles(char[][] level) {
-		width = level[0].length;
-		height = level.length;
-		tiles = new Tile[height][width];
-	}
-	
-	private void buildLevel(char[][] level) {
-		for (int y = 0; y < height; y++) {
-			for (int x = 0; x < width; x++) {
-				String temp = Character.toString((level[y][x]));
-				if(temp.equals("e")){
-					tiles[y][x] = new EmptyTile();
-				}
-				else if(temp.equals("w")) {
-					tiles[y][x] = new Wall();
-				}
-				else if(temp.equals("n")) {
-					// 'n' is fine because it is a substitute for null
-				}
-				else
-					throw new RuntimeException();
-			}
-		}
-	}
-	
-	private void buildObjects(char[][] objects) {
-		for (int y = 0; y < height; y++) {
-			for (int x = 0; x < width; x++) {
-				String temp = Character.toString((objects[y][x]));
-				if (temp.equals("d")){
-					tiles[y][x] = new Door();
-				}
-				else if (temp.equals("c")) {
-					tiles[y][x] = new Chest();
-				}
-				else if (temp.equals("z")){
-					tiles[y][x] = new PressurePad();
-				}
-				else if (temp.equals("s")) {
-					tiles[y][x] = new Spikes();
-				}
-				else if (temp.equals("n")) {
-					// 'n' is fine because it is a substitute for null
-				}
-				else
-					throw new RuntimeException();
-			}
-		}
-	}
-	
-	private void buildMovables(char[][] movables) {
-		players = new HashSet<>();
-		boulders = new HashSet<>();
-		for (int y = 0; y < height; y++) {
-			for (int x = 0; x < width; x++) {
-				String temp = Character.toString((movables[y][x]));
-				if(temp.equals("b"))
-					boulders.add(new Boulder(new Point(x, y)));
-			}
-		}
-	}
-	
-	
-	
-	/*
-	 *  Helper methods for 'getLevelState()'
+	 *  Helper methods for 'getEncodedLevel()'
 	 */
 	private char[][] getLevel() {
 		char[][] array = new char[height][width];
@@ -282,6 +229,125 @@ public class Level {
 		
 		return array;
 	}
+	
+	
+	
+	
+	/*
+	 *  Initialization methods in Level Constructor
+	 */
+	private void setupTiles(char[][] level) {
+		width = level[0].length;
+		height = level.length;
+		tiles = new Tile[height][width];
+	}
+	
+	private void buildLevel(char[][] level) {
+		for (int y = 0; y < height; y++) {
+			for (int x = 0; x < width; x++) {
+				String temp = Character.toString((level[y][x]));
+				if(temp.equals("e")){
+					tiles[y][x] = new EmptyTile();
+				}
+				else if(temp.equals("w")) {
+					tiles[y][x] = new Wall();
+				}
+				else if(temp.equals("n")) {
+					// 'n' is fine because it is a substitute for null
+				}
+				else {
+					throw new RuntimeException();
+				}
+			}
+		}
+	}
+	
+	private void buildObjects(char[][] objects) {
+		for (int y = 0; y < height; y++) {
+			for (int x = 0; x < width; x++) {
+				String temp = Character.toString((objects[y][x]));
+				
+				if (temp.equals("d")) {
+					tiles[y][x] = new Door("d");
+				}
+				else if (temp.equals("D")) {
+					tiles[y][x] = new Door("D");
+				}
+				else if (temp.equals("m")) {
+					tiles[y][x] = new Door("m");
+					if (prev == null)
+						prev = new Point(x, y);
+					else
+						throw new IllegalArgumentException("Level Constructor: Tried to make another 'Prev'. There should only be one 'Prev' location.");
+				}
+				else if (temp.equals("M")) {
+					tiles[y][x] = new Door("M");
+					if (prev == null)
+						prev = new Point(x, y);
+					else
+						throw new IllegalArgumentException("Level Constructor: Tried to make another 'Prev'. There should only be one 'Prev' location.");
+				}
+				else if (temp.equals("x")) {
+					tiles[y][x] = new Door("x");
+					if (next == null)
+						next = new Point(x, y);
+					else
+						throw new IllegalArgumentException("Level Constructor: Tried to make another 'Next'. There should only be one 'Next' location.");
+				}
+				else if (temp.equals("X")) {
+					tiles[y][x] = new Door("X");
+					if (next == null)
+						next = new Point(x, y);
+					else
+						throw new IllegalArgumentException("Level Constructor: Tried to make another 'Next'. There should only be one 'Next' location.");
+				}
+				
+				else if (temp.equals("c")) {
+					tiles[y][x] = new Chest(false);
+				}
+				else if (temp.equals("C")) {
+					tiles[y][x] = new Chest(true);
+				}
+				
+				else if (temp.equals("z")) {
+					tiles[y][x] = new PressurePad(false);
+				}
+				else if (temp.equals("Z")) {
+					tiles[y][x] = new PressurePad(true);
+				}
+				
+				else if (temp.equals("s")) {
+					tiles[y][x] = new Spikes(false);
+				}
+				else if (temp.equals("S")) {
+					tiles[y][x] = new Spikes(true);
+				}
+				
+				else if (temp.equals("n")) {
+					// 'n' is fine because it is a substitute for null
+				}
+				else {
+					throw new RuntimeException();
+				}
+			}
+		}
+		if (prev == null || next == null)
+			throw new IllegalArgumentException("Level Constructor: There should always be a 'Prev' and 'Next' on every Level. This Level one is null.");
+	}
+	
+	private void buildMovables(char[][] movables) {
+		players = new HashSet<>();
+		boulders = new HashSet<>();
+		for (int y = 0; y < height; y++) {
+			for (int x = 0; x < width; x++) {
+				String temp = Character.toString((movables[y][x]));
+				if(temp.equals("b"))
+					boulders.add(new Boulder(new Point(x, y)));
+			}
+		}
+	}
+	
+	
 	
 	@Override
 	public String toString() {

@@ -182,14 +182,9 @@ public class Player extends Moveable{
 	/*
 	 *  Change Level
 	 */
-	public void nextLevel() {
-		levelID++;
-		setLocation(new Point(1, 1));
-	}
-	
-	public void prevLevel() {
-		levelID--; 
-		setLocation(new Point(1, 1));
+	public void setLevelID(int lvlID, Point loc) {
+		levelID = lvlID;
+		setLocation(loc);
 	}
 	
 	

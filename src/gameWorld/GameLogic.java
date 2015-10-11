@@ -141,9 +141,15 @@ public class GameLogic {
 			Door door = (Door) tile;
 			if (!door.isLocked() && door.isLevelChanger()) {
 				if (door.isNextLevel()) {
-					moveNextLevel(player);
+					if (moveNextLevel(player))
+						System.out.println("--------- MOVED TO THE NEXT LEVEL");
+					else
+						System.out.println("--------- HOPEFULLY YOU CAN'T MOVE TO THE NEXT LEVEL BECAUSE THERE ISN'T ONE");
 				} else {
-					movePrevLevel(player);
+					if (movePrevLevel(player))
+						System.out.println("--------- MOVED TO THE PREV LEVEL");
+					else
+						System.out.println("--------- HOPEFULLY YOU CAN'T MOVE TO THE PREV LEVEL BECAUSE THERE ISN'T ONE");
 				}
 				return true;
 			}
@@ -315,29 +321,62 @@ public class GameLogic {
 	/*
 	 *  // TODO need to add some sort of message for changing level
 	 */
-	private void moveNextLevel(Player p) {
-		int pastLevel = p.getLevelID();
-		p.nextLevel();
+	private boolean moveNextLevel(Player p) {
+		// what level is the player on?
+		int currentLvl = p.getLevelID();
 		
+		// what index is the current lvl?
+		int indexCurrentLvl = 8989;
 		for (int i = 0; i != levels.length; i++) {
-			if (levels[i].getLevelID() == p.getLevelID())
-				levels[i].addPlayer(p);
-			
-			if (levels[i].getLevelID() == pastLevel)
-				levels[i].removePlayer(p);
+			if (levels[i].getLevelID() == currentLvl) {
+				if (indexCurrentLvl == 8989)
+					indexCurrentLvl = i;
+				else
+					throw new IllegalArgumentException("Found a bug. There shouldn't be two levels with the same levelID.");
+			}
 		}
+		
+		// is there another level after indexCurrentLvl?
+		if (indexCurrentLvl >= levels.length-1)
+			return false;
+			
+		int indexNextLvl = indexCurrentLvl+1;
+		Level lvl = levels[indexNextLvl];
+		int nextLvlID = lvl.getLevelID();
+		p.setLevelID(nextLvlID, lvl.getPrev());
+		levels[indexCurrentLvl].removePlayer(p);
+		levels[indexNextLvl].addPlayer(p);
+		
+		return true;
 	}
 	
-	private void movePrevLevel(Player p) {
-		int pastLevel = p.getLevelID();
-		p.prevLevel();
+	private boolean movePrevLevel(Player p) {
+		// what level is the player on?
+		int currentLvl = p.getLevelID();
 		
+		// what index is the current lvl?
+		int indexCurrentLvl = 8989;
 		for (int i = 0; i != levels.length; i++) {
-			if (levels[i].getLevelID() == p.getLevelID())
-				levels[i].addPlayer(p);
-			
-			if (levels[i].getLevelID() == pastLevel)
-				levels[i].removePlayer(p);
+			if (levels[i].getLevelID() == currentLvl) {
+				if (indexCurrentLvl == 8989) {
+					indexCurrentLvl = i;
+				} else {
+					throw new IllegalArgumentException("Found a bug. There shouldn't be two levels with the same levelID.");
+				}
+			}
 		}
+		
+		// is there another level after indexCurrentLvl?
+		if (indexCurrentLvl <= 0)
+			return false;
+			
+		int indexPrevLvl = indexCurrentLvl-1;
+		Level lvl = levels[indexPrevLvl];
+		int prevLvlID = lvl.getLevelID();
+		p.setLevelID(prevLvlID, lvl.getNext());
+		levels[indexCurrentLvl].removePlayer(p);
+		levels[indexPrevLvl].addPlayer(p);
+		
+		return true;
 	}
 }
