@@ -26,6 +26,7 @@ public class Level {
 	
 	private Tile[][] tiles;
 	private Set<Boulder> boulders;
+	private Set<Spikes> spikes;
 	private Set<Player> players;
 	
 	public Level(String encodedLevel) {
@@ -135,8 +136,24 @@ public class Level {
 		System.out.println(toString() + "  added a player");
 	}
 	
+	public boolean containsPlayer() {
+		return !players.isEmpty();
+	}
 	
 	
+	/*
+	 *  Activate all the Spikes on this Level
+	 */
+	public void activateSpikes() {
+		for (Spikes s : spikes)
+			s.activate();
+		
+		for (Player p : players)
+			for (Spikes s : spikes)
+				if (p.getLocation().equals(s.getLocation()))
+					if (s.isActivated())
+						p.getUserID();
+	}
 	
 	
 	
@@ -263,6 +280,7 @@ public class Level {
 	}
 	
 	private void buildObjects(char[][] objects) {
+		spikes = new HashSet<>();
 		for (int y = 0; y < height; y++) {
 			for (int x = 0; x < width; x++) {
 				String temp = Character.toString((objects[y][x]));
@@ -317,10 +335,14 @@ public class Level {
 				}
 				
 				else if (temp.equals("s")) {
-					tiles[y][x] = new Spikes(false);
+					Spikes spike = new Spikes(false, new Point(x, y));
+					tiles[y][x] = spike;
+					spikes.add(spike);
 				}
 				else if (temp.equals("S")) {
-					tiles[y][x] = new Spikes(true);
+					Spikes spike = new Spikes(true, new Point(x, y));
+					tiles[y][x] = spike;
+					spikes.add(spike);
 				}
 				
 				else if (temp.equals("n")) {
