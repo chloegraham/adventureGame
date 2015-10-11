@@ -1,6 +1,6 @@
 package tiles;
 
-public class Wall implements Tile {
+public class Wall extends Unmoveable implements Tile{
 	
 	@Override
 	public String toString() {

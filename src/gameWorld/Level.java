@@ -252,7 +252,7 @@ public class Level {
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++) {
 				Tile temp = tiles[i][j];
-				if(temp instanceof Unmoveable){
+				if(temp instanceof Unmoveable || temp instanceof PressurePad){
 					array[i][j] = temp.toString().charAt(0);
 				}
 				else{
