@@ -19,11 +19,6 @@ public class Door extends Unmoveable implements Tile {
 			nextLevel = false;
 			levelChanger = false;
 		}
-		else if (symbol.equals("m")) {
-			locked = true;
-			nextLevel = false;
-			levelChanger = true;
-		}
 		else if (symbol.equals("M")) {
 			locked = false;
 			nextLevel = false;
@@ -38,6 +33,9 @@ public class Door extends Unmoveable implements Tile {
 			locked = false;
 			nextLevel = true;
 			levelChanger = true;
+		}
+		else {
+			throw new IllegalArgumentException("Door Constructor: Passed an invalid character(  " + symbol + " ). Should be one of the following: 'd', 'D', 'M', 'x', 'X' .");
 		}
 	}
 
@@ -77,8 +75,6 @@ public class Door extends Unmoveable implements Tile {
 			return "d";
 		else if (!locked && !levelChanger)
 			return "D";
-		else if (locked && levelChanger && !nextLevel)
-			return "m";
 		else if (!locked && !nextLevel && levelChanger)
 			return "M";
 		else if (locked && nextLevel && levelChanger)

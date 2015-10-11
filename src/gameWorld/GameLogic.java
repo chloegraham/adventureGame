@@ -141,9 +141,15 @@ public class GameLogic {
 			Door door = (Door) tile;
 			if (!door.isLocked() && door.isLevelChanger()) {
 				if (door.isNextLevel()) {
-					moveNextLevel(player);
+					if (moveNextLevel(player))
+						System.out.println("--------- MOVED TO THE NEXT LEVEL");
+					else
+						System.out.println("--------- HOPEFULLY YOU CAN'T MOVE TO THE NEXT LEVEL BECAUSE THERE ISN'T ONE");
 				} else {
-					movePrevLevel(player);
+					if (movePrevLevel(player))
+						System.out.println("--------- MOVED TO THE PREV LEVEL");
+					else
+						System.out.println("--------- HOPEFULLY YOU CAN'T MOVE TO THE PREV LEVEL BECAUSE THERE ISN'T ONE");
 				}
 				return true;
 			}
@@ -320,10 +326,10 @@ public class GameLogic {
 		int currentLvl = p.getLevelID();
 		
 		// what index is the current lvl?
-		int indexCurrentLvl = 0;
+		int indexCurrentLvl = 8989;
 		for (int i = 0; i != levels.length; i++) {
 			if (levels[i].getLevelID() == currentLvl) {
-				if (indexCurrentLvl == 0)
+				if (indexCurrentLvl == 8989)
 					indexCurrentLvl = i;
 				else
 					throw new IllegalArgumentException("Found a bug. There shouldn't be two levels with the same levelID.");
@@ -334,11 +340,11 @@ public class GameLogic {
 		if (indexCurrentLvl >= levels.length-1)
 			return false;
 			
-		int indexNextLvl = indexCurrentLvl++;
+		int indexNextLvl = indexCurrentLvl+1;
 		Level lvl = levels[indexNextLvl];
 		int nextLvlID = lvl.getLevelID();
 		p.setLevelID(nextLvlID, lvl.getPrev());
-		levels[currentLvl].removePlayer(p);
+		levels[indexCurrentLvl].removePlayer(p);
 		levels[indexNextLvl].addPlayer(p);
 		
 		return true;
@@ -349,10 +355,10 @@ public class GameLogic {
 		int currentLvl = p.getLevelID();
 		
 		// what index is the current lvl?
-		int indexCurrentLvl = 0;
+		int indexCurrentLvl = 8989;
 		for (int i = 0; i != levels.length; i++) {
 			if (levels[i].getLevelID() == currentLvl) {
-				if (indexCurrentLvl == 0) {
+				if (indexCurrentLvl == 8989) {
 					indexCurrentLvl = i;
 				} else {
 					throw new IllegalArgumentException("Found a bug. There shouldn't be two levels with the same levelID.");
@@ -364,11 +370,11 @@ public class GameLogic {
 		if (indexCurrentLvl <= 0)
 			return false;
 			
-		int indexPrevLvl = indexCurrentLvl--;
+		int indexPrevLvl = indexCurrentLvl-1;
 		Level lvl = levels[indexPrevLvl];
 		int prevLvlID = lvl.getLevelID();
 		p.setLevelID(prevLvlID, lvl.getNext());
-		levels[currentLvl].removePlayer(p);
+		levels[indexCurrentLvl].removePlayer(p);
 		levels[indexPrevLvl].addPlayer(p);
 		
 		return true;
