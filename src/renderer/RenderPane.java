@@ -32,6 +32,7 @@ public class RenderPane extends JPanel {
     private char[][] level;
     private char[][] objects;
     private char[][] moveables;
+    private Point camOffset = new Point(0,0);
     
     private Direction viewDir = Direction.NORTH;
 
@@ -71,6 +72,11 @@ public class RenderPane extends JPanel {
     	this.moveables = moveables;
     }
     
+    
+    public void setCamOffset(int x, int y){
+    	this.camOffset.x = x;
+    	this.camOffset.y = y;
+    }
 
     /**
      * Rotates the this.viewDir variable. 
@@ -129,43 +135,19 @@ public class RenderPane extends JPanel {
         int numberOfRows = rotatedLevel.length;
         int numberOfColums = rotatedLevel[0].length;
         
-        
-        
-        //Next, finding the player to set the camera position *soon to be removed*
-        int camX = 0;
-		int camY = 0;
-		
-		 for (int i = 0; i < numberOfRows; i++) {
-	            for (int j = 0; j < numberOfColums; j++) {
-	            	if(rotatedMoveables[i][j] == 'i' || 
-	            			rotatedMoveables[i][j] == 'j' || 
-	            			rotatedMoveables[i][j] == 'k' || 
-	            			rotatedMoveables[i][j] == 'l' ||
-	            			rotatedMoveables[i][j] == 'I' || 
-	            			rotatedMoveables[i][j] == 'J' || 
-	            			rotatedMoveables[i][j] == 'K' || 
-	            			rotatedMoveables[i][j] == 'L'){
-		            		
-		            		camX = j;
-		            		camY = i;
-		            }
-	            }
-		 }
-		 
-		 // Rotated camera location
-		 IsoHelper.setCameraOffset(camX, camY);
-        
 		 
 		//Loop through each tile position
         for (int i = 0; i < numberOfRows; i++) {
             for (int j = 0; j < numberOfColums; j++) {
             	
-                int x = j * tilesize / 2;
-                int y = i * tilesize / 2;
-                Point tile = new Point(x, y);
+                Point tile = new Point(0, 0);
+                tile.x = j * tilesize / 2;
+                tile.y = i * tilesize / 2;
                 
+                
+       
                 //Take the Cartesian point and convert to isometric
-                Point isoTile = IsoHelper.twoDToIso(tile);
+                Point isoTile = IsoHelper.twoDToIsoWithTileOffset(tile, camOffset.x, camOffset.y);
                 
                 //Check each layer and draw the right tile at that point.
                 parseAndDrawTile(rotatedLevel[i][j], isoTile, g2);
@@ -175,6 +157,8 @@ public class RenderPane extends JPanel {
             }
         }
     }
+    
+    
     
     
     
@@ -189,11 +173,13 @@ public class RenderPane extends JPanel {
     	switch(tile){
 	    	case 'e' : tilePainter.drawFloorTile(g2, isoTile.x, isoTile.y); break;
 		    case 'w' : tilePainter.drawCubeTile(g2, isoTile.x, isoTile.y); break;
-		    case 'p' : tilePainter.drawCharachter(g2, isoTile.x, isoTile.y); break;
 		    case 'c' : tilePainter.drawChest(g2, isoTile.x, isoTile.y); break;
 		    case 'C' : tilePainter.drawOpenedChest(g2, isoTile.x, isoTile.y); break;
 		    case 'd' : tilePainter.drawDoor(g2, isoTile.x, isoTile.y); break;
 		    case 'D' : tilePainter.drawOpenDoor(g2, isoTile.x, isoTile.y); break;
+		    case 'M' : tilePainter.drawOpenDoor(g2, isoTile.x, isoTile.y); break;
+		    case 'x' : tilePainter.drawDoor(g2, isoTile.x, isoTile.y); break;
+		    case 'X' : tilePainter.drawOpenDoor(g2, isoTile.x, isoTile.y); break;
 		    case 'z' : tilePainter.drawPressurePad(g2, isoTile.x, isoTile.y); break;
 		    case 'Z' : tilePainter.drawPressurePadActive(g2, isoTile.x, isoTile.y); break;
 		    case 'b' : tilePainter.drawBoulder(g2,  isoTile.x, isoTile.y); break;

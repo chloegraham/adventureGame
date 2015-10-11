@@ -6,9 +6,14 @@ public class Chest extends Unmoveable implements Tile {
 	private boolean hasKey;
 	private boolean isOpen;
 	
-	public Chest() {
-		hasKey = true;
-		isOpen = false;
+	public Chest(boolean open) {
+		if (open) {
+			hasKey = false;
+			isOpen = true;
+		} else {
+			hasKey = true;
+			isOpen = false;
+		}
 	}
 	
 	public boolean isOpen() {

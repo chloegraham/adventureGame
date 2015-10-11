@@ -128,7 +128,7 @@ public class SplashScreen extends JPanel {
 				if (menuMnemonics[i] == event){ return menuButtons[i].getActionCommand(); }
 			}
 		}
-		else if (openCard == READY_CARD || openCard == DEATH_CARD || openCard == ABOUT_CARD){	// Cards that can be closed by key press
+		else if (openCard == READY_CARD || openCard == DEATH_CARD || openCard == ABOUT_CARD || openCard == WIN_CARD){	// Cards that can be closed by key press
 			setVisibleCard(NO_CARD);
 		}
 		return "";
@@ -188,7 +188,7 @@ public class SplashScreen extends JPanel {
 	 */
 	private void createReadyCard(){
 		allPanels[READY_CARD] = new JPanel();
-		allPanels[READY_CARD].setBackground(new Color(200, 200, 200, 200));	// Game available behind the menu, make partially transparent
+		allPanels[READY_CARD].setBackground(new Color(230, 230, 230, 220));	// Game available behind the menu, make partially transparent
 		allPanels[READY_CARD].setLayout(new BoxLayout(allPanels[READY_CARD], BoxLayout.Y_AXIS));
 
 		allPanels[READY_CARD].add(Box.createVerticalGlue());
@@ -210,7 +210,7 @@ public class SplashScreen extends JPanel {
 	private void createDeathCard(){
 		allPanels[DEATH_CARD] = new JPanel();
 		allPanels[DEATH_CARD].setLayout(new BoxLayout(allPanels[DEATH_CARD], BoxLayout.Y_AXIS));
-		allPanels[DEATH_CARD].setBackground(new Color(190, 0, 0, 200));		// Red, partially transparent.
+		allPanels[DEATH_CARD].setBackground(new Color(100, 0, 0, 220));		// Red, partially transparent.
 		
 		allPanels[DEATH_CARD].add(Box.createVerticalGlue());
 		
@@ -232,7 +232,7 @@ public class SplashScreen extends JPanel {
 	private void createWinCard(){
 		allPanels[WIN_CARD] = new JPanel();
 		allPanels[WIN_CARD].setLayout(new BoxLayout(allPanels[WIN_CARD], BoxLayout.Y_AXIS));
-		allPanels[WIN_CARD].setBackground(new Color(250, 200, 0, 240));		// Yellow/Orange, slightly transparent.
+		allPanels[WIN_CARD].setBackground(new Color(250, 200, 100, 240));		// Yellow/Orange, slightly transparent.
 		
 		allPanels[WIN_CARD].add(Box.createVerticalGlue());
 		

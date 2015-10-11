@@ -29,6 +29,7 @@ import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 import javax.swing.text.DefaultCaret;
 
+import renderer.IsoHelper;
 import renderer.RenderPane;
 import serverclient.Client;
 
@@ -57,7 +58,7 @@ public class UserInterface extends JFrame {
 	/* Inventory pane */
 	private final JLabel keys = new JLabel("0");
 	private final JLabel boulder = new JLabel();
-	private final int contentHeight = 80;			// Height of the inventory pane/message box
+	private final int contentHeight = 82;			// Height of the inventory pane/message box
 	
 	private boolean playing = false;	// Set true only when the game state and renderer are ready.
 	private int keyCount = 0;				// Number of keys player is currently holding
@@ -317,7 +318,7 @@ public class UserInterface extends JFrame {
 		try {
 			img = ImageIO.read(new File(imageAddress));
 			icon = new ImageIcon(img);
-		} catch (IOException e) {}// e.printStackTrace(); }
+		} catch (IOException e) { e.printStackTrace(); }
 		return icon;
 	}
 	
@@ -339,6 +340,27 @@ public class UserInterface extends JFrame {
 		}
 		this.repaint();
 	}
+	
+	
+	
+	/**
+	 * 
+	 * @param level
+	 * @param objects
+	 * @param moveables
+	 */
+	public void redrawFromLayersWithCoordinate(char[][]level, char[][]objects, char[][]moveables, int x, int y){
+		graphics.setCamOffset(x, y);
+		graphics.setLayers(level, objects, moveables);
+		if (!playing){
+			playing = true;
+			splash.setVisibleCard(SplashScreen.READY_CARD);		// Show player key bindings and allow them to start
+		}
+		this.repaint();
+	}
+	
+	
+	
 	
 	private static final long serialVersionUID = 1L;
 

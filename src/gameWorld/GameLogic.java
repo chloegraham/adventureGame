@@ -98,16 +98,7 @@ public class GameLogic {
 			throw new IllegalArgumentException("GameLogic:  received an unexpected ordinal. It might be 'Inspect' which we have't coded yet.");
 		}
 		
-		
-		boolean hasBoulder = player.hasBoulder();
-		int keyNumber = player.getNumberOfKeys();
-		int playerX = player.getLocation().x;
-		int playerY = player.getLocation().y;
-		String bouldersKeysLocation = hasBoulder + Msgs.DELIM_DETAILS + keyNumber + Msgs.DELIM_DETAILS +
-									  playerX + Msgs.DELIM_DETAILS + playerY + Msgs.DELIM_DETAILS +
-									  Msgs.DELIM_SPLIT;
-		
-		return bouldersKeysLocation + message;
+		return bouldersKeysLocation(player.getUserID()) + message;
 	}
 	
 	private boolean move(Player player, Level level, Point newLoc) {
@@ -137,9 +128,15 @@ public class GameLogic {
 			Door door = (Door) tile;
 			if (!door.isLocked() && door.isLevelChanger()) {
 				if (door.isNextLevel()) {
-					moveNextLevel(player);
+					if (moveNextLevel(player))
+						System.out.println("--------- MOVED TO THE NEXT LEVEL");
+					else
+						System.out.println("--------- HOPEFULLY YOU CAN'T MOVE TO THE NEXT LEVEL BECAUSE THERE ISN'T ONE");
 				} else {
-					movePrevLevel(player);
+					if (movePrevLevel(player))
+						System.out.println("--------- MOVED TO THE PREV LEVEL");
+					else
+						System.out.println("--------- HOPEFULLY YOU CAN'T MOVE TO THE PREV LEVEL BECAUSE THERE ISN'T ONE");
 				}
 				return true;
 			}
@@ -151,10 +148,6 @@ public class GameLogic {
 			PressurePad pad = (PressurePad) tile;
 			pad.activate();
 			
-		}
-		else if (tile instanceof Spikes){
-			Spikes spikes = (Spikes) tile;
-			spikes.activate();
 		}
 		
 		return player.setLocation(newLoc);		
@@ -377,29 +370,94 @@ public class GameLogic {
 	/*
 	 *  // TODO need to add some sort of message for changing level
 	 */
-	private void moveNextLevel(Player p) {
-		int pastLevel = p.getLevelID();
-		p.nextLevel();
+	private boolean moveNextLevel(Player p) {
+		// what level is the player on?
+		int currentLvl = p.getLevelID();
 		
+		// what index is the current lvl?
+		int indexCurrentLvl = 8989;
 		for (int i = 0; i != levels.length; i++) {
-			if (levels[i].getLevelID() == p.getLevelID())
-				levels[i].addPlayer(p);
-			
-			if (levels[i].getLevelID() == pastLevel)
-				levels[i].removePlayer(p);
+			if (levels[i].getLevelID() == currentLvl) {
+				if (indexCurrentLvl == 8989)
+					indexCurrentLvl = i;
+				else
+					throw new IllegalArgumentException("Found a bug. There shouldn't be two levels with the same levelID.");
+			}
 		}
+		
+		// is there another level after indexCurrentLvl?
+		if (indexCurrentLvl >= levels.length-1)
+			return false;
+			
+		int indexNextLvl = indexCurrentLvl+1;
+		Level lvl = levels[indexNextLvl];
+		int nextLvlID = lvl.getLevelID();
+		p.setLevelID(nextLvlID, lvl.getPrev());
+		levels[indexCurrentLvl].removePlayer(p);
+		levels[indexNextLvl].addPlayer(p);
+		
+		return true;
 	}
 	
-	private void movePrevLevel(Player p) {
-		int pastLevel = p.getLevelID();
-		p.prevLevel();
+	private boolean movePrevLevel(Player p) {
+		// what level is the player on?
+		int currentLvl = p.getLevelID();
 		
+		// what index is the current lvl?
+		int indexCurrentLvl = 8989;
 		for (int i = 0; i != levels.length; i++) {
-			if (levels[i].getLevelID() == p.getLevelID())
-				levels[i].addPlayer(p);
-			
-			if (levels[i].getLevelID() == pastLevel)
-				levels[i].removePlayer(p);
+			if (levels[i].getLevelID() == currentLvl) {
+				if (indexCurrentLvl == 8989) {
+					indexCurrentLvl = i;
+				} else {
+					throw new IllegalArgumentException("Found a bug. There shouldn't be two levels with the same levelID.");
+				}
+			}
 		}
+		
+		// is there another level after indexCurrentLvl?
+		if (indexCurrentLvl <= 0)
+			return false;
+			
+		int indexPrevLvl = indexCurrentLvl-1;
+		Level lvl = levels[indexPrevLvl];
+		int prevLvlID = lvl.getLevelID();
+		p.setLevelID(prevLvlID, lvl.getNext());
+		levels[indexCurrentLvl].removePlayer(p);
+		levels[indexPrevLvl].addPlayer(p);
+		
+		return true;
+	}
+	
+	public void activateSpikes() {
+		for (Level l : levels) {
+			if (l.containsPlayer()) {
+				l.activateSpikes();
+			}
+		}
+		
+		
+	}
+	
+	public String bouldersKeysLocation(int userID) {
+		int index = 8989;
+		for (int i = 0; i != players.length; i++) {
+			if (players[i].getUserID() == userID) {
+				if (index == 8989) {
+					index = i;
+				} else {
+					throw new IllegalArgumentException("bouldersKeysLocation(): There were two players with the same ID. This is a bug, investigate.");
+				}
+			}
+		}
+		
+		boolean hasBoulder = players[index].hasBoulder();
+		int keyNumber = players[index].getNumberOfKeys();
+		int playerX = players[index].getLocation().x;
+		int playerY = players[index].getLocation().y;
+		String bouldersKeysLocation = hasBoulder + Msgs.DELIM_DETAILS + keyNumber + Msgs.DELIM_DETAILS +
+									  playerX + Msgs.DELIM_DETAILS + playerY + Msgs.DELIM_DETAILS +
+									  Msgs.DELIM_SPLIT;
+		return bouldersKeysLocation;
 	}
 }
