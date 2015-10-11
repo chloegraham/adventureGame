@@ -128,7 +128,7 @@ public class SplashScreen extends JPanel {
 				if (menuMnemonics[i] == event){ return menuButtons[i].getActionCommand(); }
 			}
 		}
-		else if (openCard == READY_CARD || openCard == DEATH_CARD || openCard == ABOUT_CARD){	// Cards that can be closed by key press
+		else if (openCard == READY_CARD || openCard == DEATH_CARD || openCard == ABOUT_CARD || openCard == WIN_CARD){	// Cards that can be closed by key press
 			setVisibleCard(NO_CARD);
 		}
 		return "";

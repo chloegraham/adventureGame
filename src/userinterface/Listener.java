@@ -56,6 +56,16 @@ public class Listener extends JPanel implements KeyListener, ActionListener {
 			actionPerformed(ac);
 			return;				// If splash screen is open, don't check game controls.
 		}
+		
+		// TESTING KEYS
+		if (event == KeyEvent.VK_F1){
+			splash.setVisibleCard(SplashScreen.DEATH_CARD);
+			return;
+		}
+		else if (event == KeyEvent.VK_F2){
+			splash.setVisibleCard(SplashScreen.WIN_CARD);
+			return;
+		}
 
 		/* Game controls */
 		
