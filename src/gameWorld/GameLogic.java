@@ -99,16 +99,7 @@ public class GameLogic {
 			throw new IllegalArgumentException("GameLogic:  received an unexpected ordinal. It might be 'Inspect' which we have't coded yet.");
 		}
 		
-		
-		boolean hasBoulder = player.hasBoulder();
-		int keyNumber = player.getNumberOfKeys();
-		int playerX = player.getLocation().x;
-		int playerY = player.getLocation().y;
-		String bouldersKeysLocation = hasBoulder + Msgs.DELIM_DETAILS + keyNumber + Msgs.DELIM_DETAILS +
-									  playerX + Msgs.DELIM_DETAILS + playerY + Msgs.DELIM_DETAILS +
-									  Msgs.DELIM_SPLIT;
-		
-		return bouldersKeysLocation + message;
+		return bouldersKeysLocation(player.getUserID()) + message;
 	}
 	
 	
@@ -161,10 +152,6 @@ public class GameLogic {
 			PressurePad pad = (PressurePad) tile;
 			pad.activate();
 			
-		}
-		else if (tile instanceof Spikes){
-			Spikes spikes = (Spikes) tile;
-			spikes.activate();
 		}
 		
 		return player.setLocation(newLoc);		
@@ -378,5 +365,37 @@ public class GameLogic {
 		levels[indexPrevLvl].addPlayer(p);
 		
 		return true;
+	}
+	
+	public void activateSpikes() {
+		for (Level l : levels) {
+			if (l.containsPlayer()) {
+				l.activateSpikes();
+			}
+		}
+		
+		
+	}
+	
+	public String bouldersKeysLocation(int userID) {
+		int index = 8989;
+		for (int i = 0; i != players.length; i++) {
+			if (players[i].getUserID() == userID) {
+				if (index == 8989) {
+					index = i;
+				} else {
+					throw new IllegalArgumentException("bouldersKeysLocation(): There were two players with the same ID. This is a bug, investigate.");
+				}
+			}
+		}
+		
+		boolean hasBoulder = players[index].hasBoulder();
+		int keyNumber = players[index].getNumberOfKeys();
+		int playerX = players[index].getLocation().x;
+		int playerY = players[index].getLocation().y;
+		String bouldersKeysLocation = hasBoulder + Msgs.DELIM_DETAILS + keyNumber + Msgs.DELIM_DETAILS +
+									  playerX + Msgs.DELIM_DETAILS + playerY + Msgs.DELIM_DETAILS +
+									  Msgs.DELIM_SPLIT;
+		return bouldersKeysLocation;
 	}
 }

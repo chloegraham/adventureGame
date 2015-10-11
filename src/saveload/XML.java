@@ -94,9 +94,9 @@ public class XML {
 		// Player looks like = (userID, levelID, keyAmount, boulder, directionfacing, x, y, <Player>)
 		//					   101 % 1234 % 2 % 1 % 2 % 3 % 3 %@<Player>
 		
-		String level900 = "wwwweww%weeeeee%weeeeee%weeeeee%weeeeee%@nnnnxnn%nnnnnnn%nnnnnnn%Mnnnnnn%ncnnnnn%@nnnnnnn%nnnnnnn%nnnlnnn%nnnnnnn%nnnnnnn%@900@<Level><Split>";
-		String level901 = "wwwweww%weeeeee%weeeeee%weeeeee%weeeeee%@nnnnxnn%nnnnnnn%nnnnnnn%Mnnnnnn%nnnncnn%@nnnnnnn%nnnnnnn%nnnlnnb%nnnnnnn%nnnnnnn%@901@<Level><Split>";
-		String level902 = "wwwweww%weeeeee%weeeeee%weeeeee%weeeeee%@nnnnxnn%nnnnnnn%nnnnnnn%Mnnnnnn%nnnnnnz%@nnnnnnn%nnbnnnn%nnnlnnn%nnnnnnn%nnbnnnn%@902@<Level><Split>";
+		String level900 = "wwwweww%weeeeee%weeeeee%weeeeee%weeeeee%@nnnnxnn%nnsnnnn%nnnnnnn%Mnnnnnn%ncnnnnn%@nnnnnnn%nnnnnnn%nnnlnnn%nnnnnnn%nnnnnnn%@900@<Level><Split>";
+		String level901 = "wwwweww%weeeeee%weeeeee%weeeeee%weeeeee%@nnnnxnn%nnsnnnn%nnnnnnn%Mnnnnnn%nnnncnn%@nnnnnnn%nnnnnnn%nnnlnnb%nnnnnnn%nnnnnnn%@901@<Level><Split>";
+		String level902 = "wwwweww%weeeeee%weeeeee%weeeeee%weeeeee%@nnnnxnn%nnsnnnn%nnnnnnn%Mnnnnnn%nnnnnnz%@nnnnnnn%nnbnnnn%nnnlnnn%nnnnnnn%nnbnnnn%@902@<Level><Split>";
 		String level903 = "wwwweww%weeeeee%weeeeee%weeeeee%weeeeee%@nnnnxnn%nnnsnnn%nnnnnnn%Mnnnnnn%nnnncnz%@nnnnnnn%nnnnnnn%nnnlnnn%nnnnnnn%nnbnnnn%@903@<Level><Split>";
 		
 		

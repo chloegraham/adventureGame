@@ -8,6 +8,8 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import saveload.XML;
 import userinterface.Action.Actions;
@@ -35,10 +37,12 @@ public class Server implements Runnable {
 	private DataOutputStream outputTwo;
 	private DataInputStream inputTwo;
 	
-	
+	private static Lock lock;
 	
 	public void run() {
 	    try{
+	    	lock = new ReentrantLock(true);
+	    	
 	    	// ONLY ONE - Initialize ServerSocket
 	    	serverSocket = new ServerSocket(port);
 	    	System.out.println(toString());
@@ -89,8 +93,8 @@ public class Server implements Runnable {
 	    	if (!confirmGuest.equals(Msgs.DELIM_GUEST))
 	    		throw new IllegalArgumentException("Attempt to confirm the Guest failed.");
 	    	System.out.println(toString());
+
 	    	
-	
 	    	
 	    	/*
 	    	 *  Listen for Actions from Clients
@@ -98,7 +102,8 @@ public class Server implements Runnable {
 	    	while (true) { 
 	    		
 	    		if (inputOne.available() > 0) {
-			    	
+			    	lock.lock();
+	    			
 	    			// Listen for an action to handle
 	    			String handleAction = inputOne.readUTF();
 			    	if (!handleAction.contains(Msgs.DELIM_ACTION))
@@ -120,10 +125,13 @@ public class Server implements Runnable {
 			    		load();
 			    	else
 			    		handleAction(ordinal, Msgs.PLAYER_ONE);
+			    	
+			    	lock.unlock();
 	    		}
 		    	
 	    		
 		    	if (inputTwo.available() > 0) {
+		    		lock.lock();
 		    		
 		    		// Listen for an action to handle
 			    	String handleAction = inputTwo.readUTF();
@@ -141,11 +149,10 @@ public class Server implements Runnable {
 			    			throw new IllegalArgumentException("Player TWO should never be able to send Action with null GameWorld. Also Player TWO should never be able to New or Load Game.");
 			    	
 			    	handleAction(ordinal, Msgs.PLAYER_TWO);
+			    	
+			    	lock.unlock();
 		    	}
 	    	}
-
-	    	
-	    	
 	    } catch (IOException e) {
 	    	e.printStackTrace();
 	    } finally {
@@ -155,6 +162,21 @@ public class Server implements Runnable {
 			} catch (IOException e) { e.printStackTrace(); }
 	    }
     }
+	
+	
+	
+	/*
+	 * 
+	 */
+	public void activateSpikes() throws IOException {
+		lock.lock();
+		
+		logic.activateSpikes();		// activate all the spikes
+		broadcast();				// broadcast to both Players
+		
+		lock.unlock();
+	}
+	
 	
 	
 	/*
@@ -168,7 +190,17 @@ public class Server implements Runnable {
 		broadcast(userID, message);
 	}
 
-
+	
+	private void broadcast() throws IOException {
+//		String p1 = gameWorld.getEncodedGameWorld(Msgs.PLAYER_ONE);
+//		p1 += logic.bouldersKeysLocation(Msgs.PLAYER_ONE);
+//		outputOne.writeUTF(p1);
+		
+		String p2 = gameWorld.getEncodedGameWorld(Msgs.PLAYER_TWO);
+		p2 += logic.bouldersKeysLocation(Msgs.PLAYER_TWO);
+		outputTwo.writeUTF(p2);
+	}
+	
 
 	private void broadcast(int userID, String message) throws IOException {
 		String current = gameWorld.getEncodedGameWorld(userID);
@@ -208,6 +240,10 @@ public class Server implements Runnable {
 		System.out.println("--- Server:    NewGame created.");
 		
 		handleAction(Actions.NEWGAME.ordinal(), Msgs.PLAYER_ONE);
+		
+		Timer timer = new Timer(this);
+    	Thread timerThread = new Thread(timer);
+		timerThread.start();
 	}
 	
 	
