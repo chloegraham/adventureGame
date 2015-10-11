@@ -3,12 +3,44 @@ package tiles;
 
 public class Door extends Unmoveable implements Tile {
 	
-	private boolean locked = true;
-	private boolean levelChanger = false;
-	private boolean nextLevel = true;
+	private boolean locked;
+	private boolean levelChanger;
+	private boolean nextLevel;
 
 	
-	
+	public Door(String symbol) {
+		if (symbol.equals("d")){
+			locked = true;
+			nextLevel = false;
+			levelChanger = false;
+		}
+		else if (symbol.equals("D")) {
+			locked = false;
+			nextLevel = false;
+			levelChanger = false;
+		}
+		else if (symbol.equals("m")) {
+			locked = true;
+			nextLevel = false;
+			levelChanger = true;
+		}
+		else if (symbol.equals("M")) {
+			locked = false;
+			nextLevel = false;
+			levelChanger = true;
+		}
+		else if (symbol.equals("x")) {
+			locked = true;
+			nextLevel = true;
+			levelChanger = true;
+		}
+		else if (symbol.equals("X")) {
+			locked = false;
+			nextLevel = true;
+			levelChanger = true;
+		}
+	}
+
 	/*
 	 *  Locking & Unlocking Doors changes whether Players can pass through them or not
 	 */
@@ -18,12 +50,10 @@ public class Door extends Unmoveable implements Tile {
 	
 	public void unlock() {
 		locked = false;
-		levelChanger = true;
 	}
 	
 	public void lock() {
 		locked = true;
-		levelChanger = false;
 	}
 	
 	
@@ -39,18 +69,23 @@ public class Door extends Unmoveable implements Tile {
 		return nextLevel;
 	}
 	
-	public void setNextLevel(boolean isNext) {
-		nextLevel = isNext;
-	}
-	
 	
 	
 	@Override
 	public String toString() {
-		if (levelChanger)
-			return "x";
-		if (locked) 	 
+		if (locked && !levelChanger)
 			return "d";
-		return "D";
+		else if (!locked && !levelChanger)
+			return "D";
+		else if (locked && levelChanger && !nextLevel)
+			return "m";
+		else if (!locked && !nextLevel && levelChanger)
+			return "M";
+		else if (locked && nextLevel && levelChanger)
+			return "x";
+		else if (!locked && nextLevel && levelChanger)
+			return "X";
+		else
+			throw new IllegalArgumentException("Door toString must be faulty. None of it's conditions were met.");
 	}
 }

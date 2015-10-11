@@ -315,29 +315,62 @@ public class GameLogic {
 	/*
 	 *  // TODO need to add some sort of message for changing level
 	 */
-	private void moveNextLevel(Player p) {
-		int pastLevel = p.getLevelID();
-		p.nextLevel();
+	private boolean moveNextLevel(Player p) {
+		// what level is the player on?
+		int currentLvl = p.getLevelID();
 		
+		// what index is the current lvl?
+		int indexCurrentLvl = 0;
 		for (int i = 0; i != levels.length; i++) {
-			if (levels[i].getLevelID() == p.getLevelID())
-				levels[i].addPlayer(p);
-			
-			if (levels[i].getLevelID() == pastLevel)
-				levels[i].removePlayer(p);
+			if (levels[i].getLevelID() == currentLvl) {
+				if (indexCurrentLvl == 0)
+					indexCurrentLvl = i;
+				else
+					throw new IllegalArgumentException("Found a bug. There shouldn't be two levels with the same levelID.");
+			}
 		}
+		
+		// is there another level after indexCurrentLvl?
+		if (indexCurrentLvl >= levels.length-1)
+			return false;
+			
+		int indexNextLvl = indexCurrentLvl++;
+		Level lvl = levels[indexNextLvl];
+		int nextLvlID = lvl.getLevelID();
+		p.setLevelID(nextLvlID, lvl.getPrev());
+		levels[currentLvl].removePlayer(p);
+		levels[indexNextLvl].addPlayer(p);
+		
+		return true;
 	}
 	
-	private void movePrevLevel(Player p) {
-		int pastLevel = p.getLevelID();
-		p.prevLevel();
+	private boolean movePrevLevel(Player p) {
+		// what level is the player on?
+		int currentLvl = p.getLevelID();
 		
+		// what index is the current lvl?
+		int indexCurrentLvl = 0;
 		for (int i = 0; i != levels.length; i++) {
-			if (levels[i].getLevelID() == p.getLevelID())
-				levels[i].addPlayer(p);
-			
-			if (levels[i].getLevelID() == pastLevel)
-				levels[i].removePlayer(p);
+			if (levels[i].getLevelID() == currentLvl) {
+				if (indexCurrentLvl == 0) {
+					indexCurrentLvl = i;
+				} else {
+					throw new IllegalArgumentException("Found a bug. There shouldn't be two levels with the same levelID.");
+				}
+			}
 		}
+		
+		// is there another level after indexCurrentLvl?
+		if (indexCurrentLvl <= 0)
+			return false;
+			
+		int indexPrevLvl = indexCurrentLvl--;
+		Level lvl = levels[indexPrevLvl];
+		int prevLvlID = lvl.getLevelID();
+		p.setLevelID(prevLvlID, lvl.getNext());
+		levels[currentLvl].removePlayer(p);
+		levels[indexPrevLvl].addPlayer(p);
+		
+		return true;
 	}
 }
