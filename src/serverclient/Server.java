@@ -192,9 +192,9 @@ public class Server implements Runnable {
 
 	
 	private void broadcast() throws IOException {
-//		String p1 = gameWorld.getEncodedGameWorld(Msgs.PLAYER_ONE);
-//		p1 += logic.bouldersKeysLocation(Msgs.PLAYER_ONE);
-//		outputOne.writeUTF(p1);
+		String p1 = gameWorld.getEncodedGameWorld(Msgs.PLAYER_ONE);
+		p1 += logic.bouldersKeysLocation(Msgs.PLAYER_ONE);
+		outputOne.writeUTF(p1);
 		
 		String p2 = gameWorld.getEncodedGameWorld(Msgs.PLAYER_TWO);
 		p2 += logic.bouldersKeysLocation(Msgs.PLAYER_TWO);
