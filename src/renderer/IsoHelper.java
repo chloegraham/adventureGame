@@ -9,7 +9,7 @@ import java.awt.Point;
  */
 public final class IsoHelper {
     private IsoHelper(){}
-    public static Point cameraOffset = new Point(0,0);
+   // public static Point cameraOffset = new Point(0,0);
     private static int tileSize = 128;
     
     /**
@@ -17,8 +17,9 @@ public final class IsoHelper {
      * @param camPoint
      */
     public static void setCameraOffset(int x, int y){
-    	cameraOffset.x = x;
-    	cameraOffset.y = y;
+//    	cameraOffset.x = x;
+//    	cameraOffset.y = y;
+    	System.out.println("I shouldnt' be used");
     }
 
     
@@ -30,8 +31,23 @@ public final class IsoHelper {
     public static Point twoDToIso(Point twoDee){
         Point tempPoint = new Point(0,0);
         
-        int camX = cameraOffset.x * (tileSize / 2);
-        int camY = cameraOffset.y * (tileSize / 2);
+//        int camX = cameraOffset.x * (tileSize / 2);
+//        int camY = cameraOffset.y * (tileSize / 2);
+//                
+//        //Camera Offset
+//        twoDee.x -= camX;
+//        twoDee.y -= camY;
+        
+        tempPoint.x = (twoDee.x - twoDee.y) + 400; // Half the screen width, to center 0,0.
+        tempPoint.y = ((twoDee.x + twoDee.y) / 2) + 300; // Half the screen height
+        return tempPoint;
+    }
+    
+    public static Point twoDToIsoWithTileOffset(Point twoDee, int xoffset, int yoffset){
+        Point tempPoint = new Point(0,0);
+        
+        int camX = xoffset * (tileSize / 2);
+        int camY = yoffset * (tileSize / 2);
                 
         //Camera Offset
         twoDee.x -= camX;

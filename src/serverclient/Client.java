@@ -152,13 +152,13 @@ public class Client implements Runnable {
 				String[] details = encodedPlayer.split(Msgs.DELIM_DETAILS);
 				ui.setBoulder(details[0].equals("true"));
 				ui.setKeyCount(Integer.parseInt(details[1]));
-//				playerX = Integer.parseInt(details[2]);
-//				playerY = Integer.parseInt(details[3]);
+				playerX = Integer.parseInt(details[2]);
+				playerY = Integer.parseInt(details[3]);
 			}
 			
 			layers = new Layers();
 			layers.decode(encodedLayers);
-			ui.redrawFromLayers(layers.getDecodedLevel(), layers.getDecodedObjects(), layers.getDecodedMovables());
+			ui.redrawFromLayersWithCoordinate(layers.getDecodedLevel(), layers.getDecodedObjects(), layers.getDecodedMovables(), playerX, playerY);
 //			ui.redrawFromLayers(layers.getDecodedLevel(), layers.getDecodedObjects(), layers.getDecodedMovables(), playerX, playerY);
 			
 			if (encodedSplit.length > 2) {
