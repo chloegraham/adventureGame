@@ -69,7 +69,7 @@ public class Server implements Runnable {
 	    	else
 	    		outputOne.writeUTF(Msgs.DELIM_HOST);
 	    	String confirmHost = inputOne.readUTF();
-	    	if (!confirmHost.equals(Msgs.DELIM_HOST))
+	    	if (!confirmHost.equals(Msgs.DELIM_HOST) && !confirmHost.equals(Msgs.DELIM_HOSTLOAD))
 	    		throw new IllegalArgumentException("Attempt to confirm the Host failed.");
 	    	
 	    	

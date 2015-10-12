@@ -90,10 +90,10 @@ public class GameWorld {
 		String str = "";
 		
 		for (int i = 0; i != levels.length; i++)
-			str += levels[0].getEncodedLevel();
+			str += levels[i].getEncodedLevel();
 		
 		for (int i = 0; i != players.length; i++)
-			str += players[0].getEncodedPlayer();
+			str += players[i].getEncodedPlayer();
 		
 		return str;
 	}
