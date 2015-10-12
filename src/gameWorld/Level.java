@@ -369,9 +369,6 @@ public class Level {
 		}
 	}
 	
-	
-	
-	@Override
 	public String toString() {
 		return "   Level( levelID- " + levelID + "):   #players:  " + players.size() + "    #boulders:  " + boulders.size();
 	}
