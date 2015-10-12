@@ -27,6 +27,7 @@ public class Action {
 		LOAD (-1),
 		SAVE (-1),
 		NEWGAME (-1),
+		RESTART (-1),
 		/* Events for the User Interface. Add events for the Server or Game World above. */
 		NORTH (KeyEvent.VK_W),
 		EAST (KeyEvent.VK_D),

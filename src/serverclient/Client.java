@@ -134,6 +134,11 @@ public class Client implements Runnable {
 	private void decodePassGameToUI() {
 		try {
 			String encodedInput = input.readUTF();
+			//TODO: test if statement used for testing save logic
+			if (encodedInput.equals("save me")){
+				output.writeUTF(String.valueOf(ui.getPlayerResponse()));
+				return;
+			}
 			
 			String[] encodedSplit = encodedInput.split("<Split>");
 			
