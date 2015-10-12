@@ -205,12 +205,12 @@ public class Server implements Runnable {
 		String other = gameWorld.getEncodedGameWorld(otherUserID);
 		
 		if (userID == Msgs.PLAYER_ONE) {
-			System.out.println("--- Server:    broadcasting game after PlayerONE handle action.");
+			//System.out.println("--- Server:    broadcasting game after PlayerONE handle action.");
 					
 			outputOne.writeUTF(current);
 			outputTwo.writeUTF(other);
 		} else {
-			System.out.println("--- Server:    broadcasting game after PlayerTWO handle action.");
+			//System.out.println("--- Server:    broadcasting game after PlayerTWO handle action.");
 			
 			outputOne.writeUTF(other);
 			outputTwo.writeUTF(current);
@@ -225,6 +225,7 @@ public class Server implements Runnable {
 	private void newGame() throws IOException {
 		// Get encoded gameWorld of the standard new game
 		String encodedGameWorld = XML.newGame();
+		System.out.println(encodedGameWorld);
 		
 		// Create the GameWorld based of the encoded new game + initialize Game Logic
 		gameWorld = new GameWorld(encodedGameWorld);
@@ -242,13 +243,16 @@ public class Server implements Runnable {
 	private void load() throws IOException {
 		// Get encoded gameWorld of the standard new game
 		String encodedGameWorld = XML.load();
+		System.out.println(encodedGameWorld);
 		
 		// Create the GameWorld based of the encoded previously saved game + initialize Game Logic
 		gameWorld = new GameWorld(encodedGameWorld);
 		logic = gameWorld.getLogic();
 		System.out.println("--- Server:    Loaded Game created.");
-		
-		handleAction(Actions.LOAD.ordinal(), Msgs.PLAYER_ONE);
+						
+		TimerSpikes timer = new TimerSpikes(this);
+		Thread timerThread = new Thread(timer);
+		timerThread.start();
 	}
 	
 	
