@@ -123,9 +123,9 @@ public class Client implements Runnable {
 	
 	// Manage some rules before sending to the Server
 	private void handleAction(int ordinal, int userID) throws IOException {
-		if (ordinal == Actions.LOAD.ordinal() || ordinal == Actions.NEWGAME.ordinal())
-			if (userID != Msgs.PLAYER_ONE && this.userID != Msgs.PLAYER_ONE)
-				throw new IllegalArgumentException("Only player one should be able to Start a NewGame or Load a Game.");
+//		if (ordinal == Actions.LOAD.ordinal() || ordinal == Actions.NEWGAME.ordinal())
+//			if (userID != Msgs.PLAYER_ONE && this.userID != Msgs.PLAYER_ONE)
+//				throw new IllegalArgumentException("Only player one should be able to Start a NewGame or Load a Game.");
 		output.writeUTF(Msgs.DELIM_ACTION + ordinal);
 	}
 	
@@ -136,6 +136,10 @@ public class Client implements Runnable {
 			String encodedInput = input.readUTF();
 			//TODO: test if statement used for testing save logic
 			if (encodedInput.equals("save me")){
+				output.writeUTF(String.valueOf(ui.getPlayerResponse()));
+				return;
+			}
+			if (encodedInput.equals("load me")){
 				output.writeUTF(String.valueOf(ui.getPlayerResponse()));
 				return;
 			}
