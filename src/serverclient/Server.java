@@ -171,8 +171,9 @@ public class Server implements Runnable {
 	public void activateSpikes() throws IOException {
 		lock.lock();
 		
-		logic.activateSpikes();		// activate all the spikes
-		broadcast();				// broadcast to both Players
+		logic.activateSpikes();				// activate all the spikes
+		broadcast(Msgs.PLAYER_ONE, "");		// broadcast to both Players
+		broadcast(Msgs.PLAYER_TWO, "");		// broadcast to both Players
 		
 		lock.unlock();
 	}
@@ -188,17 +189,6 @@ public class Server implements Runnable {
 //				// tell the game to stop
 		String message = logic.handleAction(ordinal, userID);
 		broadcast(userID, message);
-	}
-
-	
-	private void broadcast() throws IOException {
-		String p1 = gameWorld.getEncodedGameWorld(Msgs.PLAYER_ONE);
-		p1 += logic.bouldersKeysLocation(Msgs.PLAYER_ONE);
-		outputOne.writeUTF(p1);
-		
-		String p2 = gameWorld.getEncodedGameWorld(Msgs.PLAYER_TWO);
-		p2 += logic.bouldersKeysLocation(Msgs.PLAYER_TWO);
-		outputTwo.writeUTF(p2);
 	}
 	
 

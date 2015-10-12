@@ -3,39 +3,6 @@ package convertors;
 import gameWorld.Direction;
 
 public class Msgs {
-	
-	private String decodedMessages;
-	
-	public String getDecoded() { return decodedMessages; }
-	
-	public void decode(String encodedMessages) {
-		decodedMessages = "";
-		String[] lines = encodedMessages.split("%");
-		
-		String line1 = lines[0];
-		decodedMessages += line1 + "\n";
-		String line2;
-		String line3;
-		String line4;
-		
-		if (lines.length > 1) {
-			line2 = lines[1];
-			decodedMessages += line2 + "\n";
-		}
-		
-		if (lines.length > 2) {
-			line3 = lines[2];
-			decodedMessages += line3 + "\n";
-		}
-		
-		if (lines.length > 3) {
-			line4 = lines[3];
-			decodedMessages += line4 + "\n";
-		}
-	}
-	
-	
-	
 	public static final int PLAYER_ONE = 101;
 	public static final int PLAYER_TWO = 202;
 	
