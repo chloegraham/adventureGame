@@ -37,7 +37,6 @@ public class Level {
 		this.padsToDoors = new HashMap<Point, Point>();
 		// Split String up in to x3 Strings which will be converted to char[][]
 		String[] layers = encodedLevel.split("@");
-			
 		// Split up the 2d-char[][] in to 1d-char[] (they are still Strings at the moment)
 		String[] subLayers1 = layers[0].split("%");
 		String[] subLayers2 = layers[1].split("%");
@@ -174,8 +173,6 @@ public class Level {
 					if (s.isActivated())
 						p.getUserID();
 	}
-	
-	
 	
 	/*
 	 *  Getter for GameWorld
@@ -406,7 +403,7 @@ public class Level {
 
 	public Point getDoorFromPad(Point newLoc) {
 		
-		//TODO: throw illagal argument if not present
+		//TODO: throw illegal argument if not present
 		Point door = this.padsToDoors.get(newLoc);
 		return door;
 	}
