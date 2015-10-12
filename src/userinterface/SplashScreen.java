@@ -28,8 +28,9 @@ public class SplashScreen extends JPanel {
 	public static final int WIN_CARD = 5;			// Show when the game is won. Player cannot return to the game from this card.
 	public static final int ABOUT_CARD = 6;			// Shows information about the game to the user.
 	public static final int CONFIRM_CARD = 7;		// Shows information about the game to the user.
-	public static final int GENERIC_CARD = 8;		// Displays any message to the player.
-	private final JPanel[] allPanels = new JPanel[9];
+	public static final int INFORM_CARD = 8;		// Inform this player of an action that the other player has performed (such as loading)
+	public static final int GENERIC_CARD = 9;		// Displays any message to the player.
+	private final JPanel[] allPanels = new JPanel[10];
 	
 	/* Menu buttons and the key events for each */
 	private final int LOAD_GAME = 1;		// Position of the Load Game button in array, to disable/enable
@@ -40,6 +41,7 @@ public class SplashScreen extends JPanel {
 	/* Labels for screens with changing messages. */
 	private final JLabel startupMessage = new JLabel("Waiting for connection ...");
 	private final JLabel confirmMessage = new JLabel("");
+	private final JLabel informMessage = new JLabel("");
 	private final JLabel genericMessage = new JLabel("");
 	
 	private final CardLayout layout = new CardLayout();
@@ -63,6 +65,7 @@ public class SplashScreen extends JPanel {
 		createWinCard();
 		createAboutCard();
 		createConfirmCard(listener);
+		createInformCard();
 		createGenericCard();
 		
 		/* Add cards to the panel */
@@ -74,6 +77,7 @@ public class SplashScreen extends JPanel {
 		this.add(allPanels[WIN_CARD], Integer.toString(WIN_CARD));
 		this.add(allPanels[ABOUT_CARD], Integer.toString(ABOUT_CARD));
 		this.add(allPanels[CONFIRM_CARD], Integer.toString(CONFIRM_CARD));
+		this.add(allPanels[INFORM_CARD], Integer.toString(INFORM_CARD));
 		this.add(allPanels[GENERIC_CARD], Integer.toString(GENERIC_CARD));
 		
 		setVisibleCard(openCard);
@@ -83,8 +87,8 @@ public class SplashScreen extends JPanel {
 	 * Shows another pane.
 	 * Enables/Disables UI content while the splash screen is open.
 	 * Will not make any changes to the cards themselves.
-	 * Call setVisibleMenu(boolean) to set the menu visible.
-	 * Call setVisibleConfirm(String, int, String) to set the confirm menu visible.
+	 * Cards that have changing parameters should be called using their
+	 * setVisible... method.
 	 * @param newPane required to call a valid card name from this class's fields
 	 */
 	public void setVisibleCard(int newPane){
@@ -117,6 +121,14 @@ public class SplashScreen extends JPanel {
 	}
 	
 	/**
+	 * Sets the message on the inform card and displays it.
+	 */
+	public void setVisibleInform(String message){
+		informMessage.setText(message);
+		setVisibleCard(INFORM_CARD);
+	}
+	
+	/**
 	 * Sets the message on the generic screen and displays it. Player cannot close this screen.
 	 */
 	public void setVisibleGeneric(String message){
@@ -127,10 +139,10 @@ public class SplashScreen extends JPanel {
 	/**
 	 * Change the startup message and show the card
 	 */
-	public void showStartup(String message){
+	public void setVisibleStartup(String message){
 		startupMessage.setText(message);
 		setVisibleCard(STARTUP_CARD);
-		ui.setPlaying(false);
+		ui.setPlayingFalse();
 	}
 	
 	/** Returns the card that is currently displaying to the user. */
@@ -154,6 +166,14 @@ public class SplashScreen extends JPanel {
 		}
 		else if (openCard == READY_CARD || openCard == DEATH_CARD || openCard == ABOUT_CARD || openCard == WIN_CARD){	// Cards that can be closed by key press
 			setVisibleCard(NO_CARD);
+		}
+		else if (openCard == INFORM_CARD){
+			if (ui.getPlaying()){	// A game state is available
+				setVisibleCard(READY_CARD);
+			}
+			else {		// still waiting on a game state. Show the startup menu.
+				setVisibleStartup("Waiting for game state ...");
+			}
 		}
 		return "";
 	}
@@ -325,6 +345,27 @@ public class SplashScreen extends JPanel {
 		allPanels[CONFIRM_CARD].add(cancelButton);
 		
 		allPanels[CONFIRM_CARD].add(Box.createVerticalGlue());
+	}
+	
+	/**
+	 * Build the card that informs a player of another player's action.
+	 * This card can be closed by the player.
+	 */
+	private void createInformCard(){
+		allPanels[INFORM_CARD] = new JPanel();
+		allPanels[INFORM_CARD].setLayout(new BoxLayout(allPanels[INFORM_CARD], BoxLayout.Y_AXIS));
+		allPanels[INFORM_CARD].setBackground(new Color(200, 200, 200, 200));		// slightly transparent.
+		
+		allPanels[INFORM_CARD].add(Box.createVerticalGlue());
+		
+		informMessage.setAlignmentX(CENTER_ALIGNMENT);
+		allPanels[INFORM_CARD].add(informMessage);
+		
+		allPanels[INFORM_CARD].add(Box.createVerticalGlue());
+		
+		allPanels[INFORM_CARD].add(new JLabel("Press any key to continue."));
+		
+		allPanels[INFORM_CARD].add(Box.createVerticalGlue());
 	}
 	
 	/**

@@ -29,9 +29,9 @@ import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 import javax.swing.text.DefaultCaret;
 
-import renderer.IsoHelper;
 import renderer.RenderPane;
 import serverclient.Client;
+import userinterface.Action.Actions;
 
 /**
  * Organises the content that is displayed to the user, and passes data between the server and the interface.
@@ -96,7 +96,7 @@ public class UserInterface extends JFrame {
 	public void setUserID(int uid, boolean loadGame){
 		this.uid = uid;
 		if (uid == 101){ splash.setVisibleMenu(loadGame); }													// Host Player
-		else if (uid == 202){ splash.showStartup("Successfully connected. Waiting for game state ..."); }	// Remote player
+		else if (uid == 202){ splash.setVisibleStartup("Successfully connected. Waiting for game state ..."); }	// Remote player
 		this.setTitle("Chicken Little : User " + this.uid);
 	}
 	
@@ -157,7 +157,7 @@ public class UserInterface extends JFrame {
 	}
 	
 	/**
-	 * Alert the user that they have won the game. User cannot close this screen.
+	 * Alert the user that they have won the game.
 	 */
 	public void setPlayerWon(){
 		splash.setVisibleCard(SplashScreen.WIN_CARD);
@@ -167,12 +167,33 @@ public class UserInterface extends JFrame {
 	}
 	
 	/**
+	 * Tell this player that the game state is currently being changed.
+	 * Returns player to startup screen to wait for new game state.
+	 * @param ordinal The Action that caused the game state change (Actions.NEWGAME.ordinal() etc.)
+	 */
+	public void setChangedGameState(int ordinal){
+		playing = false;		// Stop the current game. When this changes, it is restarted.
+		if (ordinal == Actions.NEWGAME.ordinal()){
+			splash.setVisibleInform("The host player has created a new game.");
+		}
+		else if (ordinal == Actions.LOAD.ordinal()){
+			splash.setVisibleInform("The host player has loaded a saved game.");
+		}
+		else if (ordinal == Actions.RESTART.ordinal()){
+			splash.setVisibleInform("The host player has restarted the current level.");
+		}
+		else {
+			splash.setVisibleInform("The host player has changed the state of the game.");
+		}
+	}
+	
+	/**
 	 * Call when disconnected or connection cannot be established. Player returns to startup screen. 
 	 * @param message Explain connection error to user 
 	 */
 	public void connectionError(String message){
 		playing = false;
-		splash.showStartup(message);
+		splash.setVisibleStartup(message);
 	}
 
 	/** Displays a custom message that the user cannot close. Must call closeGenericScreen() to close it. */
@@ -191,9 +212,11 @@ public class UserInterface extends JFrame {
 		listener.setSplashLocked(enabled);
 	}
 	
-	public void setPlaying(boolean playing){
-		this.playing = playing;
-	}
+	/** If this is called, the READY card will be displayed next time a game level is sent through. */
+	public void setPlayingFalse(){ this.playing = false; }
+	
+	/** Returns true if the ready card will display upon next game state update, false otherwise. */
+	public boolean getPlaying(){ return playing; }
 	
 	// ========================================================
 	// Methods for building the frame
@@ -343,7 +366,9 @@ public class UserInterface extends JFrame {
 		graphics.setLayers(level, objects, moveables);
 		if (!playing){
 			playing = true;
-			splash.setVisibleCard(SplashScreen.READY_CARD);		// Show player key bindings and allow them to start
+			if (splash.getOpenCard() != SplashScreen.INFORM_CARD){	// Inform card needs to stay up until the player has read it.
+				splash.setVisibleCard(SplashScreen.READY_CARD);		// Show player key bindings and allow them to start
+			}
 		}
 		this.repaint();
 	}
@@ -361,7 +386,9 @@ public class UserInterface extends JFrame {
 		graphics.setLayers(level, objects, moveables);
 		if (!playing){
 			playing = true;
-			splash.setVisibleCard(SplashScreen.READY_CARD);		// Show player key bindings and allow them to start
+			if (splash.getOpenCard() != SplashScreen.INFORM_CARD){	// Inform card needs to stay up until the player has read it.
+				splash.setVisibleCard(SplashScreen.READY_CARD);		// Show player key bindings and allow them to start
+			}
 		}
 		this.repaint();
 	}

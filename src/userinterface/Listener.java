@@ -108,18 +108,18 @@ public class Listener extends JPanel implements KeyListener, ActionListener {
 			int openCard = splash.getOpenCard();
 			if (openCard == SplashScreen.HOST_CARD || openCard == SplashScreen.CONFIRM_CARD ){
 				if (ac.equals("New Game")){
-					splash.showStartup("Creating a new game. Waiting for game state ...");
+					splash.setVisibleStartup("Creating a new game. Waiting for game state ...");
 					client.handleAction(Actions.NEWGAME.ordinal());
 				}
 				else if (ac.equals("Load Game")){
-					splash.showStartup("Loading a game. Waiting for game state ...");
+					splash.setVisibleStartup("Loading a game. Waiting for game state ...");
 					client.handleAction(Actions.LOAD.ordinal());
 				}
 			}
 			if (openCard == SplashScreen.CONFIRM_CARD){
 				if (ac.equals("Cancel")){ splash.setVisibleCard(SplashScreen.NO_CARD); }	// Changed mind, ignore
 				else if (ac.equals("Restart")){
-					splash.showStartup("Restarting the level. Waiting for game state ...");
+					splash.setVisibleStartup("Restarting the level. Waiting for game state ...");
 					client.handleAction(Actions.RESTART.ordinal());
 				}
 				else if (ac.equals("Exit")){
