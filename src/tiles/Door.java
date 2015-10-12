@@ -1,7 +1,7 @@
 package tiles;
 
 
-public class Door extends Unmoveable implements Tile {	
+public class Door implements Tile, Passable, PutDownOnable, Furniture {	
 	private boolean locked;
 	private boolean levelChanger;
 	private boolean nextLevel;
@@ -65,7 +65,15 @@ public class Door extends Unmoveable implements Tile {
 		return nextLevel;
 	}
 	
+	@Override
+	public boolean isPassable() {
+		return !isLocked();
+	}
 	
+	@Override
+	public boolean isPutDownOnable() {
+		return !isLocked();
+	}
 	
 	@Override
 	public String toString() {

@@ -2,7 +2,7 @@ package tiles;
 
 import java.awt.Point;
 
-public class Spikes extends Unmoveable implements Tile {
+public class Spikes implements Tile, Passable, Furniture {
 
 	private boolean isActivated;
 	private Point location;
@@ -22,6 +22,11 @@ public class Spikes extends Unmoveable implements Tile {
 	
 	public Point getLocation() {
 		return location;
+	}
+	
+	@Override
+	public boolean isPassable() {
+		return !isActivated();
 	}
 	
 	@Override

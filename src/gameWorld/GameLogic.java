@@ -7,10 +7,11 @@ import movable.Player;
 import tiles.Chest;
 import tiles.Door;
 import tiles.EmptyTile;
+import tiles.LevelDoor;
+import tiles.Passable;
 import tiles.PressurePad;
+import tiles.PutDownOnable;
 import tiles.Tile;
-import tiles.Unmoveable;
-import tiles.Wall;
 import userinterface.Action.Actions;
 import convertors.Msgs;
 
@@ -102,56 +103,68 @@ public class GameLogic {
 	
 	private boolean move(Player player, Level level, Point newLoc) {
 		
-		//check for out of bounds
-		if (newLoc.y < 0 || newLoc.y > level.getTiles().length-1 || newLoc.x < 0 || newLoc.x > level.getTiles()[0].length-1){
+		// Check for out of bounds
+		if (newLoc.y < 0 || newLoc.y > level.getTiles().length-1 || newLoc.x < 0 || newLoc.x > level.getTiles()[0].length-1)
 			return false;
-		}	
+		
+		
 		
 		Tile tile = level.getTiles()[newLoc.y][newLoc.x];
 	
 		
 		
+		// Check Boulders because Players can't move on to Boulders
 		for(Boulder b: level.getBoulders())
 			if(b.getLocation().equals(newLoc))
 				return false;
 			
 		
 		
-		if (tile instanceof Chest || tile instanceof Wall || (tile instanceof Door && ((Door)tile).isLocked())) {
+		// If Tile is not type Passable = can't move on to.
+		// If Tile is type Passable but state is !isPassable() = can't move on to.
+		if (!(tile instanceof Passable) || (tile instanceof Passable && !((Passable)tile).isPassable()))
 			return false;
-		} 
 		
 		
 		
-		if (tile instanceof Door) {
-			Door door = (Door) tile;
-			if (!door.isLocked() && door.isLevelChanger()) {
-				if (door.isNextLevel()) {
-					if (moveNextLevel(player))
-						System.out.println("--------- MOVED TO THE NEXT LEVEL");
-					else
-						System.out.println("--------- HOPEFULLY YOU CAN'T MOVE TO THE NEXT LEVEL BECAUSE THERE ISN'T ONE");
-				} else {
-					if (movePrevLevel(player))
-						System.out.println("--------- MOVED TO THE PREV LEVEL");
-					else
-						System.out.println("--------- HOPEFULLY YOU CAN'T MOVE TO THE PREV LEVEL BECAUSE THERE ISN'T ONE");
-				}
-				return true;
-			}
-		}
-		
-		
-		
-		if (tile instanceof PressurePad){
-			PressurePad pad = (PressurePad) tile;
-			pad.activate();
+		// If Tile is a LevelDoor
+		// The Passable check above ensure LevelDoor is also Passable
+		if (tile instanceof LevelDoor) {
+			moveNextLevel();
+			System.out.println("--------- MOVED TO THE NEXT LEVEL");
+			return true;
 			
+			/*
+			 *  I could instead write a method to change the New Location for tidier code
+			 */
 		}
 		
+		
+		
+		// If Tile is a Door
+		// The Passable check above ensure LevelDoor is also Passable
+		if (tile instanceof Door) {
+			moveNextDoor(player);
+			System.out.println("--------- TRANSFER TO ANOTHER DOOR");
+			return true;
+			
+			/*
+			 *  I could instead write a method to change the New Location for tidier code
+			 */
+		}
+		
+		
+		
+		// If Tile is type PressurePad = activate the PressurePad
+		if (tile instanceof PressurePad)
+			((PressurePad)tile).activate();
+		
+		
+		
+		// If made it to here return true because move is valid.
 		return player.setLocation(newLoc);		
 	}	
-	
+
 
 
 	private String interact(Player player, Level level, Point now) {
@@ -176,9 +189,12 @@ public class GameLogic {
 				throw new IllegalArgumentException();
 		}
 		
-		if (interactWith.y < 0 || interactWith.y > level.getTiles().length-1 || interactWith.x < 0 || interactWith.x > level.getTiles()[0].length-1){
-			return "temp - you are trying to interact with a tile outside the bounds of the game.";
-		}	
+		
+		
+		if (interactWith.y < 0 || interactWith.y > level.getTiles().length-1 || interactWith.x < 0 || interactWith.x > level.getTiles()[0].length-1)
+			return "temp - you are trying to interact with a tile outside the bounds of the game.";	
+		
+		
 		
 		Tile tile = level.getTiles()[interactWith.y][interactWith.x];	
 		
@@ -258,38 +274,30 @@ public class GameLogic {
 		boolean emptyORpressure = false;
 		
 		if (!player.hasBoulder()) {
-			//facingBoulder will be true if there was a boulder in front of player (which is now removed from the list of boulders in the level)
+			
+			// facingBoulder() true = There is Boulder in front of player (which is now removed from the list of boulders in the level)
 			boolean facingBoulder = level.removeBoulder(new Boulder(interactWith));
-			if(facingBoulder){
-				player.addBoulder();		// true - "You picked up a Boulder"
-			} else {
-				isBoulderRelavent = false;	// false - [do nothing]
+			// If Boulder there pick it up
+			// If no Boulder this section of code is irrelevant
+			if(facingBoulder) {
+				player.addBoulder();		// true - "You picked up a Boulder"	
+				/*
+				 *  IF pressure pad then call activate() on PressurePad in level so level can manage openeing closing doors
+				 */
 			}
 		}
 		else if (player.hasBoulder()) {
-			//if there's a boulder in front of you, you can't drop your current boulder or pick it up
+			// If there's a boulder in front of you, you can't drop your current boulder or pick another
 			boolean facingBoulder = level.containsBoulder(new Boulder(interactWith));
-			for(Player p: this.players){
-				if(p.getLocation().equals(interactWith)){
-					return "You can't put a boulder on your friend lol";
-				}
-			}
+			// Check if there's a player present on the tile you're trying to drop the boulder onto. If Player there you can't drop.
+			boolean facingPlayer = level.playerAt(interactWith);
 				
-			if(facingBoulder) {
-				infrontBoulder = true; 						// "You already have a Boulder, so can't pick up another."
-			}
-			//check if there's a player present on the tile you're trying to drop the boulder onto
-			else if (tile instanceof EmptyTile) {
+			if (tile instanceof PutDownOnable) {
 				level.addBoulder(new Boulder(interactWith));
 				player.dropBoulder();
-				emptyORpressure = true;						// "You dropped a Boulder on an Empty Tile or Pressure Pad."
-			}
-			else if (tile instanceof PressurePad) {
-				level.addBoulder(new Boulder(interactWith));
-				player.dropBoulder();
-				PressurePad pad = (PressurePad) tile;
-				pad.activate();
-				emptyORpressure = true;						// "You dropped a Boulder on an Empty Tile or Pressure Pad."
+				
+				if (tile instanceof PressurePad) 
+					((PressurePad)tile).activate();
 			}
 		}
 			
@@ -336,40 +344,40 @@ public class GameLogic {
 		
 		Tile tile = level.getTiles()[interactWith.y][interactWith.x];
 		
-		if(tile instanceof Unmoveable){	//doesn't include pressure pad
-			return Msgs.inspectUnmovable((Unmoveable) tile);
-		}
-		//if code reaches here, might be trying to inspect an empty tile (empty tile doesn't extend unmoveable) boulders and players (moveables) can be on empty tiles
-		for(Boulder b: level.getBoulders()){
-			if(b.getLocation().equals(interactWith)){
-				if(tile instanceof PressurePad){
-					return Msgs.inspectMoveable(b, true);
-				}
-				return Msgs.inspectMoveable(b, false);
-			}
-		}
-		//check both players in list, if one is present on the tile you're inspecting then return a string that says so
-		for(Player p: this.players){
-			if(p.getLocation().equals(interactWith)){
-				if(tile instanceof PressurePad){
-					return Msgs.inspectMoveable(p, true);
-				}
-				return Msgs.inspectMoveable(p, false);
-			}
-		}
-		
-		//if code reaches here, pressure pad can't contain a moveable object and so return message stating it's a pressure pad
-		if(tile instanceof PressurePad){
-			return Msgs.inspectPressurePad();
-		}
-		return "You're trying to inspect not much";
+//		if(tile instanceof Furniture && !(tile instanceof PressurePad)){	//doesn't include pressure pad
+//			return Msgs.inspectUnmovable((Furniture) tile);
+//		}
+//		//if code reaches here, might be trying to inspect an empty tile (empty tile doesn't extend unmoveable) boulders and players (moveables) can be on empty tiles
+//		for(Boulder b: level.getBoulders()){
+//			if(b.getLocation().equals(interactWith)){
+//				if(tile instanceof PressurePad){
+//					return Msgs.inspectMoveable(b, true);
+//				}
+//				return Msgs.inspectMoveable(b, false);
+//			}
+//		}
+//		//check both players in list, if one is present on the tile you're inspecting then return a string that says so
+//		for(Player p: this.players){
+//			if(p.getLocation().equals(interactWith)){
+//				if(tile instanceof PressurePad){
+//					return Msgs.inspectMoveable(p, true);
+//				}
+//				return Msgs.inspectMoveable(p, false);
+//			}
+//		}
+//		
+//		//if code reaches here, pressure pad can't contain a moveable object and so return message stating it's a pressure pad
+//		if(tile instanceof PressurePad){
+//			return Msgs.inspectPressurePad();
+//		}
+		return "BEN TURNED OFF INSPECT TEMPORARILY";
 	}
 
 	
 	/*
 	 *  // TODO need to add some sort of message for changing level
 	 */
-	private boolean moveNextLevel(Player p) {
+	private boolean moveNextDoor(Player p) {
 		// what level is the player on?
 		int currentLvl = p.getLevelID();
 		
@@ -398,7 +406,7 @@ public class GameLogic {
 		return true;
 	}
 	
-	private boolean movePrevLevel(Player p) {
+	private boolean movePrevDoor(Player p) {
 		// what level is the player on?
 		int currentLvl = p.getLevelID();
 		
@@ -437,6 +445,15 @@ public class GameLogic {
 		
 		
 	}
+	
+	
+	
+	private void moveNextLevel() {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	
 	
 	public String bouldersKeysLocation(int userID) {
 		int index = 8989;

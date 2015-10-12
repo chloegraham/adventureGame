@@ -1,6 +1,6 @@
 package tiles;
 
-public class PressurePad extends Unmoveable implements Tile {
+public class PressurePad implements Tile, Passable, Furniture {
 	
 	private boolean isActivated;
 	
@@ -14,6 +14,11 @@ public class PressurePad extends Unmoveable implements Tile {
 	
 	public boolean isActivated(){
 		return isActivated;
+	}
+	
+	@Override
+	public boolean isPassable() {
+		return true;
 	}
 	
 	@Override

@@ -4,17 +4,18 @@ import java.awt.Point;
 import java.util.HashSet;
 import java.util.Set;
 
-import convertors.Msgs;
 import movable.Boulder;
 import movable.Player;
 import tiles.Chest;
 import tiles.Door;
+import tiles.DrawFirst;
 import tiles.EmptyTile;
+import tiles.Furniture;
 import tiles.PressurePad;
 import tiles.Spikes;
 import tiles.Tile;
-import tiles.Unmoveable;
 import tiles.Wall;
+import convertors.Msgs;
 
 public class Level {
 	private int levelID;
@@ -140,6 +141,13 @@ public class Level {
 		return !players.isEmpty();
 	}
 	
+	public boolean playerAt(Point location) {
+		for (Player p : players)
+			if (p.getLocation().equals(location))
+				return true;
+		return false;
+	}
+	
 	
 	/*
 	 *  Activate all the Spikes on this Level
@@ -200,7 +208,7 @@ public class Level {
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++) {
 				Tile temp = tiles[i][j];
-				if(temp instanceof EmptyTile || temp instanceof Wall){
+				if(temp instanceof DrawFirst){
 					array[i][j] = temp.toString().charAt(0);
 				}
 				else{
@@ -216,7 +224,7 @@ public class Level {
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++) {
 				Tile temp = tiles[i][j];
-				if(temp instanceof Unmoveable && !(temp instanceof Wall)) {
+				if(temp instanceof Furniture) {
 					array[i][j] = temp.toString().charAt(0);
 				}
 				else{

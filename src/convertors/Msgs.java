@@ -1,17 +1,10 @@
 package convertors;
 
+import gameWorld.Direction;
 import movable.Boulder;
 import movable.Moveable;
 import movable.Player;
-import sun.invoke.empty.Empty;
-import tiles.Chest;
-import tiles.Door;
-import tiles.EmptyTile;
-import tiles.PressurePad;
-import tiles.Spikes;
-import tiles.Unmoveable;
-import tiles.Wall;
-import gameWorld.Direction;
+import tiles.Furniture;
 
 public class Msgs {
 	public static final int PLAYER_ONE = 101;
@@ -128,33 +121,34 @@ public class Msgs {
 	
 	
 	
-	public static String inspectUnmovable(Unmoveable item) {
+	public static String inspectUnmovable(Furniture item) {
 		
 		String str = "";
-		
-		if(item instanceof Chest){
-			
-			if(((Chest) item).isOpen()){
-				return str += Msgs.INSPECT_OPEN_CHEST;
-			}
-			else {
-				return str += Msgs.INSPECT_CLOSED_CHEST;
-			}
-		} else if(item instanceof Door){
-			
-			if(((Door) item).isLocked()){
-				return str += Msgs.INSPECT_CLOSED_DOOR;
-			}
-			else {
-				return str += Msgs.INSPECT_OPEN_DOOR;
-			}
-		}else if(item instanceof Spikes){
-			return str += Msgs.INSPECT_SPIKES;
-		}else if(item instanceof Wall){
-			return str += Msgs.INSPECT_WALL;
-		}else{
-			return "this isn't an unmoveable object??";
-		}
+//		
+//		if(item instanceof Chest){
+//			
+//			if(((Chest) item).isOpen()){
+//				return str += Msgs.INSPECT_OPEN_CHEST;
+//			}
+//			else {
+//				return str += Msgs.INSPECT_CLOSED_CHEST;
+//			}
+//		} else if(item instanceof Door){
+//			
+//			if(((Door) item).isLocked()){
+//				return str += Msgs.INSPECT_CLOSED_DOOR;
+//			}
+//			else {
+//				return str += Msgs.INSPECT_OPEN_DOOR;
+//			}
+//		}else if(item instanceof Spikes){
+//			return str += Msgs.INSPECT_SPIKES;
+//		}else if(item instanceof Wall){
+//			return str += Msgs.INSPECT_WALL;
+//		}else{
+//			return "this isn't an unmoveable object??";
+//		}
+		return "BEN HAS HACKED THIS TOO";
 	}
 
 	public static String inspectMoveable(Moveable moveable, boolean onPressurePad) {
