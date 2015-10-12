@@ -231,7 +231,7 @@ public class Server implements Runnable {
 		
 		handleAction(Actions.NEWGAME.ordinal(), Msgs.PLAYER_ONE);
 		
-		Timer timer = new Timer(this);
+		TimerSpikes timer = new TimerSpikes(this);
     	Thread timerThread = new Thread(timer);
 		timerThread.start();
 	}
