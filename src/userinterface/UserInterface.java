@@ -167,6 +167,13 @@ public class UserInterface extends JFrame {
 		} catch (InterruptedException e) {}
 	}
 	
+	//TODO: test method implemented for checking save process
+		public int getPlayerResponse(){
+			int temp = JOptionPane.showConfirmDialog(getFocusOwner(), "Annie are you ok, are you ok Annie?");
+			System.out.println("int value is: " + String.valueOf(temp));
+			return temp;
+		}
+	
 	/**
 	 * Tell this player that the game state is currently being changed.
 	 * Returns player to startup screen to wait for new game state.
