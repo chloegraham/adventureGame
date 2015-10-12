@@ -1,6 +1,6 @@
 package tiles;
 
-public class PressurePad implements Tile {
+public class PressurePad extends Unmoveable implements Tile {
 	
 	private boolean isActivated;
 	
