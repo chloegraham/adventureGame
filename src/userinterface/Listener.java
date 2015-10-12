@@ -101,27 +101,45 @@ public class Listener extends JPanel implements KeyListener, ActionListener {
 	
 	/**
 	 * Override ActionPerformed using a String instead of an ActionEvent.
+	 * actionPerformed in splash screen is restricted.
 	 */
 	public void actionPerformed(String ac){
 		/* Splash screen controls */
 		if (!splashLocked){
-			if (splash.getOpenCard() != SplashScreen.HOST_CARD){ return; }	// Only the splash menu has action listeners.
-			else if (ac.equals("New Game")){
-				splash.showStartup("Creating a new game. Waiting for game state ...");
-				client.handleAction(Actions.NEWGAME.ordinal());
+			int openCard = splash.getOpenCard();
+			if (openCard == SplashScreen.HOST_CARD || openCard == SplashScreen.CONFIRM_CARD ){
+				if (ac.equals("New Game")){
+					splash.showStartup("Creating a new game. Waiting for game state ...");
+					client.handleAction(Actions.NEWGAME.ordinal());
+				}
+				else if (ac.equals("Load Game")){
+					splash.showStartup("Loading a game. Waiting for game state ...");
+					client.handleAction(Actions.LOAD.ordinal());
+				}
 			}
-			else if (ac.equals("Load Game")){
-				splash.showStartup("Loading a game. Waiting for game state ...");
-				client.handleAction(Actions.LOAD.ordinal());
+			if (openCard == SplashScreen.CONFIRM_CARD){
+				if (ac.equals("Cancel")){ splash.setVisibleCard(SplashScreen.NO_CARD); }	// Changed mind, ignore
+				else if (ac.equals("Restart")){
+					//TODO set startup screen? Set game playing to false?
+					client.handleAction(Actions.RESTART.ordinal());
+				}
 			}
-			
 			return;				// If splash screen is unlocked, do not check game controls
 		}
 		
 		/* Game controls */
-		if (ac.equals("New Game")){ client.handleAction(Actions.NEWGAME.ordinal()); }
-		else if (ac.equals("Save")){ client.handleAction(Actions.SAVE.ordinal()); }
-		else if (ac.equals("Load")){ client.handleAction(Actions.LOAD.ordinal()); }
+		if (ac.equals("New Game")){
+			splash.setVisibleConfirm("New Game", KeyEvent.VK_N, "Start a new game? Current game state will be lost.");
+		}
+		else if (ac.equals("Save")){
+			client.handleAction(Actions.SAVE.ordinal());
+		}
+		else if (ac.equals("Load")){
+			splash.setVisibleConfirm("Load Game", KeyEvent.VK_L, "Load the saved game? Current game state will be lost.");
+		}
+		else if (ac.equals("Restart Level")){
+			splash.setVisibleConfirm("Restart", KeyEvent.VK_R, "Restart this level? Current game state will be lost.");
+		}
 		else if (ac.equals("Controls")){ splash.setVisibleCard(SplashScreen.READY_CARD); }
 		else if (ac.equals("About")){ splash.setVisibleCard(SplashScreen.ABOUT_CARD); }
 		else if (ac.equals("Exit")){ exitGame(); }

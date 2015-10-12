@@ -191,6 +191,10 @@ public class UserInterface extends JFrame {
 		listener.setSplashLocked(enabled);
 	}
 	
+	public void setPlaying(boolean playing){
+		this.playing = playing;
+	}
+	
 	// ========================================================
 	// Methods for building the frame
 	// ========================================================
