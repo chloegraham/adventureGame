@@ -193,7 +193,7 @@ public class RenderPane extends JPanel {
 	        case 'J' : tilePainter.drawCharachterWestWithBoulder(g2, isoTile.x, isoTile.y); break;       		
 	        case 'L' : tilePainter.drawCharachterEastWithBoulder(g2, isoTile.x, isoTile.y); break;
 	        case 'K' : tilePainter.drawCharachterSouthWithBoulder(g2, isoTile.x, isoTile.y); break;
-	        
+	        //TODO: handle player being 0 as dead? we can chat about that
     	}
     }
 

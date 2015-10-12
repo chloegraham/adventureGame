@@ -1,5 +1,6 @@
 package tiles;
 
+
 public class PressurePad implements Tile {
 	
 	private boolean isActivated;

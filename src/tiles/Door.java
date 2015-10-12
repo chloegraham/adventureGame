@@ -54,8 +54,6 @@ public class Door extends Unmoveable implements Tile {
 		locked = true;
 	}
 	
-	
-	
 	/*
 	 *  LevelChanger logic
 	 */
@@ -66,8 +64,6 @@ public class Door extends Unmoveable implements Tile {
 	public boolean isNextLevel() {
 		return nextLevel;
 	}
-	
-	
 	
 	@Override
 	public String toString() {

@@ -1,7 +1,9 @@
 package gameWorld;
 
 import java.awt.Point;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import convertors.Msgs;
@@ -28,8 +30,11 @@ public class Level {
 	private Set<Boulder> boulders;
 	private Set<Spikes> spikes;
 	private Set<Player> players;
+	private Map<Point, Point> padsToDoors;
 	
 	public Level(String encodedLevel) {
+		
+		this.padsToDoors = new HashMap<Point, Point>();
 		// Split String up in to x3 Strings which will be converted to char[][]
 		String[] layers = encodedLevel.split("@");
 			
@@ -38,10 +43,10 @@ public class Level {
 		String[] subLayers2 = layers[1].split("%");
 		String[] subLayers3 = layers[2].split("%");
 		levelID = Integer.parseInt(layers[3]);
-			
+		String[] padToDoor = layers[4].split("%");
 		char[][] level;
 		char[][] objects;
-		char[][] movables;
+		char[][] movables;	
 		
 		// Now build the actual 2d-char[][] from the broken down Strings
 		level = new char[subLayers1.length][];
@@ -61,11 +66,26 @@ public class Level {
 		buildLevel(level);
 		buildObjects(objects);
 		buildMovables(movables);
-		
+		connectPadsToDoors(padToDoor);
 		System.out.println(toString());
 	}
 	
 	
+	private void connectPadsToDoors(String[] points) {
+			
+			if(points.length == 1)return;
+			if(points.length %4 != 0) throw new IllegalArgumentException("A level has the wrong number of coordinates connecting pads to doors");
+			//for(int i = 0; i < points.length; i = i + 3){
+			int i = 0;
+			Point pressurePad = new Point(Integer.parseInt(points[i+1]), Integer.parseInt(points[i]));
+			Point door = new Point(Integer.parseInt(points[i+3]), Integer.parseInt(points[i+2]));
+			System.out.println("pressure pad: x = " + pressurePad.getX() + " y = " + pressurePad.getY());
+			System.out.println("door: x = " + door.getX() + " y = " + door.getY());
+			this.padsToDoors.put(pressurePad, door);
+			//}	
+	}
+
+
 	/*
 	 *  Getter LevelID
 	 */
@@ -216,7 +236,7 @@ public class Level {
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++) {
 				Tile temp = tiles[i][j];
-				if(temp instanceof Unmoveable){
+				if(temp instanceof Unmoveable || temp instanceof PressurePad){
 					array[i][j] = temp.toString().charAt(0);
 				}
 				else{
@@ -281,10 +301,16 @@ public class Level {
 	
 	private void buildObjects(char[][] objects) {
 		spikes = new HashSet<>();
+		System.out.println(objects[0].length);
 		for (int y = 0; y < height; y++) {
 			for (int x = 0; x < width; x++) {
 				String temp = Character.toString((objects[y][x]));
-				
+				/*if(temp.equals("z")){
+					temp += Character.toString((objects[y][++x]));
+					temp += Character.toString((objects[y][++x]));
+					System.out.println(temp);
+					System.out.println("x length = " + x);
+				}*/
 				if (temp.equals("d")) {
 					tiles[y][x] = new Door("d");
 				}
@@ -327,7 +353,7 @@ public class Level {
 					tiles[y][x] = new Chest(true);
 				}
 				
-				else if (temp.equals("z")) {
+				else if (temp.charAt(0) =='z') {
 					tiles[y][x] = new PressurePad(false);
 				}
 				else if (temp.equals("Z")) {
@@ -369,7 +395,19 @@ public class Level {
 		}
 	}
 	
+	public Map<Point,Point> getMapOfPads(){
+		return this.padsToDoors;
+	}
+	
 	public String toString() {
 		return "   Level( levelID- " + levelID + "):   #players:  " + players.size() + "    #boulders:  " + boulders.size();
+	}
+
+
+	public Point getDoorFromPad(Point newLoc) {
+		
+		//TODO: throw illagal argument if not present
+		Point door = this.padsToDoors.get(newLoc);
+		return door;
 	}
 }
