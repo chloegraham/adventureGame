@@ -5,7 +5,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import renderer.RenderPane;
@@ -120,8 +119,11 @@ public class Listener extends JPanel implements KeyListener, ActionListener {
 			if (openCard == SplashScreen.CONFIRM_CARD){
 				if (ac.equals("Cancel")){ splash.setVisibleCard(SplashScreen.NO_CARD); }	// Changed mind, ignore
 				else if (ac.equals("Restart")){
-					//TODO set startup screen? Set game playing to false?
+					splash.showStartup("Restarting the level. Waiting for game state ...");
 					client.handleAction(Actions.RESTART.ordinal());
+				}
+				else if (ac.equals("Exit")){
+					System.exit(0);
 				}
 			}
 			return;				// If splash screen is unlocked, do not check game controls
@@ -142,7 +144,9 @@ public class Listener extends JPanel implements KeyListener, ActionListener {
 		}
 		else if (ac.equals("Controls")){ splash.setVisibleCard(SplashScreen.READY_CARD); }
 		else if (ac.equals("About")){ splash.setVisibleCard(SplashScreen.ABOUT_CARD); }
-		else if (ac.equals("Exit")){ exitGame(); }
+		else if (ac.equals("Exit")){
+			splash.setVisibleConfirm("Exit", KeyEvent.VK_X, "Are you sure you want to quit? Current game state will be lost.");
+		}
 	}
 	
 	@Override		// Overload so it takes the action command instead.
@@ -152,18 +156,6 @@ public class Listener extends JPanel implements KeyListener, ActionListener {
 	public void keyReleased(KeyEvent e) {}
 	@Override
 	public void keyTyped(KeyEvent e) {}
-	
-	/**
-	 * Checks if the user really wants to quit the game. If so, shuts down the system.
-	 */
-	public static void exitGame(){
-		int confirm = JOptionPane.showOptionDialog(null,
-				"Are you sure you want to exit the game?\nProgress since last save will be lost.\nConnection to server will be closed.", 
-				"Exit Game", JOptionPane.CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
-		if (confirm == 0) {
-			System.exit(0);
-		}
-	}
 	
 	private static final long serialVersionUID = 1L;
 }

@@ -269,7 +269,10 @@ public class UserInterface extends JFrame {
 		menuBar.add(help);
 		// File menu
 		file.add(createMenuItem("Save", KeyEvent.VK_S));
+		file.addSeparator();
+		file.add(createMenuItem("Restart Level", KeyEvent.VK_R));
 		file.add(createMenuItem("Load", KeyEvent.VK_L));
+		file.add(createMenuItem("New Game", KeyEvent.VK_N));
 		file.addSeparator();
 		file.add(createMenuItem("Exit", KeyEvent.VK_X));
 		// Help menu
@@ -303,7 +306,7 @@ public class UserInterface extends JFrame {
 		WindowListener exitListener = new WindowAdapter() {
 		    @Override
 		    public void windowClosing(WindowEvent e) {				// Override closing event.
-		        Listener.exitGame();
+		        listener.actionPerformed("Exit");
 		    }
 		};
 		addWindowListener(exitListener);
