@@ -9,6 +9,7 @@ import tiles.Door;
 import tiles.EmptyTile;
 import tiles.PressurePad;
 import tiles.Tile;
+import tiles.Unmoveable;
 import tiles.Wall;
 import userinterface.Action.Actions;
 import convertors.Msgs;
@@ -82,9 +83,7 @@ public class GameLogic {
 			
 		}
 		else if (Actions.INSPECT.ordinal() == ordinal) { 
-			// TODO need to write inspect()
-			
-			// message = 
+			message = inspect(player, level, current);
 			
 			
 		}
@@ -100,9 +99,6 @@ public class GameLogic {
 		
 		return message;
 	}
-	
-	
-	
 	
 	private boolean move(Player player, Level level, Point newLoc) {
 		
@@ -184,14 +180,13 @@ public class GameLogic {
 			return "temp - you are trying to interact with a tile outside the bounds of the game.";
 		}	
 		
-		Tile tile = level.getTiles()[interactWith.y][interactWith.x];
-		
-		
+		Tile tile = level.getTiles()[interactWith.y][interactWith.x];	
 		
 		/*
-		 *  Chest interaction code & messages
+		 *  Chest interaction or inspection code & messages
 		 */
 		if (tile instanceof Chest){
+
 			Chest chest = (Chest) tile;
 			
 			// OPEN
@@ -263,17 +258,27 @@ public class GameLogic {
 		boolean emptyORpressure = false;
 		
 		if (!player.hasBoulder()) {
+			//facingBoulder will be true if there was a boulder in front of player (which is now removed from the list of boulders in the level)
 			boolean facingBoulder = level.removeBoulder(new Boulder(interactWith));
-			if (facingBoulder)
+			if(facingBoulder){
 				player.addBoulder();		// true - "You picked up a Boulder"
-			else
+			} else {
 				isBoulderRelavent = false;	// false - [do nothing]
+			}
 		}
 		else if (player.hasBoulder()) {
+			//if there's a boulder in front of you, you can't drop your current boulder or pick it up
 			boolean facingBoulder = level.containsBoulder(new Boulder(interactWith));
-			if (facingBoulder) {
+			for(Player p: this.players){
+				if(p.getLocation().equals(interactWith)){
+					return "You can't put a boulder on your friend lol";
+				}
+			}
+				
+			if(facingBoulder) {
 				infrontBoulder = true; 						// "You already have a Boulder, so can't pick up another."
 			}
+			//check if there's a player present on the tile you're trying to drop the boulder onto
 			else if (tile instanceof EmptyTile) {
 				level.addBoulder(new Boulder(interactWith));
 				player.dropBoulder();
@@ -293,16 +298,73 @@ public class GameLogic {
 		} else {
 			if (isBoulderRelavent)
 				return Msgs.boulderPickUpMsg();
+		
 		}
-		
-		
 		/*
 		 *  //TODO I think should only reach here is there is nothing to interact with.
 		 */
-		return "Testing - No valid interaction. Player should be infront of a Wall or EmptyTile else this is an ERROR." + Msgs.DELIM_SPLIT;
+		return "";
 	}
 	
+
 	
+	private String inspect(Player player, Level level, Point now) {
+		
+		Direction direction = player.getDirection();
+		Point interactWith;
+		
+		switch(direction){
+			case NORTH:
+				interactWith = new Point(now.x, now.y-1);
+				break;
+			case SOUTH:
+				interactWith = new Point(now.x, now.y+1);
+				break;
+			case EAST:
+				interactWith = new Point(now.x+1, now.y);
+				break;
+			case WEST:
+				interactWith = new Point(now.x-1, now.y);
+				break;
+			default:
+				throw new IllegalArgumentException();
+		}
+		
+		if (interactWith.y < 0 || interactWith.y > level.getTiles().length-1 || interactWith.x < 0 || interactWith.x > level.getTiles()[0].length-1){
+			return "Why are you trying to inspect a tile outside the bounds of the game? Jesus.";
+		}	
+		
+		Tile tile = level.getTiles()[interactWith.y][interactWith.x];
+		
+		if(tile instanceof Unmoveable){	//doesn't include pressure pad
+			return Msgs.inspectUnmovable((Unmoveable) tile);
+		}
+		//if code reaches here, might be trying to inspect an empty tile (empty tile doesn't extend unmoveable) boulders and players (moveables) can be on empty tiles
+		for(Boulder b: level.getBoulders()){
+			if(b.getLocation().equals(interactWith)){
+				if(tile instanceof PressurePad){
+					return Msgs.inspectMoveable(b, true);
+				}
+				return Msgs.inspectMoveable(b, false);
+			}
+		}
+		//check both players in list, if one is present on the tile you're inspecting then return a string that says so
+		for(Player p: this.players){
+			if(p.getLocation().equals(interactWith)){
+				if(tile instanceof PressurePad){
+					return Msgs.inspectMoveable(p, true);
+				}
+				return Msgs.inspectMoveable(p, false);
+			}
+		}
+		
+		//if code reaches here, pressure pad can't contain a moveable object and so return message stating it's a pressure pad
+		if(tile instanceof PressurePad){
+			return Msgs.inspectPressurePad();
+		}
+		return "You're trying to inspect not much";
+	}
+
 	
 	/*
 	 *  // TODO need to add some sort of message for changing level
