@@ -95,8 +95,7 @@ public class GameLogic {
 	    }
 		else {
 			throw new IllegalArgumentException("GameLogic:  received an unexpected ordinal. It might be 'Inspect' which we have't coded yet.");
-		}
-		
+		}	
 		return message;
 	}
 	
@@ -110,33 +109,19 @@ public class GameLogic {
 		Tile tile = level.getTiles()[newLoc.y][newLoc.x];
 		Point currentTile =  player.getLocation();
 		
+		//Can't move into a boulder
 		for(Boulder b: level.getBoulders())
 			if(b.getLocation().equals(newLoc))
 				return false;
-			
-		
-		
+		//Can't move into the following
 		if (tile instanceof Chest || tile instanceof Wall || (tile instanceof Door && ((Door)tile).isLocked())) {
 			return false;
 		} 
 		
 		if(level.getTiles()[currentTile.y][currentTile.x] instanceof PressurePad){
-			PressurePad pad = (PressurePad) level.getTiles()[currentTile.y][currentTile.x];
-			pad.activate();
-			Point doorPoint = level.getDoorFromPad(player.getLocation());
-			Door doorTile = (Door)level.getTiles()[doorPoint.y][doorPoint.x];	
-			doorTile.lock();
-			//if there's a player in the doorway when getting off the activated pressure pad then kill them
-			for(Player p: this.players){
-				if(p.getLocation().equals(doorPoint)){
-					//TODO: kill player
-					p.murder();
-					System.out.println("you dead");
-				}
-			}
-
+			deactivateDoor(tile, level, player.getLocation());
 		}
-		
+		//TODO: if door is closed behind a player and they come back to that level they can be seen within the door. change this
 		if (tile instanceof Door) {
 			Door door = (Door) tile;
 			if (!door.isLocked() && door.isLevelChanger()) {
@@ -156,19 +141,34 @@ public class GameLogic {
 		}
 		
 		if (tile instanceof PressurePad){
-			PressurePad pad = (PressurePad) tile;
-			pad.activate();
-			Point door = level.getDoorFromPad(newLoc);
-			System.out.println("door point = " + door);
-			Door doorTile = (Door)level.getTiles()[door.y][door.x];	
-			doorTile.unlock();
-		}
-		
+			activateDoor(tile, level, newLoc);
+		}	
 		return player.setLocation(newLoc);		
 	}	
-	
-
-
+	//this method is called when either a player or a boulder is placed on a pressure pad
+	private void activateDoor(Tile tile, Level level, Point newLoc) {
+		PressurePad pad = (PressurePad) tile;
+		pad.activate();
+		Point door = level.getDoorFromPad(newLoc);
+		Door doorTile = (Door)level.getTiles()[door.y][door.x];	
+		doorTile.unlock();
+	}
+	//this method is called when either a player or a boulder is removed from a pressure pad, killing a player if present on door position
+	private void deactivateDoor(Tile tile, Level level, Point currentLoc) {
+		PressurePad pad = (PressurePad) level.getTiles()[currentLoc.y][currentLoc.x];
+		pad.activate();
+		Point doorPoint = level.getDoorFromPad(currentLoc);
+		Door doorTile = (Door)level.getTiles()[doorPoint.y][doorPoint.x];	
+		doorTile.lock();
+		//if there's a player in the doorway when getting off the activated pressure pad then kill them
+		for(Player p: this.players){
+			if(p.getLocation().equals(doorPoint)){
+				//TODO: kill player
+				p.murder();
+				System.out.println("you dead");
+			}
+		}
+	}
 
 	private String interact(Player player, Level level, Point now) {
 		
@@ -277,6 +277,7 @@ public class GameLogic {
 			//facingBoulder will be true if there was a boulder in front of player (which is now removed from the list of boulders in the level)
 			boolean facingBoulder = level.removeBoulder(new Boulder(interactWith));
 			if(facingBoulder){
+				if(tile instanceof PressurePad) deactivateDoor(tile, level, interactWith);
 				player.addBoulder();		// true - "You picked up a Boulder"
 			} else {
 				isBoulderRelavent = false;	// false - [do nothing]
@@ -299,14 +300,13 @@ public class GameLogic {
 			else if (tile instanceof EmptyTile) {
 				level.addBoulder(new Boulder(interactWith));
 				player.dropBoulder();
-				emptyORpressure = true;						// "You dropped a Boulder on an Empty Tile or Pressure Pad."
+				emptyORpressure = true;						// "You dropped a Boulder on an Empty Tile"
 			}
 			else if (tile instanceof PressurePad) {
 				level.addBoulder(new Boulder(interactWith));
 				player.dropBoulder();
-				PressurePad pad = (PressurePad) tile;
-				pad.activate();
-				emptyORpressure = true;						// "You dropped a Boulder on an Empty Tile or Pressure Pad."
+				activateDoor(tile, level, interactWith);
+				emptyORpressure = true;						// "You dropped a Boulder on a Pressure Pad."
 			}
 		}
 			
@@ -317,9 +317,6 @@ public class GameLogic {
 				return Msgs.boulderPickUpMsg();
 		
 		}
-		/*
-		 *  //TODO I think should only reach here is there is nothing to interact with.
-		 */
 		return "";
 	}
 	
@@ -448,7 +445,7 @@ public class GameLogic {
 	public void activateSpikes() {
 		for (Level l : levels) {
 			if (l.containsPlayer()) {
-				l.activateSpikes();
+				l.activateSpikes(); //don't bother activate them if nobody is in a level to be affected by them
 			}
 		}
 		
