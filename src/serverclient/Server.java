@@ -39,6 +39,9 @@ public class Server implements Runnable {
 	
 	private static Lock lock;
 	
+	private TimerSpikes timer;
+	private Thread timerThread;
+	
 	public void run() {
 	    try{
 	    	lock = new ReentrantLock(true);
@@ -212,6 +215,8 @@ public class Server implements Runnable {
 		} else {
 			//System.out.println("--- Server:    broadcasting game after PlayerTWO handle action.");
 			
+			System.out.println("other is: " + other);
+			System.out.println("current is: " + current);
 			outputOne.writeUTF(other);
 			outputTwo.writeUTF(current);
 		}
@@ -234,8 +239,8 @@ public class Server implements Runnable {
 		
 		handleAction(Actions.NEWGAME.ordinal(), Msgs.PLAYER_ONE);
 		
-		TimerSpikes timer = new TimerSpikes(this);
-    	Thread timerThread = new Thread(timer);
+		this.timer = new TimerSpikes(this);
+    	this.timerThread = new Thread(timer);
 		timerThread.start();
 	}
 	
@@ -250,15 +255,24 @@ public class Server implements Runnable {
 		logic = gameWorld.getLogic();
 		System.out.println("--- Server:    Loaded Game created.");
 						
-		TimerSpikes timer = new TimerSpikes(this);
-		Thread timerThread = new Thread(timer);
+		this.timer = new TimerSpikes(this);
+		this.timerThread = new Thread(timer);
 		timerThread.start();
 	}
 	
 	
-	private boolean save() {
+	private boolean save() throws IOException {
 		System.out.println("--- Server:    attempting to Save Game.");
-		return XML.save(gameWorld.getEncodedGameSave());
+		//TODO: someone think of a better implementation this feels hacky
+		String saveMe = "save me";
+		outputOne.writeUTF(saveMe);
+		outputTwo.writeUTF(saveMe);
+		String temp1 = inputOne.readUTF();
+		String temp2 = inputTwo.readUTF();
+		if (temp1.equals("0") && temp2.equals("0")){
+			return XML.save(gameWorld.getEncodedGameSave());
+		}
+		return false;	
 	}
 
 	
