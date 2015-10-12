@@ -52,19 +52,6 @@ public class Door implements Tile, Passable, PutDownOnable, Furniture {
 		locked = true;
 	}
 	
-	
-	
-	/*
-	 *  LevelChanger logic
-	 */
-	public boolean isLevelChanger() {
-		return levelChanger; 
-	}
-	
-	public boolean isNextLevel() {
-		return nextLevel;
-	}
-	
 	@Override
 	public boolean isPassable() {
 		return !isLocked();

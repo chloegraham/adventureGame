@@ -110,7 +110,8 @@ public class GameLogic {
 		
 		
 		Tile tile = level.getTiles()[newLoc.y][newLoc.x];
-	
+		Point currentTile =  player.getLocation();
+		
 		
 		
 		// Check Boulders because Players can't move on to Boulders
@@ -127,6 +128,24 @@ public class GameLogic {
 		
 		
 		
+		if(level.getTiles()[currentTile.y][currentTile.x] instanceof PressurePad){
+			PressurePad pad = (PressurePad) level.getTiles()[currentTile.y][currentTile.x];
+			pad.activate();
+			Point doorPoint = level.getDoorFromPad(player.getLocation());
+			Door doorTile = (Door)level.getTiles()[doorPoint.y][doorPoint.x];	
+			doorTile.lock();
+			//if there's a player in the doorway when getting off the activated pressure pad then kill them
+			for(Player p: this.players){
+				if(p.getLocation().equals(doorPoint)){
+					//TODO: kill player
+					p.murder();
+					System.out.println("you dead");
+				}
+			}
+		}
+		
+		
+		
 		// If Tile is a LevelDoor
 		// The Passable check above ensure LevelDoor is also Passable
 		if (tile instanceof LevelDoor) {
@@ -138,6 +157,7 @@ public class GameLogic {
 			 *  I could instead write a method to change the New Location for tidier code
 			 */
 		}
+
 		
 		
 		
@@ -152,18 +172,24 @@ public class GameLogic {
 			 *  I could instead write a method to change the New Location for tidier code
 			 */
 		}
-		
-		
-		
-		// If Tile is type PressurePad = activate the PressurePad
-		if (tile instanceof PressurePad)
-			((PressurePad)tile).activate();
+
+
+
+		if (tile instanceof PressurePad){
+			PressurePad pad = (PressurePad) tile;
+			pad.activate();
+			Point door = level.getDoorFromPad(newLoc);
+			System.out.println("door point = " + door);
+			Door doorTile = (Door)level.getTiles()[door.y][door.x];	
+			doorTile.unlock();
+		}
 		
 		
 		
 		// If made it to here return true because move is valid.
 		return player.setLocation(newLoc);		
 	}	
+
 
 
 
@@ -289,6 +315,7 @@ public class GameLogic {
 		else if (player.hasBoulder()) {
 			// If there's a boulder in front of you, you can't drop your current boulder or pick another
 			boolean facingBoulder = level.containsBoulder(new Boulder(interactWith));
+
 			// Check if there's a player present on the tile you're trying to drop the boulder onto. If Player there you can't drop.
 			boolean facingPlayer = level.playerAt(interactWith);
 				

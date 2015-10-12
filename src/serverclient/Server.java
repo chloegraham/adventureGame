@@ -122,12 +122,18 @@ public class Server implements Runnable {
 		    				throw new IllegalArgumentException("GameWorld still null and Client is trying to send Actions that aren't New or Load");
 			    	
 			    	
-			    	if (ordinal == Actions.NEWGAME.ordinal())
+					if (ordinal == Actions.NEWGAME.ordinal())
 			    		newGame();
 			    	else if (ordinal == Actions.LOAD.ordinal())
 			    		load();
-			    	else if (ordinal == Actions.SAVE.ordinal())
-			    		save();
+			    	else if (ordinal == Actions.SAVE.ordinal()){
+			    		boolean temp = save();
+			    		if (temp == true){
+			    			broadcast(Msgs.PLAYER_ONE, "Player one called save successfully");
+			    		} else {
+			    			broadcast(Msgs.PLAYER_ONE, "Player two failed to save successfully");
+			    		}
+			    	}
 			    	else
 			    		handleAction(ordinal, Msgs.PLAYER_ONE);
 			    	
@@ -150,10 +156,23 @@ public class Server implements Runnable {
 			    	
 			    	
 			    	// Checks that PlayerTWO doesn't attempt invalid actions
-			    	if (gameWorld == null || ordinal == Actions.NEWGAME.ordinal() || ordinal == Actions.LOAD.ordinal())
+			    	if (gameWorld == null)
 			    			throw new IllegalArgumentException("Player TWO should never be able to send Action with null GameWorld. Also Player TWO should never be able to New or Load Game.");
 			    	
-			    	handleAction(ordinal, Msgs.PLAYER_TWO);
+			    	if (ordinal == Actions.NEWGAME.ordinal())
+			    		newGame();
+			    	else if (ordinal == Actions.LOAD.ordinal())
+			    		load();
+			    	else if (ordinal == Actions.SAVE.ordinal()){
+			    		boolean temp = save();
+			    		if (temp == true){
+			    			broadcast(Msgs.PLAYER_TWO, "Player two called save successfully");
+			    		} else {
+			    			broadcast(Msgs.PLAYER_TWO, "Player two failed to save successfully");
+			    		}
+			    	}
+			    	else
+			    		handleAction(ordinal, Msgs.PLAYER_TWO);
 			    	
 			    	lock.unlock();
 		    	}
@@ -250,29 +269,28 @@ public class Server implements Runnable {
 		String encodedGameWorld = XML.load();
 		System.out.println(encodedGameWorld);
 		
-		// Create the GameWorld based of the encoded previously saved game + initialize Game Logic
-		gameWorld = new GameWorld(encodedGameWorld);
-		logic = gameWorld.getLogic();
-		System.out.println("--- Server:    Loaded Game created.");
-						
-		this.timer = new TimerSpikes(this);
-		this.timerThread = new Thread(timer);
-		timerThread.start();
+		String loadMe = "load me";
+		outputOne.writeUTF(loadMe);
+		outputTwo.writeUTF(loadMe);
+		String temp1 = inputOne.readUTF();
+		String temp2 = inputTwo.readUTF();
+		if (temp1.equals("0") && temp2.equals("0")){
+			// Create the GameWorld based of the encoded previously saved game + initialize Game Logic
+			gameWorld = new GameWorld(encodedGameWorld);
+			logic = gameWorld.getLogic();
+			System.out.println("--- Server:    Loaded Game created.");
+							
+			this.timer = new TimerSpikes(this);
+			this.timerThread = new Thread(timer);
+			timerThread.start();
+		}
 	}
 	
 	
 	private boolean save() throws IOException {
 		System.out.println("--- Server:    attempting to Save Game.");
 		//TODO: someone think of a better implementation this feels hacky
-		String saveMe = "save me";
-		outputOne.writeUTF(saveMe);
-		outputTwo.writeUTF(saveMe);
-		String temp1 = inputOne.readUTF();
-		String temp2 = inputTwo.readUTF();
-		if (temp1.equals("0") && temp2.equals("0")){
-			return XML.save(gameWorld.getEncodedGameSave());
-		}
-		return false;	
+		return XML.save(gameWorld.getEncodedGameSave());
 	}
 
 	
