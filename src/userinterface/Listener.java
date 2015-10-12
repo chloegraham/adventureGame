@@ -5,7 +5,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import renderer.RenderPane;
@@ -69,6 +68,9 @@ public class Listener extends JPanel implements KeyListener, ActionListener {
 
 		/* Game controls */
 		
+		// Ctrl is used to access menu events. Some menu events share a key with a game, so don't perform game events when control is down.
+		if (e.isControlDown()){ return; }
+		
 		// Rotation
 		if (Actions.CLOCKWISE.getKeyCode() == event){
 			directions.rotate(true);
@@ -101,30 +103,59 @@ public class Listener extends JPanel implements KeyListener, ActionListener {
 	
 	/**
 	 * Override ActionPerformed using a String instead of an ActionEvent.
+	 * actionPerformed in splash screen is restricted.
 	 */
 	public void actionPerformed(String ac){
+		/* Exit command needs to be able to override splash screen. */
+		if (ac.equals("Exit")){
+			splash.setSavedCard();
+			splash.setVisibleConfirm("Quit", KeyEvent.VK_Q, "Are you sure you want to quit? Current game state will be lost.");
+			return;
+		}
+		
 		/* Splash screen controls */
 		if (!splashLocked){
-			if (splash.getOpenCard() != SplashScreen.HOST_CARD){ return; }	// Only the splash menu has action listeners.
-			else if (ac.equals("New Game")){
-				splash.showStartup("Creating a new game. Waiting for game state ...");
-				client.handleAction(Actions.NEWGAME.ordinal());
+			int openCard = splash.getOpenCard();
+			if (openCard == SplashScreen.HOST_CARD || openCard == SplashScreen.CONFIRM_CARD ){
+				if (ac.equals("New Game")){
+					splash.setVisibleStartup("Creating a new game. Waiting for game state ...");
+					client.handleAction(Actions.NEWGAME.ordinal());
+				}
+				else if (ac.equals("Load Game")){
+					splash.setVisibleStartup("Loading a game. Waiting for game state ...");
+					client.handleAction(Actions.LOAD.ordinal());
+				}
 			}
-			else if (ac.equals("Load Game")){
-				splash.showStartup("Loading a game. Waiting for game state ...");
-				client.handleAction(Actions.LOAD.ordinal());
+			if (openCard == SplashScreen.CONFIRM_CARD){
+				if (ac.equals("Cancel")){
+					splash.loadSavedCard();		// if no saved card, will go straight to game. 
+				}	// Changed mind, ignore
+				else if (ac.equals("Restart")){
+					splash.setVisibleStartup("Restarting the level. Waiting for game state ...");
+					client.handleAction(Actions.RESTART.ordinal());
+				}
+				else if (ac.equals("Quit")){
+					System.exit(0);
+				}
 			}
-			
 			return;				// If splash screen is unlocked, do not check game controls
 		}
 		
 		/* Game controls */
-		if (ac.equals("New Game")){ client.handleAction(Actions.NEWGAME.ordinal()); }
-		else if (ac.equals("Save")){ client.handleAction(Actions.SAVE.ordinal()); }
-		else if (ac.equals("Load")){ client.handleAction(Actions.LOAD.ordinal()); }
+		if (ac.equals("New Game")){
+			splash.setVisibleConfirm("New Game", KeyEvent.VK_N, "Start a new game? Current game state will be lost.");
+		}
+		else if (ac.equals("Save")){
+			client.handleAction(Actions.SAVE.ordinal());
+		}
+		else if (ac.equals("Load")){
+			splash.setVisibleConfirm("Load Game", KeyEvent.VK_L, "Load the saved game? Current game state will be lost.");
+		}
+		else if (ac.equals("Restart Level")){
+			splash.setVisibleConfirm("Restart", KeyEvent.VK_R, "Restart this level? Current game state will be lost.");
+		}
 		else if (ac.equals("Controls")){ splash.setVisibleCard(SplashScreen.READY_CARD); }
 		else if (ac.equals("About")){ splash.setVisibleCard(SplashScreen.ABOUT_CARD); }
-		else if (ac.equals("Exit")){ exitGame(); }
 	}
 	
 	@Override		// Overload so it takes the action command instead.
@@ -134,18 +165,6 @@ public class Listener extends JPanel implements KeyListener, ActionListener {
 	public void keyReleased(KeyEvent e) {}
 	@Override
 	public void keyTyped(KeyEvent e) {}
-	
-	/**
-	 * Checks if the user really wants to quit the game. If so, shuts down the system.
-	 */
-	public static void exitGame(){
-		int confirm = JOptionPane.showOptionDialog(null,
-				"Are you sure you want to exit the game?\nProgress since last save will be lost.\nConnection to server will be closed.", 
-				"Exit Game", JOptionPane.CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
-		if (confirm == 0) {
-			System.exit(0);
-		}
-	}
 	
 	private static final long serialVersionUID = 1L;
 }

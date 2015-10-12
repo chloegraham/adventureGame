@@ -1,13 +1,11 @@
 package tiles;
 
 
-public class Door extends Unmoveable implements Tile {
-	
+public class Door extends Unmoveable implements Tile {	
 	private boolean locked;
 	private boolean levelChanger;
 	private boolean nextLevel;
 
-	
 	public Door(String symbol) {
 		if (symbol.equals("d")){
 			locked = true;

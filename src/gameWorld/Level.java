@@ -236,7 +236,8 @@ public class Level {
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++) {
 				Tile temp = tiles[i][j];
-				if(temp instanceof Unmoveable || temp instanceof PressurePad){
+
+				if(temp instanceof Unmoveable && !(temp instanceof Wall || temp instanceof PressurePad && !(temp instanceof Wall))) {
 					array[i][j] = temp.toString().charAt(0);
 				}
 				else{

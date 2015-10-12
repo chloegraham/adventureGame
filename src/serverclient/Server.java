@@ -39,6 +39,9 @@ public class Server implements Runnable {
 	
 	private static Lock lock;
 	
+	private TimerSpikes timer;
+	private Thread timerThread;
+	
 	public void run() {
 	    try{
 	    	lock = new ReentrantLock(true);
@@ -69,7 +72,7 @@ public class Server implements Runnable {
 	    	else
 	    		outputOne.writeUTF(Msgs.DELIM_HOST);
 	    	String confirmHost = inputOne.readUTF();
-	    	if (!confirmHost.equals(Msgs.DELIM_HOST))
+	    	if (!confirmHost.equals(Msgs.DELIM_HOST) && !confirmHost.equals(Msgs.DELIM_HOSTLOAD))
 	    		throw new IllegalArgumentException("Attempt to confirm the Host failed.");
 	    	
 	    	
@@ -123,6 +126,8 @@ public class Server implements Runnable {
 			    		newGame();
 			    	else if (ordinal == Actions.LOAD.ordinal())
 			    		load();
+			    	else if (ordinal == Actions.SAVE.ordinal())
+			    		save();
 			    	else
 			    		handleAction(ordinal, Msgs.PLAYER_ONE);
 			    	
@@ -171,8 +176,9 @@ public class Server implements Runnable {
 	public void activateSpikes() throws IOException {
 		lock.lock();
 		
-		logic.activateSpikes();		// activate all the spikes
-		broadcast();				// broadcast to both Players
+		logic.activateSpikes();				// activate all the spikes
+		broadcast(Msgs.PLAYER_ONE, "");		// broadcast to both Players
+		broadcast(Msgs.PLAYER_TWO, "");		// broadcast to both Players
 		
 		lock.unlock();
 	}
@@ -189,17 +195,6 @@ public class Server implements Runnable {
 		String message = logic.handleAction(ordinal, userID);
 		broadcast(userID, message);
 	}
-
-	
-	private void broadcast() throws IOException {
-		String p1 = gameWorld.getEncodedGameWorld(Msgs.PLAYER_ONE);
-		p1 += logic.bouldersKeysLocation(Msgs.PLAYER_ONE);
-		outputOne.writeUTF(p1);
-		
-		String p2 = gameWorld.getEncodedGameWorld(Msgs.PLAYER_TWO);
-		p2 += logic.bouldersKeysLocation(Msgs.PLAYER_TWO);
-		outputTwo.writeUTF(p2);
-	}
 	
 
 	private void broadcast(int userID, String message) throws IOException {
@@ -213,13 +208,15 @@ public class Server implements Runnable {
 		String other = gameWorld.getEncodedGameWorld(otherUserID);
 		
 		if (userID == Msgs.PLAYER_ONE) {
-			System.out.println("--- Server:    broadcasting game after PlayerONE handle action.");
+			//System.out.println("--- Server:    broadcasting game after PlayerONE handle action.");
 					
 			outputOne.writeUTF(current);
 			outputTwo.writeUTF(other);
 		} else {
-			System.out.println("--- Server:    broadcasting game after PlayerTWO handle action.");
+			//System.out.println("--- Server:    broadcasting game after PlayerTWO handle action.");
 			
+			System.out.println("other is: " + other);
+			System.out.println("current is: " + current);
 			outputOne.writeUTF(other);
 			outputTwo.writeUTF(current);
 		}
@@ -233,6 +230,7 @@ public class Server implements Runnable {
 	private void newGame() throws IOException {
 		// Get encoded gameWorld of the standard new game
 		String encodedGameWorld = XML.newGame();
+		System.out.println(encodedGameWorld);
 		
 		// Create the GameWorld based of the encoded new game + initialize Game Logic
 		gameWorld = new GameWorld(encodedGameWorld);
@@ -241,8 +239,8 @@ public class Server implements Runnable {
 		
 		handleAction(Actions.NEWGAME.ordinal(), Msgs.PLAYER_ONE);
 		
-		Timer timer = new Timer(this);
-    	Thread timerThread = new Thread(timer);
+		this.timer = new TimerSpikes(this);
+    	this.timerThread = new Thread(timer);
 		timerThread.start();
 	}
 	
@@ -250,19 +248,31 @@ public class Server implements Runnable {
 	private void load() throws IOException {
 		// Get encoded gameWorld of the standard new game
 		String encodedGameWorld = XML.load();
+		System.out.println(encodedGameWorld);
 		
 		// Create the GameWorld based of the encoded previously saved game + initialize Game Logic
 		gameWorld = new GameWorld(encodedGameWorld);
 		logic = gameWorld.getLogic();
 		System.out.println("--- Server:    Loaded Game created.");
-		
-		handleAction(Actions.LOAD.ordinal(), Msgs.PLAYER_ONE);
+						
+		this.timer = new TimerSpikes(this);
+		this.timerThread = new Thread(timer);
+		timerThread.start();
 	}
 	
 	
-	private boolean save() {
+	private boolean save() throws IOException {
 		System.out.println("--- Server:    attempting to Save Game.");
-		return XML.save(gameWorld.getEncodedGameSave());
+		//TODO: someone think of a better implementation this feels hacky
+		String saveMe = "save me";
+		outputOne.writeUTF(saveMe);
+		outputTwo.writeUTF(saveMe);
+		String temp1 = inputOne.readUTF();
+		String temp2 = inputTwo.readUTF();
+		if (temp1.equals("0") && temp2.equals("0")){
+			return XML.save(gameWorld.getEncodedGameSave());
+		}
+		return false;	
 	}
 
 	

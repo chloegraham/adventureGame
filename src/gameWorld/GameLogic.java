@@ -2,7 +2,6 @@ package gameWorld;
 
 import java.awt.Point;
 
-import convertors.Msgs;
 import movable.Boulder;
 import movable.Player;
 import tiles.Chest;
@@ -13,6 +12,7 @@ import tiles.Tile;
 import tiles.Unmoveable;
 import tiles.Wall;
 import userinterface.Action.Actions;
+import convertors.Msgs;
 
 public class GameLogic {
 	private Level[] levels;
@@ -97,7 +97,7 @@ public class GameLogic {
 			throw new IllegalArgumentException("GameLogic:  received an unexpected ordinal. It might be 'Inspect' which we have't coded yet.");
 		}
 		
-		return bouldersKeysLocation(player.getUserID()) + message;
+		return message;
 	}
 	
 	private boolean move(Player player, Level level, Point newLoc) {

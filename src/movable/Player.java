@@ -93,6 +93,7 @@ public class Player extends Moveable{
 		str += y + "%";
 		
 		str += Msgs.DELIM_PLAYER;
+		str += Msgs.DELIM_SPLIT;
 		return str;
 	}
 	
