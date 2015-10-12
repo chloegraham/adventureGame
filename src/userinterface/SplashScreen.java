@@ -46,6 +46,7 @@ public class SplashScreen extends JPanel {
 	
 	private final CardLayout layout = new CardLayout();
 	private UserInterface ui;						// UI content needs to be enabled/disabled when a card is open
+	private int savedCard = -1;
 	private int openCard = STARTUP_CARD;
 	
 	public SplashScreen(UserInterface ui, Listener listener){
@@ -147,6 +148,22 @@ public class SplashScreen extends JPanel {
 	
 	/** Returns the card that is currently displaying to the user. */
 	public int getOpenCard(){ return openCard; }
+	
+	/** Save the currently opened card. */
+	public void setSavedCard(){ savedCard = openCard; }
+	
+	/** Load the saved card. If nothing is saved, shows invisible card. */
+	public void loadSavedCard(){
+		if (savedCard == -1){ setVisibleCard(NO_CARD); }
+		else if (savedCard == STARTUP_CARD){
+			if (ui.getPlaying()){ setVisibleCard(READY_CARD); }
+			else { setVisibleCard(STARTUP_CARD); }
+		}
+		else {
+			setVisibleCard(savedCard);
+		}
+		savedCard = -1;
+	}
 	
 	/**
 	 * Cards that close on key press will be closed if they are open.

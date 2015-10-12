@@ -68,6 +68,9 @@ public class Listener extends JPanel implements KeyListener, ActionListener {
 
 		/* Game controls */
 		
+		// Ctrl is used to access menu events. Some menu events share a key with a game, so don't perform game events when control is down.
+		if (e.isControlDown()){ return; }
+		
 		// Rotation
 		if (Actions.CLOCKWISE.getKeyCode() == event){
 			directions.rotate(true);
@@ -103,6 +106,13 @@ public class Listener extends JPanel implements KeyListener, ActionListener {
 	 * actionPerformed in splash screen is restricted.
 	 */
 	public void actionPerformed(String ac){
+		/* Exit command needs to be able to override splash screen. */
+		if (ac.equals("Exit")){
+			splash.setSavedCard();
+			splash.setVisibleConfirm("Quit", KeyEvent.VK_Q, "Are you sure you want to quit? Current game state will be lost.");
+			return;
+		}
+		
 		/* Splash screen controls */
 		if (!splashLocked){
 			int openCard = splash.getOpenCard();
@@ -117,12 +127,14 @@ public class Listener extends JPanel implements KeyListener, ActionListener {
 				}
 			}
 			if (openCard == SplashScreen.CONFIRM_CARD){
-				if (ac.equals("Cancel")){ splash.setVisibleCard(SplashScreen.NO_CARD); }	// Changed mind, ignore
+				if (ac.equals("Cancel")){
+					splash.loadSavedCard();		// if no saved card, will go straight to game. 
+				}	// Changed mind, ignore
 				else if (ac.equals("Restart")){
 					splash.setVisibleStartup("Restarting the level. Waiting for game state ...");
 					client.handleAction(Actions.RESTART.ordinal());
 				}
-				else if (ac.equals("Exit")){
+				else if (ac.equals("Quit")){
 					System.exit(0);
 				}
 			}
@@ -144,9 +156,6 @@ public class Listener extends JPanel implements KeyListener, ActionListener {
 		}
 		else if (ac.equals("Controls")){ splash.setVisibleCard(SplashScreen.READY_CARD); }
 		else if (ac.equals("About")){ splash.setVisibleCard(SplashScreen.ABOUT_CARD); }
-		else if (ac.equals("Exit")){
-			splash.setVisibleConfirm("Exit", KeyEvent.VK_X, "Are you sure you want to quit? Current game state will be lost.");
-		}
 	}
 	
 	@Override		// Overload so it takes the action command instead.
