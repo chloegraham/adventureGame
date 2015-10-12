@@ -123,6 +123,8 @@ public class Server implements Runnable {
 			    		newGame();
 			    	else if (ordinal == Actions.LOAD.ordinal())
 			    		load();
+			    	else if (ordinal == Actions.SAVE.ordinal())
+			    		save();
 			    	else
 			    		handleAction(ordinal, Msgs.PLAYER_ONE);
 			    	
