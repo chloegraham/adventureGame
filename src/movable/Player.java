@@ -15,7 +15,7 @@ public class Player extends Moveable{
 	private Direction direction = Direction.NORTH; 	//String representing which direction player is facing
 	private List<Item> inventory = new ArrayList<Item>();
 	private boolean hasBoulder;
-	
+	private boolean dead;
 	
 	
 	/*
@@ -24,6 +24,7 @@ public class Player extends Moveable{
 	public Player(Point location) {
 		super(location);
 		hasBoulder = false;
+		this.dead = false;
 	}
 	
 	
@@ -176,22 +177,17 @@ public class Player extends Moveable{
 		return hasBoulder;
 	}
 	
-	
-
-	
-
 	/*
 	 *  Change Level
 	 */
 	public void setLevelID(int lvlID, Point loc) {
 		levelID = lvlID;
 		setLocation(loc);
-	}
-	
-	
+	}	
 	
 	@Override
 	public String toString() {
+		if(dead) return "0";
 		switch (this.direction) {
 		case NORTH:
 			if(hasBoulder) return "I";
@@ -206,5 +202,11 @@ public class Player extends Moveable{
 			if(hasBoulder) return "J";
 			else return "j";
 		}
+	}
+
+
+
+	public void murder() {
+		this.dead = true;
 	}
 }
