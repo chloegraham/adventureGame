@@ -108,8 +108,7 @@ public class GameLogic {
 		}	
 		
 		Tile tile = level.getTiles()[newLoc.y][newLoc.x];
-	
-		
+		Point currentTile =  player.getLocation();
 		
 		for(Boulder b: level.getBoulders())
 			if(b.getLocation().equals(newLoc))
@@ -121,7 +120,22 @@ public class GameLogic {
 			return false;
 		} 
 		
-		
+		if(level.getTiles()[currentTile.y][currentTile.x] instanceof PressurePad){
+			PressurePad pad = (PressurePad) level.getTiles()[currentTile.y][currentTile.x];
+			pad.activate();
+			Point doorPoint = level.getDoorFromPad(player.getLocation());
+			Door doorTile = (Door)level.getTiles()[doorPoint.y][doorPoint.x];	
+			doorTile.lock();
+			//if there's a player in the doorway when getting off the activated pressure pad then kill them
+			for(Player p: this.players){
+				if(p.getLocation().equals(doorPoint)){
+					//TODO: kill player
+					p.murder();
+					System.out.println("you dead");
+				}
+			}
+
+		}
 		
 		if (tile instanceof Door) {
 			Door door = (Door) tile;
@@ -141,17 +155,19 @@ public class GameLogic {
 			}
 		}
 		
-		
-		
 		if (tile instanceof PressurePad){
 			PressurePad pad = (PressurePad) tile;
 			pad.activate();
-			
+			Point door = level.getDoorFromPad(newLoc);
+			System.out.println("door point = " + door);
+			Door doorTile = (Door)level.getTiles()[door.y][door.x];	
+			doorTile.unlock();
 		}
 		
 		return player.setLocation(newLoc);		
 	}	
 	
+
 
 
 	private String interact(Player player, Level level, Point now) {
@@ -270,7 +286,8 @@ public class GameLogic {
 			//if there's a boulder in front of you, you can't drop your current boulder or pick it up
 			boolean facingBoulder = level.containsBoulder(new Boulder(interactWith));
 			for(Player p: this.players){
-				if(p.getLocation().equals(interactWith)){
+				//ensure that there isn't a player on the same level at the position you're trying to drop the boulder onto
+				if(p.getLocation().equals(interactWith) && p.getLevelID() == level.getLevelID()){
 					return "You can't put a boulder on your friend lol";
 				}
 			}
