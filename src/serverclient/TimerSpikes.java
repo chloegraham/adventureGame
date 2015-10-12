@@ -2,12 +2,12 @@ package serverclient;
 
 import java.io.IOException;
 
-public class Timer implements Runnable {
+public class TimerSpikes implements Runnable {
 	private Server server;
 	
 	private boolean pause = false;
 	
-	public Timer(Server s) {
+	public TimerSpikes(Server s) {
 		server = s;
 	}
 

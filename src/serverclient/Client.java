@@ -142,7 +142,6 @@ public class Client implements Runnable {
 			String encodedMessages;
 			
 			Layers layers;
-			Msgs msgs;
 			
 			int playerX = 0;
 			int playerY = 0;
@@ -162,9 +161,11 @@ public class Client implements Runnable {
 			
 			if (encodedSplit.length > 2) {
 				encodedMessages = encodedSplit[2];
-				msgs = new Msgs();
-				msgs.decode(encodedMessages);
-				ui.addMessage(msgs.getDecoded());
+				String[] lines = encodedMessages.split("%");
+				String str = "";
+				for (int i = 0; i != lines.length; i++)
+					str += lines[i] + "\n";
+				ui.addMessage(str);
 			}
 		
 		} catch (IOException e) {

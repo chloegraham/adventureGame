@@ -80,7 +80,7 @@ public class GameWorld {
 		// return the encoded level which the player is on
 		for(int i = 0; i < levels.length; i++)
 			if(levels[i].getLevelID() == levelID)
-				return str += levels[i].getEncodedLevel();
+				return str += levels[i].getEncodedLevel() + logic.bouldersKeysLocation(userID);
 			
 		throw new IllegalArgumentException("No such level that matches player's level");
 	}
