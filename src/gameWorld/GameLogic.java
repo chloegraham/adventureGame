@@ -9,7 +9,6 @@ import testenums.DoorTransfers;
 import testenums.Doors;
 import tiles.Chest;
 import tiles.Door;
-import tiles.DoorLevel;
 import tiles.DoorNormal;
 import tiles.Passable;
 import tiles.PressurePad;
@@ -184,7 +183,7 @@ public class GameLogic {
 		// If Tile is a Door
 		// The Passable check above ensure LevelDoor is also Passable
 		if (nextTile instanceof Door) {
-			if ( ((DoorLevel)nextTile).isPassable() ) {
+			if ( ((Passable)nextTile).isPassable() ) {
 				Doors d = DoorTransfers.transfer(player.getStageID(), player.getRoomID(), nextLoc);
 				gameWorld.removePlayers();
 				player.setLocation(d.getStage(), d.getRoom(), d.getLocation());

@@ -98,29 +98,7 @@ public class XML {
 	    return false;
 	}
 	
-	public static String newGame(){
-		// Level looks like = (row = 'char', rowspacer = '%', layer spacer = '@', 1234 + @ = levelID, level tag = <Level>)
-		//                    www%eee%@www%eee%@1234@<Level>
-		// Player looks like = (userID, levelID, keyAmount, boulder, directionfacing, x, y, <Player>)
-		//					   101 % 1234 % 2 % 1 % 2 % 3 % 3 %@<Player>
-		
-		String level900 = "wwwweww%weeeeee%weeeeee%weeeeee%weeeeee%@nnnnxnn%nnsnnnn%nnnnnnn%Mnnnnnn%ncnnnnn%@nnnnnnn%nnnnnnn%nnnlnnn%nnnnnnn%nnnnnnn%@900@<Level><Split>";
-		String level901 = "wwwweww%weeeeee%weeeeee%weeeeee%weeeeee%@nnnnxnn%nnsnnnn%nnnnnzn%Mnnnnnn%nnnncnn%@nnnnnnn%nnnnnnn%nnnlnnb%nnnnnnn%nnnnnnn%@901@2%5%0%4%@<Level><Split>";
-		String level902 = "wwwweww%weeeeee%weeeeee%weeeeee%weeeeee%@nnnnxnn%nnsnnnn%nnnnnnn%Mnnnnnn%nnnnnnz%@nnnnnnn%nnbnnnn%nnnlnnn%nnnnnnn%nnbnnnn%@902@4%6%0%4%@<Level><Split>";
-		String level903 = "wwwweww%weeeeee%weeeeee%weeeeee%weeeeee%@nnnnxnn%nnnsnnn%nnnnnnn%Mnnnnnn%nnnncnz%@nnnnnnn%nnnnnnn%nnnlnnn%nnnnnnn%nnbnnnn%@903@4%6%0%4%@<Level><Split>";
-		
-		
-		String playerOne = "101%901%0%0%1%3%3%@<Player><Split>";
-		String playerTwo = "202%901%1%1%1%2%2%@<Player><Split>";
-		
-		String playerTwoDiffLvl = "202%901%0%0%1%2%2%@<Player><Split>";
-		
-		String testLevel = "wwwweww%weeeeee%weeeeee%weeeeee%weeeeee%@nnnndnn%nnnsnnn%nnnnnnn%nnnnnnn%nnnncnz%@nnnnnnn%nnnnnnn%nnnlnnn%nnnnnnn%nnbnnnn%@1234@<Level><Split>101%1234%1%0%2%3%3%@<Player><Split>202%1234%5%1%2%2%2%@<Player><Split>";
-		
-		String demo = level901 + level902 + level903 + playerOne + playerTwo;
-		
-		return STAGE1 + "<Split>" + STAGE2 + "<Split>" + PLAYER1 + "<Split>" + PLAYER2 + "<Split>";
-	}
+	
 	
 	private static String getTextValue(String def, Element doc, String tag) {
 	    String value = def;
@@ -134,17 +112,28 @@ public class XML {
 	
 	
 	
+	
+	public static String newGame(){
+		/*
+		 *  TODO still to sort
+		 */
+		return STAGE1 + "<Split>" + STAGE2 + "<Split>" + PLAYER1 + "<Split>" + PLAYER2 + "<Split>";
+	}
+	
+	
+	
 	/*
 	 *  Rooms for Stage 1 + Stage 1
+	 *  -- s1room1 = stage1 room1 etc
 	 */
-	private static final String S1ROOM1 = "wwe%eee%eee%eee%eee%eee%eee%eee%eee%eee%eee%eee%@" +
-			  							  "nnn%nnc%ccc%sss%nnn%nnn%nDn%nnn%nnn%nnn%nnn%nnn%@" +
-			  							  "nnn%bbn%nnn%nnn%nnn%nnn%nnn%nnn%nnn%nnn%nnn%nnn%@" +
+	private static final String S1ROOM1 = "wee%wee%wee%wee%wee%wee%wee%wee%wee%wee%wee%wee%@" +
+			  							  "nnn%nnc%nnc%nns%nns%nnz%nDz%nnn%nnn%nnn%nnn%nnn%@" +
+			  							  "nnn%nnn%nnn%nnn%nnn%nnn%nnn%nnb%nnn%nnn%nnn%nnn%@" +
 			  							  "<Room>";
 	
-	private static final String S1ROOM2 = "eeee%ewww%eeee%eeee%@" +
-										  "sssD%nnnn%nnzz%nnnn%@" +
-										  "nnnn%nnnn%nnnn%nnbb%@" +
+	private static final String S1ROOM2 = "eeeeeeeee%wweeeeeee%wweeeeeee%eeeeeeeee%@" +
+										  "nnnnnsssD%nnnnnnnnn%nnnnnnnzz%nnnnnnnnn%@" +
+										  "nnnnnnnnn%nnnnnnnnn%nnnnnnnnn%nnbbnnnnn%@" +
 										  "<Room>";
 	
 	private static final String STAGE1 = S1ROOM1 + S1ROOM2 + "<Stage>";

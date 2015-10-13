@@ -53,7 +53,7 @@ public class RenderPane extends JPanel {
         if(this.level != null && this.objects != null && this.moveables != null ){
             	paintFromCharLayers(g2);        	
         }else{
-        	System.out.println("Set the layers before painting");
+        	//System.out.println("Set the layers before painting");
         }
     }
     
@@ -109,10 +109,13 @@ public class RenderPane extends JPanel {
     private void paintFromCharLayers(Graphics2D g2){
         
     	
-    	//First, we rotate the all the char arrays, to the right view dirrection.
+    	//First, we rotate the all the char arrays, to the right view direction.
         char[][] rotatedLevel = null;
         char[][] rotatedObjects = null;
         char[][] rotatedMoveables = null;
+        
+        float rotatedXOffset = xLerpOffset;
+        float rotatedYOffset = yLerpOffset;
         
         if(this.viewDir == Direction.NORTH){
         	rotatedLevel = this.level;
@@ -124,23 +127,31 @@ public class RenderPane extends JPanel {
         	rotatedObjects = IsoHelper.rotateCW(this.objects);
         	rotatedMoveables = IsoHelper.rotateCW(this.moveables);
         	
-            int width = rotatedLevel[0].length;
-
-        	
-        	int x = width - camOffset.x;
-        	int y = camOffset.x;
-        	
-        	setCamOffset(x, y);
+        	//Rotate cam
+        	rotatedXOffset = - yLerpOffset + rotatedLevel[0].length - 1;
+        	rotatedYOffset = xLerpOffset;
+        	     
         }
         else if(this.viewDir == Direction.WEST){
         	rotatedLevel = IsoHelper.rotateCCW(this.level);
         	rotatedObjects = IsoHelper.rotateCCW(this.objects);
         	rotatedMoveables = IsoHelper.rotateCCW(this.moveables);
+        	
+
+        	// rotating camera location
+        	// You would not believe the amount of thought and failure going into these two lines.
+        	rotatedXOffset = yLerpOffset;
+        	rotatedYOffset = - xLerpOffset + rotatedLevel.length - 1;
+
         }
         else if(this.viewDir == Direction.SOUTH){
         	rotatedLevel = IsoHelper.rotate180(this.level);
         	rotatedObjects = IsoHelper.rotate180(this.objects);
-        	rotatedMoveables = IsoHelper.rotate180(this.moveables);
+        	rotatedMoveables = IsoHelper.rotate180(this.moveables);        	
+        	
+        	rotatedXOffset = rotatedLevel[0].length - xLerpOffset - 1;
+        	rotatedYOffset =  rotatedLevel.length - yLerpOffset - 1;
+        	
         }
         else
         	throw new RuntimeException("Invalid direction.");
@@ -160,7 +171,7 @@ public class RenderPane extends JPanel {
                 
        
                 //Take the Cartesian point and convert to isometric
-                Point isoTile = IsoHelper.twoDToIsoWithLerpOffset(tile, xLerpOffset, yLerpOffset);
+                Point isoTile = IsoHelper.twoDToIsoWithLerpOffset(tile, rotatedXOffset, rotatedYOffset);
                 
                 //Check each layer and draw the right tile at that point.
                 parseAndDrawTile(rotatedLevel[i][j], isoTile, g2);
@@ -219,7 +230,7 @@ public class RenderPane extends JPanel {
 		    case 'C' : tilePainter.drawOpenedChest(g2, isoTile.x, isoTile.y); break;
 		    case 'd' : tilePainter.drawDoor(g2, isoTile.x, isoTile.y); break;
 		    case 'D' : tilePainter.drawOpenDoor(g2, isoTile.x, isoTile.y); break;
-		    case 'M' : tilePainter.drawOpenDoor(g2, isoTile.x, isoTile.y); break;
+		    case 'M' : tilePainter.drawGoalTile(g2, isoTile.x, isoTile.y); break;
 		    case 'x' : tilePainter.drawDoor(g2, isoTile.x, isoTile.y); break;
 		    case 'X' : tilePainter.drawOpenDoor(g2, isoTile.x, isoTile.y); break;
 		    case 'z' : tilePainter.drawPressurePad(g2, isoTile.x, isoTile.y); break;
