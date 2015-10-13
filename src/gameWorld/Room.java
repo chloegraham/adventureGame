@@ -159,8 +159,6 @@ public class Room {
 						p.getUserID();
 	}
 	
-	
-	
 	/*
 	 *  Getter for GameWorld
 	 */
@@ -371,7 +369,7 @@ public class Room {
 
 	public Point getDoorFromPad(Point newLoc) {
 		
-		//TODO: throw illagal argument if not present
+		//TODO: throw illegal argument if not present
 		Point door = this.padsToDoors.get(newLoc);
 		return door;
 	}

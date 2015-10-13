@@ -134,13 +134,12 @@ public class Client implements Runnable {
 	private void decodePassGameToUI() {
 		try {
 			String encodedInput = input.readUTF();
-			//TODO: test if statement used for testing save logic
-			if (encodedInput.equals("save me")){
-				output.writeUTF(String.valueOf(ui.getPlayerResponse()));
+			if (encodedInput.equals(String.valueOf(Actions.LOAD.ordinal()))){
+				ui.setChangedGameState(Actions.LOAD.ordinal());
 				return;
 			}
-			if (encodedInput.equals("load me")){
-				output.writeUTF(String.valueOf(ui.getPlayerResponse()));
+			if (encodedInput.equals(String.valueOf(Actions.NEWGAME.ordinal()))){
+				ui.setChangedGameState(Actions.NEWGAME.ordinal());
 				return;
 			}
 			
@@ -166,7 +165,7 @@ public class Client implements Runnable {
 			
 			layers = new Layers();
 			layers.decode(encodedLayers);
-			ui.redrawFromLayersWithCoordinate(layers.getDecodedLevel(), layers.getDecodedObjects(), layers.getDecodedMovables(), playerX, playerY);
+			ui.setLayersWithCoordinate(layers.getDecodedLevel(), layers.getDecodedObjects(), layers.getDecodedMovables(), playerX, playerY);
 			
 			if (encodedSplit.length > 2) {
 				encodedMessages = encodedSplit[2];
@@ -182,7 +181,12 @@ public class Client implements Runnable {
 		}
 	}
 	
-	
+	public void reDraw(){
+		//System.out.println("Client Redraw");
+		if(this.ui != null){
+			this.ui.reDraw();
+		}
+	}
 	
 	@Override
 	public String toString() {

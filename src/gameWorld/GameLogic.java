@@ -106,8 +106,10 @@ public class GameLogic {
 		
 		/*
 		 *  // TODO check player is dead here??
+		 *  // TODO check player is dead here??
+		 *  
 		 */
-		
+
 		return message;
 	}
 	
@@ -122,7 +124,6 @@ public class GameLogic {
 		Tile nextTile = room.getTiles()[nextLoc.y][nextLoc.x];
 		Point currLoc =  player.getLocation();
 		Tile currTile = room.getTiles()[currLoc.y][currLoc.x];
-		
 		
 		
 		
@@ -166,9 +167,8 @@ public class GameLogic {
 			 *  I could instead write a method to change the New Location for tidier code
 			 */
 		}
+		
 
-		
-		
 		
 		// If Tile is a Door
 		// The Passable check above ensure LevelDoor is also Passable
@@ -193,11 +193,39 @@ public class GameLogic {
 		
 		// If made it to here return true because move is valid.
 		return player.setLocation(nextLoc);		
-	}	
+	}
+	
+	
+	
+	
+	//this method is called when either a player or a boulder is placed on a pressure pad
+	private void activateDoor(Tile tile, Room room, Point newLoc) {
+		PressurePad pad = (PressurePad) tile;
+		pad.activate();
+		Point door = room.getDoorFromPad(newLoc);
+		Door doorTile = (Door)room.getTiles()[door.y][door.x];	
+		doorTile.unlock();
+	}
+	//this method is called when either a player or a boulder is removed from a pressure pad, killing a player if present on door position
+	private void deactivateDoor(Tile tile, Room room, Point currentLoc) {
+		PressurePad pad = (PressurePad) room.getTiles()[currentLoc.y][currentLoc.x];
+		pad.activate();
+		Point doorPoint = room.getDoorFromPad(currentLoc);
+		Door doorTile = (Door)room.getTiles()[doorPoint.y][doorPoint.x];	
+		doorTile.lock();
+		//if there's a player in the doorway when getting off the activated pressure pad then kill them
+		for(Player p: this.players){
+			if(p.getLocation().equals(doorPoint)){
+				//TODO: kill player
+//				p.murder();
+				System.out.println("you dead");
+			}
+		}
+	}
 
 
-
-
+	
+	
 	private String interact(Player player, Room room, Point now) {
 		
 		Direction direction = player.getDirection();
@@ -228,6 +256,8 @@ public class GameLogic {
 		
 		
 		Tile tile = room.getTiles()[interactWith.y][interactWith.x];	
+		
+		
 		
 		/*
 		 *  Chest interaction or inspection code & messages
@@ -315,6 +345,7 @@ public class GameLogic {
 				/*
 				 *  IF pressure pad then call activate() on PressurePad in level so level can manage openeing closing doors
 				 */
+
 			}
 		}
 		else if (player.hasBoulder()) {
@@ -324,12 +355,14 @@ public class GameLogic {
 			// Check if there's a player present on the tile you're trying to drop the boulder onto. If Player there you can't drop.
 			boolean facingPlayer = room.playerAt(interactWith);
 				
+
 			if (tile instanceof PutDownOnable) {
 				room.addBoulder(new Boulder(interactWith));
 				player.dropBoulder();
 				
 				if (tile instanceof PressurePad) 
 					((PressurePad)tile).activate();
+
 			}
 		}
 			
@@ -340,9 +373,6 @@ public class GameLogic {
 				return Msgs.boulderPickUpMsg();
 		
 		}
-		/*
-		 *  //TODO I think should only reach here is there is nothing to interact with.
-		 */
 		return "";
 	}
 	
