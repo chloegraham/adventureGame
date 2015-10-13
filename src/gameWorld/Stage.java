@@ -19,9 +19,9 @@ public class Stage {
 		
 		int index = 0;
 		for (String s : split)
-			rooms.add(new Room(s, index++));
+			rooms.add(new Room(s, stageID, index++));
 		
-		System.out.println("	Constructor-" + toString());
+		System.out.println("\n  Constructor-" + toString());
 	}
 	
 	
@@ -63,10 +63,10 @@ public class Stage {
 	
 	@Override
 	public String toString() {
-		String str = "   STAGE:   ID of this Stage:   " + stageID + "#Rooms:  " + rooms.size() + ".   IDs of those Rooms:  "; 
+		String str = "  STAGE-  StageID: " + stageID + "  #Rooms: " + rooms.size() + ".   RoomIDs: "; 
 		
 		for (Room r : rooms)
-			str += r.getRoomID() + ",  ";
+			str += r.getRoomID() + ", ";
 		
 		return str;
 	}

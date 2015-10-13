@@ -36,6 +36,8 @@ public class Player extends Moveable{
 		hasBoulder = Integer.parseInt(parts[7]) == 1;
 		
 		setLocation(point);
+		
+		System.out.println("\n  Constructor-" + toStringConstructor());
 	}
 	
 	
@@ -163,7 +165,7 @@ public class Player extends Moveable{
 	}
 	
 	public String toStringConstructor() {
-		String str = "		Constructor:  Player-";
+		String str = "  PLAYER-";
 		
 		str += "  userID: ";
 		str += userID;
@@ -179,13 +181,16 @@ public class Player extends Moveable{
 		str += getLocation().y;
 		
 		str += "  direction: ";
-		str += direction.toString() + "%";
+		str += direction.toString();
 		
 		str += "  #keys: ";
 		str += keys;
 		
 		str += "  hasBoulder: ";
 		str += hasBoulder();
+		
+		str += "  isDead: ";
+		str += isDead();
 		
 		return str;
 	}

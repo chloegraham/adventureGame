@@ -117,7 +117,8 @@ public class XML {
 		/*
 		 *  TODO still to sort
 		 */
-		return STAGE1 + "<Split>" + STAGE2 + "<Split>" + PLAYER1 + "<Split>" + PLAYER2 + "<Split>";
+		return STAGE1 + "<Split>" + PLAYER1 + "<Split>" + PLAYER2 + "<Split>";
+//		return STAGE1 + "<Split>" + STAGE2 + "<Split>" + PLAYER1 + "<Split>" + PLAYER2 + "<Split>";
 	}
 	
 	

@@ -30,7 +30,7 @@ public class GameWorld {
 		addPlayersToRooms();
 		
 		logic = new GameLogic(this, stages, players);
-		System.out.println("	Constructor-" + toString());
+		System.out.println("\n  Constructor-" + toString());
 	}
 	
 	
@@ -121,12 +121,12 @@ public class GameWorld {
 	
 	@Override
 	public String toString() {
-		String str = "   GAMEWORLD:   #Stages:  " + stages.size() + ".   IDs of those Stages:  "; 
+		String str = "  GAMEWORLD-  #Stages: " + stages.size() + ".  StageID's: "; 
 		
 		for (Stage s : stages)
-			str += s.getStageID() + ",  ";
+			str += s.getStageID() + ", ";
 			
-		str += "\n   #Players:  " + players.size() + ".   toString() of those Players:  \n";
+		str += "\n  #Players: " + players.size() + "\n  'toString()' of Players:\n";
 		
 		for (Player p : players)
 			str += p.toStringConstructor() + "\n";

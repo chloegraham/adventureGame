@@ -114,7 +114,7 @@ public class Server implements Runnable {
 			    	int ordinal = Integer.parseInt(handleAction.substring(Msgs.DELIM_ACTION.length()));
 			    	
 			    	// Print chosen handle action to Server for testing & understanding
-			    	System.out.println("--- Server   InputONE received action: " + Actions.getName(ordinal) + "   Action sent to Logic (except New & Load done in Server)");
+			    	System.out.println("--- Server-  PlayerONE is trying to do Action " + Actions.getName(ordinal));
 			    	
 			    	
 			    	if (gameWorld == null)
@@ -160,7 +160,7 @@ public class Server implements Runnable {
 			    	
 			    	
 			    	// Print chosen handle action to Server for testing & understanding
-			    	System.out.println("--- Server   InputTWO received action: " + Actions.getName(ordinal) + "   Action sent to Logic (except New & Load done in Server)");
+			    	System.out.println("--- Server-  PlayerTWO is trying to do Action " + Actions.getName(ordinal));
 			    	
 			    	
 			    	// Checks that PlayerTWO doesn't attempt invalid actions
@@ -257,7 +257,6 @@ public class Server implements Runnable {
 	private void newGame() throws IOException {
 		// Get encoded gameWorld of the standard new game
 		String encodedGameWorld = XML.newGame();
-		System.out.println(encodedGameWorld);
 		
 		// Create the GameWorld based of the encoded new game + initialize Game Logic
 		System.out.println("--- Server:    attempting to start a NewGame");
@@ -274,7 +273,6 @@ public class Server implements Runnable {
 	private void load() throws IOException {
 		// Get encoded gameWorld of the standard new game
 		String encodedGameWorld = XML.load();
-		System.out.println(encodedGameWorld);
 		
 		// Create the GameWorld based of the encoded previously saved game + initialize Game Logic
 		System.out.println("--- Server:    attempting to start a Loaded Game");

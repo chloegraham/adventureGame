@@ -42,7 +42,7 @@ public class GameLogic {
 		// ansjfknsadjkf
 		Stage stage = null;
 		for (Stage s : stages)
-			if (s.getStageID() == player.getRoomID())
+			if (s.getStageID() == player.getStageID())
 				stage = s;
 		
 		assert(stage != null);

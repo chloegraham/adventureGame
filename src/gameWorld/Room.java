@@ -21,6 +21,7 @@ import tiles.Wall;
 import convertors.Msgs;
 
 public class Room {
+	private int stageID;
 	private int roomID;
 	private int width;
 	private int height;	
@@ -30,7 +31,8 @@ public class Room {
 	private Set<Spikes> spikes;
 	private Set<Player> players;
 	
-	public Room(String encodedRoom, int roomID) {
+	public Room(String encodedRoom, int stageID, int roomID) {
+		this.stageID = stageID;
 		this.roomID = roomID;
 		encodedRoom = encodedRoom.replace(Msgs.DELIM_ROOM, "");
 		
@@ -66,7 +68,7 @@ public class Room {
 		
 		
 		
-		System.out.println("	Constructor-" + toStringConstructor());
+		System.out.println("\n  Constructor-" + toStringConstructor());
 	}
 	
 	
@@ -74,11 +76,10 @@ public class Room {
 
 
 	/*
-	 *  Getter LevelID
+	 *  Getter StageID & RoomID
 	 */
-	public int getRoomID() {
-		return roomID;
-	}
+	public int getStageID() { return stageID; }
+	public int getRoomID() { return roomID; }
 	
 	
 	/*
@@ -97,12 +98,10 @@ public class Room {
 		boolean success = boulders.add(boulder);
 		if (!success)
 			throw new IllegalArgumentException("Invalid to add a Boulder that is already in Boulder set. Investigate how this was possible.");
-		System.out.println(toString());
 	}
 	
 	public boolean removeBoulder(Boulder boulder) {
 		boolean success = boulders.remove(boulder);
-		System.out.println(toString());
 		return success;
 	}
 	
@@ -118,7 +117,6 @@ public class Room {
 	 */
 	public boolean removePlayer(Player player) {
 		boolean success = players.remove(player);
-		System.out.println(toString() + "  removed a player");
 		return success;
 	}
 	
@@ -129,7 +127,6 @@ public class Room {
 		boolean success = players.add(player);
 		if (!success)
 			throw new IllegalArgumentException("Should never be able to add two of the same player to one Level.");
-		System.out.println(toString() + "  added a player");
 		return success;
 	}
 	
@@ -357,13 +354,11 @@ public class Room {
 	public String toStringConstructor() {
 		String str = toString();
 		
-		str += "\n";
-		
 		for (int y = 0; y < height; y++) {
-			str += "\n";
 			for (int x = 0; x < width; x++) {
 				str += tiles[y][x].toString();
 			}
+			str += "\n";
 		}
 		
 		return str;
@@ -371,13 +366,13 @@ public class Room {
 	
 	@Override
 	public String toString() {
-		String str = "   ROOM:   roomID:  " + roomID + "    #players:  " + players.size() + ".   IDs of those Players:  "; 
+		String str = "  ROOM-  roomID/stageID: " + roomID + "/" + stageID + ".  #players: " + players.size() + ".   PlayersIDs:  "; 
 		
 		for (Player p : players)
-			str += p.getUserID() + ",  ";
+			str += p.getUserID() + ", ";
 		
-		str += "   	#boulders:   " + boulders.size();
-		str += "	#spikes:   " + spikes.size();
+		str += "  #boulders: " + boulders.size();
+		str += "  #spikes: " + spikes.size();
 		
 		str += "\n";
 		
