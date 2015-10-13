@@ -2,13 +2,23 @@ package saveload;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
-import javax.xml.parsers.*;
-import javax.xml.transform.*;
-import javax.xml.transform.dom.*;
-import javax.xml.transform.stream.*;
 
-import org.xml.sax.*;
-import org.w3c.dom.*;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
+import convertors.Msgs;
 
 public class XML {
 	
@@ -109,7 +119,7 @@ public class XML {
 		
 		String demo = level901 + level902 + level903 + playerOne + playerTwo;
 		
-		return demo;
+		return STAGE1 + "<Split>" + STAGE2 + "<Split>" + PLAYER1 + "<Split>" + PLAYER2 + "<Split>";
 	}
 	
 	private static String getTextValue(String def, Element doc, String tag) {
@@ -121,4 +131,65 @@ public class XML {
 	    }
 	    return value;
 	}
+	
+	
+	
+	/*
+	 *  Rooms for Stage 1 + Stage 1
+	 */
+	private static final String S1ROOM1 = "wwe%eee%eee%eee%eee%eee%eee%eee%eee%eee%eee%eee%@" +
+			  							  "nnn%nnc%ccc%sss%nnn%nnn%nDn%nnn%nnn%nnn%nnn%nnn%@" +
+			  							  "nnn%bbn%nnn%nnn%nnn%nnn%nnn%nnn%nnn%nnn%nnn%nnn%@" +
+			  							  "<Room>";
+	
+	private static final String S1ROOM2 = "eeee%ewww%eeee%eeee%@" +
+										  "sssD%nnnn%nnzz%nnnn%@" +
+										  "nnnn%nnnn%nnnn%nnbb%@" +
+										  "<Room>";
+	
+	private static final String STAGE1 = S1ROOM1 + S1ROOM2 + "<Stage>";
+	
+	
+	
+	/*
+	 *  Rooms for Stage 2 + Stage 2
+	 */
+	private static final String S2ROOM1 = "eeee%eeee%eeee%eeee%eeee%eeee%eeee%@" +
+			  							  "nnnn%nnnn%sssn%nnnn%nnnn%ssss%nnnn%@" +
+			  							  "nnnn%bbbn%nnnn%nnnn%nnnn%nnnn%nnnn%@" +
+			  							  "<Room>";
+
+	private static final String S2ROOM2 = "eeeeee%eeeeee%wwwwew%eeeeee%@" +
+										  "ssssss%nnzzzz%nnnnnn%nnnnnn%@" +
+										  "nnnnnn%nnnnnn%nnnnnn%nnbbbn%@" +
+										  "<Room>";
+
+	private static final String STAGE2 = S2ROOM1 + S2ROOM2 + "<Stage>";
+	
+	
+	
+	/*
+	 *  Players
+	 */
+	private static final String PLAYER1 = Msgs.PLAYER_ONE + "%" +			// UserID
+										  "0%" +							// StageID    Current Stage ('000' default start) 
+										  "0%" +							// RoomID
+										  "2%" +							// Point.x
+										  "4%" + 							// Point.y
+										  "1%" +							// Facing Direction
+										  "0%" +							// # of Keys Player has
+										  "0%" +							// Holding Boulder 0=false, 1=true
+										  "@" +
+										  "<Player>";
+	
+	private static final String PLAYER2 = Msgs.PLAYER_TWO + "%" +			// UserID
+										  "0%" +							// StageID    Current Stage ('000' default start) 
+										  "0%" +							// RoomID
+										  "2%" +							// Point.x
+										  "5%" + 							// Point.y
+										  "1%" +							// Facing Direction
+										  "0%" +							// # of Keys Player has
+										  "0%" +							// Holding Boulder 0=false, 1=true
+										  "@" +
+										  "<Player>";
 }

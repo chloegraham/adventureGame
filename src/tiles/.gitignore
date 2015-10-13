@@ -6,3 +6,12 @@
 /PressurePad.class
 /Spikes.class
 /Unmoveable.class
+/Impassable.class
+/Passable.class
+/Furniture.class
+/DrawFirst.class
+/PutDownOnable.class
+/LevelDoor.class
+/LevelChanger.class
+/DoorNormal.class
+/DoorLevel.class

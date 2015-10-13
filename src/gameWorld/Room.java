@@ -6,25 +6,24 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import convertors.Msgs;
 import movable.Boulder;
 import movable.Player;
 import tiles.Chest;
-import tiles.Door;
+import tiles.DoorNormal;
+import tiles.DrawFirst;
 import tiles.EmptyTile;
+import tiles.Furniture;
+import tiles.DoorLevel;
 import tiles.PressurePad;
 import tiles.Spikes;
 import tiles.Tile;
-import tiles.Unmoveable;
 import tiles.Wall;
+import convertors.Msgs;
 
-public class Level {
-	private int levelID;
+public class Room {
+	private int roomID;
 	private int width;
 	private int height;	
-	
-	private Point prev;
-	private Point next;
 	
 	private Tile[][] tiles;
 	private Set<Boulder> boulders;
@@ -32,64 +31,54 @@ public class Level {
 	private Set<Player> players;
 	private Map<Point, Point> padsToDoors;
 	
-	public Level(String encodedLevel) {
+	public Room(String encodedRoom, int roomID) {
+		this.roomID = roomID;
+		encodedRoom = encodedRoom.replace(Msgs.DELIM_ROOM, "");
 		
-		this.padsToDoors = new HashMap<Point, Point>();
 		// Split String up in to x3 Strings which will be converted to char[][]
-		String[] layers = encodedLevel.split("@");
+		String[] layers = encodedRoom.split("@");
+			
 		// Split up the 2d-char[][] in to 1d-char[] (they are still Strings at the moment)
-		String[] subLayers1 = layers[0].split("%");
-		String[] subLayers2 = layers[1].split("%");
-		String[] subLayers3 = layers[2].split("%");
-		levelID = Integer.parseInt(layers[3]);
-		String[] padToDoor = layers[4].split("%");
-		char[][] level;
-		char[][] objects;
-		char[][] movables;	
+		String[] wallEmpty = layers[0].split("%");
+		String[] furniture = layers[1].split("%");
+		String[] bouldersPlayers = layers[2].split("%");
+		char[][] wallEmptyCH;
+		char[][] furnitureCH;
+		char[][] bouldersPlayersCH;	
 		
 		// Now build the actual 2d-char[][] from the broken down Strings
-		level = new char[subLayers1.length][];
-		for (int x = 0; x < level.length; x++)
-			level[x] = subLayers1[x].toCharArray();
+		wallEmptyCH = new char[wallEmpty.length][];
+		for (int x = 0; x < wallEmptyCH.length; x++)
+			wallEmptyCH[x] = wallEmpty[x].toCharArray();
 		
-		objects = new char[subLayers2.length][];
-		for (int x = 0; x < objects.length; x++)
-			objects[x] = subLayers2[x].toCharArray();
+		furnitureCH = new char[furniture.length][];
+		for (int x = 0; x < furnitureCH.length; x++)
+			furnitureCH[x] = furniture[x].toCharArray();
 		
-		movables = new char[subLayers3.length][];
-		for (int x = 0; x < movables.length; x++)
-			movables[x] = subLayers3[x].toCharArray();
+		bouldersPlayersCH = new char[bouldersPlayers.length][];
+		for (int x = 0; x < bouldersPlayersCH.length; x++)
+			bouldersPlayersCH[x] = bouldersPlayers[x].toCharArray();
 		
-		setupTiles(level);
+		setupTiles(wallEmptyCH);
 		
-		buildLevel(level);
-		buildObjects(objects);
-		buildMovables(movables);
-		connectPadsToDoors(padToDoor);
+		buildWallEmpties(wallEmptyCH);
+		buildFurniture(furnitureCH);
+		buildBouldersPlayers(bouldersPlayersCH);
+		
+		
+		
 		System.out.println(toString());
 	}
 	
 	
-	private void connectPadsToDoors(String[] points) {
-			
-			if(points.length == 1)return;
-			if(points.length %4 != 0) throw new IllegalArgumentException("A level has the wrong number of coordinates connecting pads to doors");
-			//for(int i = 0; i < points.length; i = i + 3){
-			int i = 0;
-			Point pressurePad = new Point(Integer.parseInt(points[i+1]), Integer.parseInt(points[i]));
-			Point door = new Point(Integer.parseInt(points[i+3]), Integer.parseInt(points[i+2]));
-			System.out.println("pressure pad: x = " + pressurePad.getX() + " y = " + pressurePad.getY());
-			System.out.println("door: x = " + door.getX() + " y = " + door.getY());
-			this.padsToDoors.put(pressurePad, door);
-			//}	
-	}
+	
 
 
 	/*
 	 *  Getter LevelID
 	 */
-	public int getLevelID() {
-		return levelID;
+	public int getRoomID() {
+		return roomID;
 	}
 	
 	
@@ -97,18 +86,6 @@ public class Level {
 	 *  Getters for GameLogic
 	 */
 	public Tile[][] getTiles() { return tiles; }
-	
-	
-	
-	/*
-	 *  Getters for Prev & Next level locations.
-	 */
-	public Point getPrev() {
-		return prev;
-	}
-	public Point getNext() {
-		return next;
-	}
 	
 	
 	
@@ -140,23 +117,32 @@ public class Level {
 	/*
 	 *  Getter to Remove Players from a Level
 	 */
-	public void removePlayer(Player player) {
+	public boolean removePlayer(Player player) {
 		boolean success = players.remove(player);
 		System.out.println(toString() + "  removed a player");
+		return success;
 	}
 	
 	/*
 	 *  Method to Transfer Players between Levels
 	 */
-	public void addPlayer(Player player) {
+	public boolean addPlayer(Player player) {
 		boolean success = players.add(player);
 		if (!success)
 			throw new IllegalArgumentException("Should never be able to add two of the same player to one Level.");
 		System.out.println(toString() + "  added a player");
+		return success;
 	}
 	
 	public boolean containsPlayer() {
 		return !players.isEmpty();
+	}
+	
+	public boolean playerAt(Point location) {
+		for (Player p : players)
+			if (p.getLocation().equals(location))
+				return true;
+		return false;
 	}
 	
 	
@@ -177,10 +163,10 @@ public class Level {
 	/*
 	 *  Getter for GameWorld
 	 */
-	public String getEncodedLevel() {
-		char[][] level = getLevel();
-		char[][] objects = getObjects();
-		char[][] movables= getMovables();
+	public String getEncodedRoom() {
+		char[][] level = getWallsEmpties();
+		char[][] objects = getFurniture();
+		char[][] movables= getBouldersPlayers();
 		
 		StringBuilder sb = new StringBuilder();
 		for (int x = 0; x < level.length; x++) {
@@ -200,10 +186,10 @@ public class Level {
 			sb.append('%');
 		}
 		sb.append('@');
-		sb.append(levelID);
+		sb.append(roomID);
 		sb.append('@');
 		return sb.toString() +
-			   Msgs.DELIM_LEVEL +
+			   Msgs.DELIM_ROOM +
 			   Msgs.DELIM_SPLIT;
 	}
 	
@@ -212,12 +198,12 @@ public class Level {
 	/*
 	 *  Helper methods for 'getEncodedLevel()'
 	 */
-	private char[][] getLevel() {
+	private char[][] getWallsEmpties() {
 		char[][] array = new char[height][width];
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++) {
 				Tile temp = tiles[i][j];
-				if(temp instanceof EmptyTile || temp instanceof Wall){
+				if(temp instanceof DrawFirst){
 					array[i][j] = temp.toString().charAt(0);
 				}
 				else{
@@ -228,12 +214,13 @@ public class Level {
 		return array;
 	}
 
-	private char[][] getObjects() {
+	private char[][] getFurniture() {
 		char[][] array = new char[height][width];
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++) {
 				Tile temp = tiles[i][j];
-				if(temp instanceof Unmoveable && !(temp instanceof Wall) || temp instanceof PressurePad) {
+				
+				if(temp instanceof Furniture) {
 					array[i][j] = temp.toString().charAt(0);
 				}
 				else{
@@ -244,7 +231,7 @@ public class Level {
 		return array;
 	}
 
-	private char[][] getMovables() {
+	private char[][] getBouldersPlayers() {
 		char[][] array = new char[height][width];
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++) {
@@ -270,24 +257,21 @@ public class Level {
 	/*
 	 *  Initialization methods in Level Constructor
 	 */
-	private void setupTiles(char[][] level) {
-		width = level[0].length;
-		height = level.length;
+	private void setupTiles(char[][] wallsEmpties) {
+		width = wallsEmpties[0].length;
+		height = wallsEmpties.length;
 		tiles = new Tile[height][width];
 	}
 	
-	private void buildLevel(char[][] level) {
+	private void buildWallEmpties(char[][] wallsEmpties) {
 		for (int y = 0; y < height; y++) {
 			for (int x = 0; x < width; x++) {
-				String temp = Character.toString((level[y][x]));
+				String temp = Character.toString((wallsEmpties[y][x]));
 				if(temp.equals("e")){
 					tiles[y][x] = new EmptyTile();
 				}
 				else if(temp.equals("w")) {
 					tiles[y][x] = new Wall();
-				}
-				else if(temp.equals("n")) {
-					// 'n' is fine because it is a substitute for null
 				}
 				else {
 					throw new RuntimeException();
@@ -296,52 +280,28 @@ public class Level {
 		}
 	}
 	
-	private void buildObjects(char[][] objects) {
+	private void buildFurniture(char[][] furniture) {
 		spikes = new HashSet<>();
-		System.out.println(objects[0].length);
+		
 		for (int y = 0; y < height; y++) {
 			for (int x = 0; x < width; x++) {
-				String temp = Character.toString((objects[y][x]));
-				/*if(temp.equals("z")){
-					temp += Character.toString((objects[y][++x]));
-					temp += Character.toString((objects[y][++x]));
-					System.out.println(temp);
-					System.out.println("x length = " + x);
-				}*/
+				
+				String temp = Character.toString((furniture[y][x]));
+				
 				if (temp.equals("d")) {
-					tiles[y][x] = new Door("d");
+					System.out.println(x + ", " + y);
+					tiles[y][x] = new DoorNormal("d");
 				}
 				else if (temp.equals("D")) {
-					tiles[y][x] = new Door("D");
+					tiles[y][x] = new DoorNormal("D");
 				}
-				else if (temp.equals("m")) {
-					tiles[y][x] = new Door("m");
-					if (prev == null)
-						prev = new Point(x, y);
-					else
-						throw new IllegalArgumentException("Level Constructor: Tried to make another 'Prev'. There should only be one 'Prev' location.");
+				else if (temp.equals("l")) {
+					tiles[y][x] = new DoorLevel("l");
 				}
-				else if (temp.equals("M")) {
-					tiles[y][x] = new Door("M");
-					if (prev == null)
-						prev = new Point(x, y);
-					else
-						throw new IllegalArgumentException("Level Constructor: Tried to make another 'Prev'. There should only be one 'Prev' location.");
+				else if (temp.equals("L")) {
+					tiles[y][x] = new DoorLevel("L");
 				}
-				else if (temp.equals("x")) {
-					tiles[y][x] = new Door("x");
-					if (next == null)
-						next = new Point(x, y);
-					else
-						throw new IllegalArgumentException("Level Constructor: Tried to make another 'Next'. There should only be one 'Next' location.");
-				}
-				else if (temp.equals("X")) {
-					tiles[y][x] = new Door("X");
-					if (next == null)
-						next = new Point(x, y);
-					else
-						throw new IllegalArgumentException("Level Constructor: Tried to make another 'Next'. There should only be one 'Next' location.");
-				}
+				
 				
 				else if (temp.equals("c")) {
 					tiles[y][x] = new Chest(false);
@@ -350,12 +310,14 @@ public class Level {
 					tiles[y][x] = new Chest(true);
 				}
 				
-				else if (temp.charAt(0) =='z') {
+				
+				else if (temp.equals("z")) {
 					tiles[y][x] = new PressurePad(false);
 				}
 				else if (temp.equals("Z")) {
 					tiles[y][x] = new PressurePad(true);
 				}
+				
 				
 				else if (temp.equals("s")) {
 					Spikes spike = new Spikes(false, new Point(x, y));
@@ -368,6 +330,7 @@ public class Level {
 					spikes.add(spike);
 				}
 				
+				
 				else if (temp.equals("n")) {
 					// 'n' is fine because it is a substitute for null
 				}
@@ -376,30 +339,35 @@ public class Level {
 				}
 			}
 		}
-		if (prev == null || next == null)
-			throw new IllegalArgumentException("Level Constructor: There should always be a 'Prev' and 'Next' on every Level. This Level one is null.");
 	}
 	
-	private void buildMovables(char[][] movables) {
+	
+	private void buildBouldersPlayers(char[][] bouldersPlayers) {
 		players = new HashSet<>();
 		boulders = new HashSet<>();
+		
 		for (int y = 0; y < height; y++) {
 			for (int x = 0; x < width; x++) {
-				String temp = Character.toString((movables[y][x]));
+				String temp = Character.toString((bouldersPlayers[y][x]));
 				if(temp.equals("b"))
 					boulders.add(new Boulder(new Point(x, y)));
 			}
 		}
 	}
 	
+	
+	@Override
+	public String toString() {
+		return "   Room( roomID- " + roomID + "):   #players:  " + players.size() + "    #boulders:  " + boulders.size();
+	}
+
+	
+	
+	
+	
 	public Map<Point,Point> getMapOfPads(){
 		return this.padsToDoors;
 	}
-	
-	public String toString() {
-		return "   Level( levelID- " + levelID + "):   #players:  " + players.size() + "    #boulders:  " + boulders.size();
-	}
-
 
 	public Point getDoorFromPad(Point newLoc) {
 		
@@ -407,4 +375,18 @@ public class Level {
 		Point door = this.padsToDoors.get(newLoc);
 		return door;
 	}
+	
+	private void connectPadsToDoors(String[] points) {
+		padsToDoors = new HashMap<Point, Point>();
+		if(points.length == 1)return;
+		if(points.length %4 != 0) throw new IllegalArgumentException("A level has the wrong number of coordinates connecting pads to doors");
+		//for(int i = 0; i < points.length; i = i + 3){
+		int i = 0;
+		Point pressurePad = new Point(Integer.parseInt(points[i+1]), Integer.parseInt(points[i]));
+		Point door = new Point(Integer.parseInt(points[i+3]), Integer.parseInt(points[i+2]));
+		System.out.println("pressure pad: x = " + pressurePad.getX() + " y = " + pressurePad.getY());
+		System.out.println("door: x = " + door.getX() + " y = " + door.getY());
+		this.padsToDoors.put(pressurePad, door);
+		//}	
+}
 }

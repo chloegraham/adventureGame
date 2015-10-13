@@ -1,7 +1,7 @@
 package tiles;
 
 
-public class Chest extends Unmoveable implements Tile {
+public class Chest implements Tile, Impassable, Furniture {
 	
 	private boolean hasKey;
 	private boolean isOpen;
