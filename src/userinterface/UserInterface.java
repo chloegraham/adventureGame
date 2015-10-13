@@ -12,6 +12,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.IOException;
+import java.util.Timer;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
@@ -92,6 +93,15 @@ public class UserInterface extends JFrame {
 		
 		this.pack();
 		setVisible(true);	// Finished building the frame. Show it and wait until the userID is added.
+		
+		
+		// Starting the render loop
+		DrawLoop drawLooper = new DrawLoop();
+		drawLooper.setGraphics(this.graphics);
+		
+		Timer timer = new Timer();
+		timer.schedule(drawLooper, 0, 33);
+		
 	}
 	
 	/** Sets the unique ID for this user and changes the SplashScreen. */
@@ -369,42 +379,11 @@ public class UserInterface extends JFrame {
 	// ========================================================
 	
 	/**
-	 * Redraws the renderer from 3 char layers
+	 * Sets the char layers, and the camera position, ready to be redrawn by the draw loop.
 	 * @param level
 	 * @param objects
 	 * @param moveables
 	 */
-	public void redrawFromLayers(char[][]level, char[][]objects, char[][]moveables){
-		graphics.setLayers(level, objects, moveables);
-		if (!playing){
-			playing = true;
-			if (splash.getOpenCard() != SplashScreen.INFORM_CARD){	// Inform card needs to stay up until the player has read it.
-				splash.setVisibleCard(SplashScreen.READY_CARD);		// Show player key bindings and allow them to start
-			}
-		}
-		this.repaint();
-	}
-	
-	
-	
-	/**
-	 * 
-	 * @param level
-	 * @param objects
-	 * @param moveables
-	 */
-	public void redrawFromLayersWithCoordinate(char[][]level, char[][]objects, char[][]moveables, int x, int y){
-		graphics.setCamOffset(x, y);
-		graphics.setLayers(level, objects, moveables);
-		if (!playing){
-			playing = true;
-			if (splash.getOpenCard() != SplashScreen.INFORM_CARD){	// Inform card needs to stay up until the player has read it.
-				splash.setVisibleCard(SplashScreen.READY_CARD);		// Show player key bindings and allow them to start
-			}
-			if (firstGame){ firstGame = false; }
-		}
-		this.repaint();
-	}
 	
 	public void setLayersWithCoordinate(char[][]level, char[][]objects, char[][]moveables, int x, int y){
 		graphics.setCamOffset(x, y);
@@ -415,13 +394,6 @@ public class UserInterface extends JFrame {
 				splash.setVisibleCard(SplashScreen.READY_CARD);		// Show player key bindings and allow them to start
 			}
 		}
-	}
-	
-	public void reDraw(){
-		if(graphics != null){
-			graphics.update();
-		}
-		this.repaint();
 	}
 	
 	
