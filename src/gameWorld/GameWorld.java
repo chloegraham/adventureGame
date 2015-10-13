@@ -1,6 +1,5 @@
 package gameWorld;
 
-import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,7 +30,7 @@ public class GameWorld {
 		addPlayersToRooms();
 		
 		logic = new GameLogic(this, stages, players);
-		System.out.println(toString());
+		System.out.println("\n  Constructor-" + toString());
 	}
 	
 	
@@ -122,6 +121,16 @@ public class GameWorld {
 	
 	@Override
 	public String toString() {
-		return "   GameWorld:   #stages:  " + stages.size() + "   #players:  " + players.size();
+		String str = "  GAMEWORLD-  #Stages: " + stages.size() + ".  StageID's: "; 
+		
+		for (Stage s : stages)
+			str += s.getStageID() + ", ";
+			
+		str += "\n  #Players: " + players.size() + "\n  'toString()' of Players:\n";
+		
+		for (Player p : players)
+			str += p.toStringConstructor() + "\n";
+		
+		return str;
 	}
 }

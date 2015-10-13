@@ -114,7 +114,7 @@ public class Server implements Runnable {
 			    	int ordinal = Integer.parseInt(handleAction.substring(Msgs.DELIM_ACTION.length()));
 			    	
 			    	// Print chosen handle action to Server for testing & understanding
-			    	System.out.println("--- Server   InputONE received action: " + Actions.getName(ordinal) + "   Action sent to Logic (except New & Load done in Server)");
+			    	System.out.println("--- Server-  PlayerONE is trying to do Action " + Actions.getName(ordinal));
 			    	
 			    	
 			    	if (gameWorld == null)
@@ -160,7 +160,7 @@ public class Server implements Runnable {
 			    	
 			    	
 			    	// Print chosen handle action to Server for testing & understanding
-			    	System.out.println("--- Server   InputTWO received action: " + Actions.getName(ordinal) + "   Action sent to Logic (except New & Load done in Server)");
+			    	System.out.println("--- Server-  PlayerTWO is trying to do Action " + Actions.getName(ordinal));
 			    	
 			    	
 			    	// Checks that PlayerTWO doesn't attempt invalid actions
@@ -224,9 +224,6 @@ public class Server implements Runnable {
 	 *  Ask Logic to handle users action & then Broadcast the results back to the Clients
 	 */
 	private void handleAction(int ordinal, int userID) throws IOException {
-//		if (ordinal == Actions.SAVE.ordinal())
-//			if (save())
-//				// tell the game to stop
 		String message = logic.handleAction(ordinal, userID);
 		broadcast(userID, message);
 	}
@@ -243,15 +240,10 @@ public class Server implements Runnable {
 		String other = gameWorld.getEncodedGameWorld(otherUserID);
 		
 		if (userID == Msgs.PLAYER_ONE) {
-			//System.out.println("--- Server:    broadcasting game after PlayerONE handle action.");
-					
 			outputOne.writeUTF(current);
 			outputTwo.writeUTF(other);
-		} else {
-			//System.out.println("--- Server:    broadcasting game after PlayerTWO handle action.");
 			
-			System.out.println("other is: " + other);
-			System.out.println("current is: " + current);
+		} else {
 			outputOne.writeUTF(other);
 			outputTwo.writeUTF(current);
 		}
@@ -265,12 +257,12 @@ public class Server implements Runnable {
 	private void newGame() throws IOException {
 		// Get encoded gameWorld of the standard new game
 		String encodedGameWorld = XML.newGame();
-		System.out.println(encodedGameWorld);
 		
 		// Create the GameWorld based of the encoded new game + initialize Game Logic
+		System.out.println("--- Server:    attempting to start a NewGame");
 		gameWorld = new GameWorld(encodedGameWorld);
 		logic = gameWorld.getLogic();
-		System.out.println("--- Server:    NewGame created.");
+		System.out.println("--- Server:    expected that a NewGame has stated");
 
 		this.timer = new TimerSpikes(this);
 		this.timerThread = new Thread(timer);
@@ -281,12 +273,12 @@ public class Server implements Runnable {
 	private void load() throws IOException {
 		// Get encoded gameWorld of the standard new game
 		String encodedGameWorld = XML.load();
-		System.out.println(encodedGameWorld);
 		
 		// Create the GameWorld based of the encoded previously saved game + initialize Game Logic
+		System.out.println("--- Server:    attempting to start a Loaded Game");
 		gameWorld = new GameWorld(encodedGameWorld);
 		logic = gameWorld.getLogic();
-		System.out.println("--- Server:    Loaded Game created.");
+		System.out.println("--- Server:    expected that a Loaded Game has stated");
 
 		this.timer = new TimerSpikes(this);
 		this.timerThread = new Thread(timer);
@@ -308,6 +300,18 @@ public class Server implements Runnable {
 	
 	@Override
 	public String toString() {
-		return "--- Server(ServerSocket- " +(serverSocket!=null)+ "):    socketONEstatus- " +(socketOne!=null)+ "    socketTWOstatus- " +(socketTwo!=null)+ "  ";
+		String serverSock = "NOT STARTED";
+		if (serverSocket!=null)
+			serverSock = "RUNNING";
+		
+		String sockOne = "WAITING";
+		if (socketOne!=null)
+			sockOne = "CONNECTED";
+		
+		String sockTwo = "WAITING";
+		if (socketTwo!=null)
+			sockTwo = "CONNECTED";
+			
+		return "--- Server(ServerSocket- " + serverSock + "):    socketONEstatus- " + sockOne + "    socketTWOstatus- " + sockTwo;
 	}
 }

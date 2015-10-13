@@ -21,6 +21,7 @@ import tiles.Wall;
 import convertors.Msgs;
 
 public class Room {
+	private int stageID;
 	private int roomID;
 	private int width;
 	private int height;	
@@ -29,9 +30,9 @@ public class Room {
 	private Set<Boulder> boulders;
 	private Set<Spikes> spikes;
 	private Set<Player> players;
-	private Map<Point, Point> padsToDoors;
 	
-	public Room(String encodedRoom, int roomID) {
+	public Room(String encodedRoom, int stageID, int roomID) {
+		this.stageID = stageID;
 		this.roomID = roomID;
 		encodedRoom = encodedRoom.replace(Msgs.DELIM_ROOM, "");
 		
@@ -67,7 +68,7 @@ public class Room {
 		
 		
 		
-		System.out.println(toString());
+		System.out.println("\n  Constructor-" + toStringConstructor());
 	}
 	
 	
@@ -75,11 +76,10 @@ public class Room {
 
 
 	/*
-	 *  Getter LevelID
+	 *  Getter StageID & RoomID
 	 */
-	public int getRoomID() {
-		return roomID;
-	}
+	public int getStageID() { return stageID; }
+	public int getRoomID() { return roomID; }
 	
 	
 	/*
@@ -98,12 +98,10 @@ public class Room {
 		boolean success = boulders.add(boulder);
 		if (!success)
 			throw new IllegalArgumentException("Invalid to add a Boulder that is already in Boulder set. Investigate how this was possible.");
-		System.out.println(toString());
 	}
 	
 	public boolean removeBoulder(Boulder boulder) {
 		boolean success = boulders.remove(boulder);
-		System.out.println(toString());
 		return success;
 	}
 	
@@ -119,7 +117,6 @@ public class Room {
 	 */
 	public boolean removePlayer(Player player) {
 		boolean success = players.remove(player);
-		System.out.println(toString() + "  removed a player");
 		return success;
 	}
 	
@@ -130,7 +127,6 @@ public class Room {
 		boolean success = players.add(player);
 		if (!success)
 			throw new IllegalArgumentException("Should never be able to add two of the same player to one Level.");
-		System.out.println(toString() + "  added a player");
 		return success;
 	}
 	
@@ -354,39 +350,35 @@ public class Room {
 			}
 		}
 	}
-	
+
+	public String toStringConstructor() {
+		String str = toString();
+		
+		for (int y = 0; y < height; y++) {
+			for (int x = 0; x < width; x++) {
+				str += tiles[y][x].toString();
+			}
+			str += "\n";
+		}
+		
+		return str;
+	}
 	
 	@Override
 	public String toString() {
-		return "   Room( roomID- " + roomID + "):   #players:  " + players.size() + "    #boulders:  " + boulders.size();
-	}
-
-	
-	
-	
-	
-	public Map<Point,Point> getMapOfPads(){
-		return this.padsToDoors;
-	}
-
-	public Point getDoorFromPad(Point newLoc) {
+		String str = "  ROOM-  roomID/stageID: " + roomID + "/" + stageID + ".  #players: " + players.size() + ".   PlayersIDs:  "; 
 		
-		//TODO: throw illegal argument if not present
-		Point door = this.padsToDoors.get(newLoc);
-		return door;
+		for (Player p : players)
+			str += p.getUserID() + ", ";
+		
+		str += "  #boulders: " + boulders.size();
+		str += "  #spikes: " + spikes.size();
+		
+		str += "\n";
+		
+		for (Player p : players)
+			str += p.toStringConstructor();
+		
+		return str;
 	}
-	
-	private void connectPadsToDoors(String[] points) {
-		padsToDoors = new HashMap<Point, Point>();
-		if(points.length == 1)return;
-		if(points.length %4 != 0) throw new IllegalArgumentException("A level has the wrong number of coordinates connecting pads to doors");
-		//for(int i = 0; i < points.length; i = i + 3){
-		int i = 0;
-		Point pressurePad = new Point(Integer.parseInt(points[i+1]), Integer.parseInt(points[i]));
-		Point door = new Point(Integer.parseInt(points[i+3]), Integer.parseInt(points[i+2]));
-		System.out.println("pressure pad: x = " + pressurePad.getX() + " y = " + pressurePad.getY());
-		System.out.println("door: x = " + door.getX() + " y = " + door.getY());
-		this.padsToDoors.put(pressurePad, door);
-		//}	
-}
 }

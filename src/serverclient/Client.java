@@ -86,7 +86,7 @@ public class Client implements Runnable {
 	    	
 	    	ui.setUserID(userID, isLoadValid);
     		output.writeUTF(hostORguest);
-	    	
+    		System.out.println(toString());
     
 	    	
 	    	/*
@@ -121,11 +121,9 @@ public class Client implements Runnable {
 	
 	
 	
-	// Manage some rules before sending to the Server
+	// vguvguvgh
 	private void handleAction(int ordinal, int userID) throws IOException {
-//		if (ordinal == Actions.LOAD.ordinal() || ordinal == Actions.NEWGAME.ordinal())
-//			if (userID != Msgs.PLAYER_ONE && this.userID != Msgs.PLAYER_ONE)
-//				throw new IllegalArgumentException("Only player one should be able to Start a NewGame or Load a Game.");
+		System.out.println("\n*** Client-  Player" + userID + " is trying to do Action " + Actions.getName(ordinal));
 		output.writeUTF(Msgs.DELIM_ACTION + ordinal);
 	}
 	
@@ -165,7 +163,7 @@ public class Client implements Runnable {
 			
 			layers = new Layers();
 			layers.decode(encodedLayers);
-			ui.setLayersWithCoordinate(layers.getDecodedLevel(), layers.getDecodedObjects(), layers.getDecodedMovables(), playerX, playerY);
+			ui.setLayersWithCoordinate(layers.getDecodedWallsEmpties(), layers.getDecodedFurniture(), layers.getDecodedBouldersPlayers(), playerX, playerY);
 			
 			if (encodedSplit.length > 2) {
 				encodedMessages = encodedSplit[2];
@@ -185,7 +183,7 @@ public class Client implements Runnable {
 	@Override
 	public String toString() {
 		if (clientSocket == null)
-			return "*** Client( testid-" +testID+ "  userid-" +userID+ "):    socketStatus- null    isHost?- " +hostORguest;
-		return "*** Client( testid-" +testID+ "  userid-" +userID+ "):    socketStatus- " +clientSocket.getPort()+"/"+clientSocket.getLocalPort()+ "    isHost?- " +hostORguest;
+			return "*** Client( testid-" +testID+ "  userid-" +userID+ "):    socketStatus- NOT CONNECTED    isHost?- " +hostORguest;
+		return "*** Client( testid-" +testID+ "  userid-" +userID+ "):    socketStatus- CONNECTED " +clientSocket.getPort()+"/"+clientSocket.getLocalPort()+ "    isHost?- " +hostORguest;
 	}
 }

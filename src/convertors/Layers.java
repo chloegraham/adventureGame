@@ -1,34 +1,34 @@
 package convertors;
 
 public class Layers {
-	private char[][] level;
-	private char[][] objects;
-	private char[][] movables;
+	private char[][] wallsEmpties;
+	private char[][] furniture;
+	private char[][] bouldersPlayers;
 	
-	public char[][] getDecodedLevel() { return level; }
-	public char[][] getDecodedObjects() { return objects; }
-	public char[][] getDecodedMovables() { return movables; }
+	public char[][] getDecodedWallsEmpties() { return wallsEmpties; }
+	public char[][] getDecodedFurniture() { return furniture; }
+	public char[][] getDecodedBouldersPlayers() { return bouldersPlayers; }
 	
 	public void decode(String encodedLayers) {
 		// Split String up in to x3 Strings which will be converted to char[][]
 		String[] layers = encodedLayers.split("@");
 	
 		// Split up the 2d-char[][] in to 1d-char[] (they are still Strings at the moment)
-		String[] subLayers1 = layers[0].split("%");
-		String[] subLayers2 = layers[1].split("%");
-		String[] subLayers3 = layers[2].split("%");
+		String[] wallsEmptiesARRAY = layers[0].split("%");
+		String[] furnitureARRAY = layers[1].split("%");
+		String[] bouldersPlayersARRAY = layers[2].split("%");
 		
 		// Now build the actual 2d-char[][] from the broken down Strings
-		level = new char[subLayers1.length][];
-		for (int x = 0; x < level.length; x++)
-			level[x] = subLayers1[x].toCharArray();
+		wallsEmpties = new char[wallsEmptiesARRAY.length][];
+		for (int x = 0; x < wallsEmpties.length; x++)
+			wallsEmpties[x] = wallsEmptiesARRAY[x].toCharArray();
 		
-		objects = new char[subLayers2.length][];
-		for (int x = 0; x < objects.length; x++)
-			objects[x] = subLayers2[x].toCharArray();
+		furniture = new char[furnitureARRAY.length][];
+		for (int x = 0; x < furniture.length; x++)
+			furniture[x] = furnitureARRAY[x].toCharArray();
 		
-		movables = new char[subLayers3.length][];
-		for (int x = 0; x < movables.length; x++)
-			movables[x] = subLayers3[x].toCharArray();
+		bouldersPlayers = new char[bouldersPlayersARRAY.length][];
+		for (int x = 0; x < bouldersPlayers.length; x++)
+			bouldersPlayers[x] = bouldersPlayersARRAY[x].toCharArray();
 	}
 }

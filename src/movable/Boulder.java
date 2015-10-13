@@ -2,7 +2,7 @@ package movable;
 
 import java.awt.Point;
 
-public class Boulder extends Moveable implements Item {
+public class Boulder extends Moveable {
 
 	public Boulder(Point location) {
 		super(location);
