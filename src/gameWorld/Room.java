@@ -9,11 +9,11 @@ import java.util.Set;
 import movable.Boulder;
 import movable.Player;
 import tiles.Chest;
-import tiles.Door;
+import tiles.DoorNormal;
 import tiles.DrawFirst;
 import tiles.EmptyTile;
 import tiles.Furniture;
-import tiles.LevelDoor;
+import tiles.DoorLevel;
 import tiles.PressurePad;
 import tiles.Spikes;
 import tiles.Tile;
@@ -290,16 +290,16 @@ public class Room {
 				
 				if (temp.equals("d")) {
 					System.out.println(x + ", " + y);
-					tiles[y][x] = new Door("d");
+					tiles[y][x] = new DoorNormal("d");
 				}
 				else if (temp.equals("D")) {
-					tiles[y][x] = new Door("D");
+					tiles[y][x] = new DoorNormal("D");
 				}
 				else if (temp.equals("l")) {
-					tiles[y][x] = new LevelDoor("l");
+					tiles[y][x] = new DoorLevel("l");
 				}
 				else if (temp.equals("L")) {
-					tiles[y][x] = new LevelDoor("L");
+					tiles[y][x] = new DoorLevel("L");
 				}
 				
 				

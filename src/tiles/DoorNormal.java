@@ -1,34 +1,36 @@
 package tiles;
 
 
-public class LevelDoor implements Tile, Passable, PutDownOnable, LevelChanger, Furniture {	
+public class DoorNormal implements Tile, Passable, PutDownOnable, Furniture, Door {	
 	private boolean locked;
 
-	public LevelDoor(String symbol) {
-		if (symbol.equals("y")){
+	public DoorNormal(String symbol) {
+		if (symbol.equals("d")) {
 			locked = true;
 		}
-		else if (symbol.equals("Y")) {
+		else if (symbol.equals("D")) {
 			locked = false;
 		}
 		else {
-			throw new IllegalArgumentException("Level Door Constructor: Passed an invalid character(  " + symbol + " ). Should be one of the following: 'y', 'Y' .");
+			throw new IllegalArgumentException("Door Constructor: Passed an invalid character(  " + symbol + " ). Should be one of the following: 'd', 'D' .");
 		}
 	}
 
-	
 	
 	/*
 	 *  Locking & Unlocking Doors changes whether Players can pass through them or not
 	 */
+	@Override
 	public boolean isLocked(){
 		return locked;
 	}
 	
+	@Override
 	public void unlock() {
 		locked = false;
 	}
 	
+	@Override
 	public void lock() {
 		locked = true;
 	}
@@ -47,8 +49,8 @@ public class LevelDoor implements Tile, Passable, PutDownOnable, LevelChanger, F
 	
 	@Override
 	public String toString() {
-		if (locked = true)
-			return "y";
-		return "Y";
+		if (locked)
+			return "d";
+		return "D";
 	}
 }

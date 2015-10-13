@@ -13,7 +13,7 @@ public class Player extends Moveable{
 	private Direction direction; 	//String representing which direction player is facing
 	private int keys;
 	private boolean hasBoulder;
-
+	private boolean dead = false;
 	
 	
 	/*
@@ -139,6 +139,19 @@ public class Player extends Moveable{
 	
 	
 	/*
+	 *  Dying code
+	 */
+	public void murder() {
+		dead = true;
+	}
+	
+	public boolean isDead() {
+		return dead;
+	}
+	
+	
+	
+	/*
 	 *
 	 */
 	public boolean setLocation(int stage, int room, Point location) {
@@ -167,5 +180,5 @@ public class Player extends Moveable{
 		default:
 			throw new IllegalArgumentException();
 		}
-	}	
+	}
 }

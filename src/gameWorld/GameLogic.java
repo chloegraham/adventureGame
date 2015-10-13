@@ -9,7 +9,8 @@ import testenums.DoorTransfers;
 import testenums.Doors;
 import tiles.Chest;
 import tiles.Door;
-import tiles.LevelDoor;
+import tiles.DoorLevel;
+import tiles.DoorNormal;
 import tiles.Passable;
 import tiles.PressurePad;
 import tiles.PutDownOnable;
@@ -148,58 +149,50 @@ public class GameLogic {
 		if(currTile instanceof PressurePad){
 			((PressurePad)currTile).activate();
 			
-//			Point doorPoint = room.getDoorFromPad(player.getLocation());
-//			Door doorTile = (Door)room.getTiles()[doorPoint.y][doorPoint.x];
-//			
-//			doorTile.lock();
-//			
-//			//if there's a player in the doorway when getting off the activated pressure pad then kill them
-//			for(Player p : players){
-//				if(p.getLocation().equals(doorPoint)){
-//					
-//					System.out.println("you dead");
-//				}
-//			}
+			Doors d = DoorTransfers.transfer(player.getStageID(), player.getRoomID(), currLoc);
+			
+			if (d != null) {
+				Point doorPoint = d.getLocation();
+				Door doorTile = (Door)room.getTiles()[doorPoint.y][doorPoint.x];
+				
+				doorTile.lock();
+				
+				//if there's a player in the doorway when getting off the activated pressure pad then kill them
+				for(Player p : players)
+					if(p.getLocation().equals(doorPoint))
+						p.murder();
+			}
 		}
 		
 		
 		
-		// If Tile is a LevelDoor
-		// The Passable check above ensure LevelDoor is also Passable
-		if (nextTile instanceof LevelDoor) {
-			/*
-			 *  I could instead write a method to change the New Location for tidier code
-			 */
+		if (nextTile instanceof PressurePad){
+			((PressurePad)nextTile).activate();
+			
+			Doors d = DoorTransfers.transfer(player.getStageID(), player.getRoomID(), nextLoc);
+			
+			if (d != null) {
+				Point doorPoint = d.getLocation();
+				Door doorTile = (Door)room.getTiles()[doorPoint.y][doorPoint.x];	
+			
+				doorTile.unlock();
+			}
 		}
-		
 
+		
 		
 		// If Tile is a Door
 		// The Passable check above ensure LevelDoor is also Passable
 		if (nextTile instanceof Door) {
-			/*
-			 *  I could instead write a method to change the New Location for tidier code
-			 */
-			System.out.println("It's a Door #&$&jk     fnjan   &#*Bjknjskafn  " + nextLoc.x + ",  " + nextLoc.y);
-			Doors d = DoorTransfers.transfer(player.getStageID(), player.getRoomID(), nextLoc);
-			System.out.println(d);
-			gameWorld.removePlayers();
-			player.setLocation(d.getStage(), d.getRoom(), d.getLocation());
-			gameWorld.addPlayersToRooms();
-			
-			// TODO I think this fucks up messages
-			return true;
-		}
-
-
-
-		if (nextTile instanceof PressurePad){
-			((PressurePad)nextTile).activate();
-			
-//			Point doorLoc = room.getDoorFromPad(nextLoc);
-//			Door doorTile = (Door)room.getTiles()[doorLoc.y][doorLoc.x];	
-//			
-//			doorTile.unlock();
+			if ( ((DoorLevel)nextTile).isPassable() ) {
+				Doors d = DoorTransfers.transfer(player.getStageID(), player.getRoomID(), nextLoc);
+				gameWorld.removePlayers();
+				player.setLocation(d.getStage(), d.getRoom(), d.getLocation());
+				gameWorld.addPlayersToRooms();
+				
+				// TODO I think this fucks up messages
+				return true;
+			}
 		}
 		
 		
@@ -216,7 +209,7 @@ public class GameLogic {
 		PressurePad pad = (PressurePad) tile;
 		pad.activate();
 		Point door = room.getDoorFromPad(newLoc);
-		Door doorTile = (Door)room.getTiles()[door.y][door.x];	
+		DoorNormal doorTile = (DoorNormal)room.getTiles()[door.y][door.x];	
 		doorTile.unlock();
 	}
 	//this method is called when either a player or a boulder is removed from a pressure pad, killing a player if present on door position
@@ -224,7 +217,7 @@ public class GameLogic {
 		PressurePad pad = (PressurePad) room.getTiles()[currentLoc.y][currentLoc.x];
 		pad.activate();
 		Point doorPoint = room.getDoorFromPad(currentLoc);
-		Door doorTile = (Door)room.getTiles()[doorPoint.y][doorPoint.x];	
+		DoorNormal doorTile = (DoorNormal)room.getTiles()[doorPoint.y][doorPoint.x];	
 		doorTile.lock();
 		//if there's a player in the doorway when getting off the activated pressure pad then kill them
 		for(Player p: this.players){
@@ -313,14 +306,14 @@ public class GameLogic {
 		/*
 		 *  Door interaction code & message
 		 */
-		if (tile instanceof Door){
+		if (tile instanceof DoorNormal){
 			
-			Door door = (Door) tile;
+			DoorNormal doorNormal = (DoorNormal) tile;
 			
 			// ISLOCKED
 			// true - "The Door is locked"
 			// false - "The Door is unlocked. You may enter." RETURN
-			boolean isLocked = door.isLocked();
+			boolean isLocked = doorNormal.isLocked();
 			
 			// HASKEY
 			// true - [move on to try unlock the door]
@@ -329,7 +322,7 @@ public class GameLogic {
 			
 			if (isLocked) {
 				if (hasKey) {
-					door.unlock();
+					doorNormal.unlock();
 					player.useKey();
 				}	
 			}
