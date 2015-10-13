@@ -5,6 +5,8 @@ import javax.swing.*;
 import gameWorld.Direction;
 
 import java.awt.*;
+import java.math.*;
+
 
 /**
  * Created by Eliot on 15/09/2015.
@@ -121,6 +123,14 @@ public class RenderPane extends JPanel {
         	rotatedLevel = IsoHelper.rotateCW(this.level);
         	rotatedObjects = IsoHelper.rotateCW(this.objects);
         	rotatedMoveables = IsoHelper.rotateCW(this.moveables);
+        	
+            int width = rotatedLevel[0].length;
+
+        	
+        	int x = width - camOffset.x;
+        	int y = camOffset.x;
+        	
+        	setCamOffset(x, y);
         }
         else if(this.viewDir == Direction.WEST){
         	rotatedLevel = IsoHelper.rotateCCW(this.level);
@@ -163,27 +173,30 @@ public class RenderPane extends JPanel {
     
     
     public void update(){
-    	int xGoal = camOffset.x;
-    	int yGoal = camOffset.y;
+    	float xGoal = camOffset.x;
+    	float yGoal = camOffset.y;
     	
     	float nearestX = (float)Math.round(xLerpOffset * 10f) / 10f;
     	float nearestY = (float)Math.round(yLerpOffset * 10f) / 10f;
+    	    	
     	
-    	//System.out.println(nearestX + " " + xGoal);
+    	float xDifference = Math.abs(xGoal - xLerpOffset);
+    	float yDifference = Math.abs(yGoal - yLerpOffset);
+
     	
     	if(nearestX != xGoal){
     		if(xGoal > xLerpOffset){
-        		xLerpOffset = xLerpOffset + (float) 0.2;
+        		xLerpOffset = xLerpOffset + (xDifference / 4);
         	}else{
-        		xLerpOffset = xLerpOffset - (float) 0.2;
+        		xLerpOffset = xLerpOffset - (xDifference / 4);
         	}
     	}
     	
     	if(nearestY != yGoal){
     		if(yGoal > yLerpOffset){
-    			yLerpOffset = yLerpOffset + (float) 0.2;
+    			yLerpOffset = yLerpOffset + (yDifference / 3);
         	}else{
-        		yLerpOffset = yLerpOffset - (float) 0.2;
+        		yLerpOffset = yLerpOffset - (yDifference / 3);
         	}
     	}
    	
