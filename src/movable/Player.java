@@ -13,21 +13,6 @@ public class Player extends Moveable{
 	private Direction direction; 	//String representing which direction player is facing
 	private int keys;
 	private boolean hasBoulder;
-	
-	
-	
-	/*
-	 *  For opening a Saved/Stored Game
-	 */
-	public Player(int userID, int stageID, int roomID, Point location, Direction dir, int keyAmount, boolean boulder) {
-		super(location);
-		this.userID = userID;
-		this.stageID = stageID;
-		this.roomID = roomID;
-		this.direction = dir;
-		this.keys = keyAmount;
-		this.hasBoulder = boulder;
-	}
 
 	
 	
@@ -42,13 +27,13 @@ public class Player extends Moveable{
 		stageID = Integer.parseInt(parts[1]);
 		roomID = Integer.parseInt(parts[2]);
 		
-		int x = Integer.parseInt(parts[6]);
-		int y = Integer.parseInt(parts[7]);
+		int x = Integer.parseInt(parts[3]);
+		int y = Integer.parseInt(parts[4]);
 		Point point = new Point(x, y);
 		direction = Direction.getMsg( Integer.parseInt(parts[5]) );
 		
-		keys = Integer.parseInt(parts[3]);
-		hasBoulder = Integer.parseInt(parts[4]) == 1;
+		keys = Integer.parseInt(parts[6]);
+		hasBoulder = Integer.parseInt(parts[7]) == 1;
 		
 		setLocation(point);
 	}
@@ -153,6 +138,17 @@ public class Player extends Moveable{
 
 	
 	
+	/*
+	 *
+	 */
+	public boolean setLocation(int stage, int room, Point location) {
+		stageID = stage;
+		roomID = room;
+		setLocation(location);
+		return true;
+	}
+			
+	
 	@Override
 	public String toString() {
 		switch (this.direction) {
@@ -171,5 +167,5 @@ public class Player extends Moveable{
 		default:
 			throw new IllegalArgumentException();
 		}
-	}
+	}	
 }

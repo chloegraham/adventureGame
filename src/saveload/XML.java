@@ -137,13 +137,13 @@ public class XML {
 	/*
 	 *  Rooms for Stage 1 + Stage 1
 	 */
-	private static final String S1ROOM1 = "wwe%eee%eee%eee%eee%@" +
-			  							  "nnn%nnc%czz%nnn%nnn%@" +
-			  							  "nnn%bbn%nnn%nnn%nnn%@" +
+	private static final String S1ROOM1 = "wwe%eee%eee%eee%eee%eee%eee%eee%eee%eee%eee%eee%@" +
+			  							  "nnn%nnc%ccc%sss%nnn%nnn%nDn%nnn%nnn%nnn%nnn%nnn%@" +
+			  							  "nnn%bbn%nnn%nnn%nnn%nnn%nnn%nnn%nnn%nnn%nnn%nnn%@" +
 			  							  "<Room>";
 	
 	private static final String S1ROOM2 = "eeee%ewww%eeee%eeee%@" +
-										  "ssss%nnnn%nnzz%nnnn%@" +
+										  "sssD%nnnn%nnzz%nnnn%@" +
 										  "nnnn%nnnn%nnnn%nnbb%@" +
 										  "<Room>";
 	
@@ -154,14 +154,14 @@ public class XML {
 	/*
 	 *  Rooms for Stage 2 + Stage 2
 	 */
-	private static final String S2ROOM1 = "eee%eee%eee%eee%@" +
-			  							  "nnn%nnn%sss%nnn%@" +
-			  							  "nnn%bbb%nnn%nnn%@" +
+	private static final String S2ROOM1 = "eeee%eeee%eeee%eeee%eeee%eeee%eeee%@" +
+			  							  "nnnn%nnnn%sssn%nnnn%nnnn%ssss%nnnn%@" +
+			  							  "nnnn%bbbn%nnnn%nnnn%nnnn%nnnn%nnnn%@" +
 			  							  "<Room>";
 
-	private static final String S2ROOM2 = "eeee%eeee%wwew%eeee%@" +
-										  "ssss%nnzz%nnnn%nnnn%@" +
-										  "nnnn%nnnn%nnnn%nnbb%@" +
+	private static final String S2ROOM2 = "eeeeee%eeeeee%wwwwew%eeeeee%@" +
+										  "ssssss%nnzzzz%nnnnnn%nnnnnn%@" +
+										  "nnnnnn%nnnnnn%nnnnnn%nnbbbn%@" +
 										  "<Room>";
 
 	private static final String STAGE2 = S2ROOM1 + S2ROOM2 + "<Stage>";
@@ -172,10 +172,10 @@ public class XML {
 	 *  Players
 	 */
 	private static final String PLAYER1 = Msgs.PLAYER_ONE + "%" +			// UserID
-										  "1%" +							// StageID    Current Stage ('000' default start) 
-										  "1%" +							// RoomID
-										  "1%" +							// Point.x
-										  "2%" + 							// Point.y
+										  "0%" +							// StageID    Current Stage ('000' default start) 
+										  "0%" +							// RoomID
+										  "2%" +							// Point.x
+										  "4%" + 							// Point.y
 										  "1%" +							// Facing Direction
 										  "0%" +							// # of Keys Player has
 										  "0%" +							// Holding Boulder 0=false, 1=true
@@ -183,10 +183,10 @@ public class XML {
 										  "<Player>";
 	
 	private static final String PLAYER2 = Msgs.PLAYER_TWO + "%" +			// UserID
-										  "1%" +							// StageID    Current Stage ('000' default start) 
-										  "1%" +							// RoomID
+										  "0%" +							// StageID    Current Stage ('000' default start) 
+										  "0%" +							// RoomID
 										  "2%" +							// Point.x
-										  "1%" + 							// Point.y
+										  "5%" + 							// Point.y
 										  "1%" +							// Facing Direction
 										  "0%" +							// # of Keys Player has
 										  "0%" +							// Holding Boulder 0=false, 1=true

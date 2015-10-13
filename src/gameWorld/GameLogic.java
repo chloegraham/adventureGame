@@ -5,6 +5,8 @@ import java.util.List;
 
 import movable.Boulder;
 import movable.Player;
+import testenums.DoorTransfers;
+import testenums.Doors;
 import tiles.Chest;
 import tiles.Door;
 import tiles.LevelDoor;
@@ -16,10 +18,12 @@ import userinterface.Action.Actions;
 import convertors.Msgs;
 
 public class GameLogic {
+	private GameWorld gameWorld;
 	private List<Stage> stages;
 	private List<Player> players;
 	
-	public GameLogic(List<Stage> stages, List<Player> players){
+	public GameLogic(GameWorld gameWorld, List<Stage> stages, List<Player> players){
+		this.gameWorld = gameWorld;
 		this.stages = stages;
 		this.players = players;
 	}
@@ -176,6 +180,15 @@ public class GameLogic {
 			/*
 			 *  I could instead write a method to change the New Location for tidier code
 			 */
+			System.out.println("It's a Door #&$&jk     fnjan   &#*Bjknjskafn  " + nextLoc.x + ",  " + nextLoc.y);
+			Doors d = DoorTransfers.transfer(player.getStageID(), player.getRoomID(), nextLoc);
+			System.out.println(d);
+			gameWorld.removePlayers();
+			player.setLocation(d.getStage(), d.getRoom(), d.getLocation());
+			gameWorld.addPlayersToRooms();
+			
+			// TODO I think this fucks up messages
+			return true;
 		}
 
 

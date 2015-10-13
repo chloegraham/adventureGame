@@ -1,5 +1,6 @@
 package gameWorld;
 
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,18 +30,30 @@ public class GameWorld {
 		
 		addPlayersToRooms();
 		
-		logic = new GameLogic(stages, players);
+		logic = new GameLogic(this, stages, players);
 		System.out.println(toString());
 	}
 	
 	
 	
-	private void addPlayersToRooms() {
+	public void addPlayersToRooms() {
 		for (Player p : players) {
 			Stage stage = stages.get(p.getStageID());
 			stage.addPlayerToRoom(p);
 		}
 	}
+	
+	
+	
+	public void removePlayers() {
+		for (Player p : players) {
+			Stage stage = stages.get(p.getStageID());
+			stage.removePlayerFromRoom(p);
+		}
+	}
+
+
+	
 
 
 

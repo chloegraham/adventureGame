@@ -117,9 +117,10 @@ public class Room {
 	/*
 	 *  Getter to Remove Players from a Level
 	 */
-	public void removePlayer(Player player) {
+	public boolean removePlayer(Player player) {
 		boolean success = players.remove(player);
 		System.out.println(toString() + "  removed a player");
+		return success;
 	}
 	
 	/*
@@ -288,6 +289,7 @@ public class Room {
 				String temp = Character.toString((furniture[y][x]));
 				
 				if (temp.equals("d")) {
+					System.out.println(x + ", " + y);
 					tiles[y][x] = new Door("d");
 				}
 				else if (temp.equals("D")) {

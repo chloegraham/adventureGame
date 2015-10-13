@@ -1,9 +1,7 @@
 package gameWorld;
 
-import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import movable.Player;
 import convertors.Msgs;
@@ -11,7 +9,6 @@ import convertors.Msgs;
 public class Stage {
 	private int stageID;
 	private List<Room> rooms;
-	private Map<DoorAddress, DoorAddress> doorToDoor;	// Need to know about moving between Rooms(called Levels atm)
 	
 	public Stage(String encodedStage, int stageID) {
 		this.stageID = stageID;
@@ -57,25 +54,8 @@ public class Stage {
 	
 	
 	
-	
-	
-	
-	
-	protected class DoorAddress {
-		private int roomID;
-		private Point locationInsideRoom;
-		
-		public DoorAddress(int roomID, Point locationInsideRoom) {
-			this.roomID = roomID;
-			this.locationInsideRoom = locationInsideRoom;
-		}
-		
-		public int getRoomID() {
-			return roomID;
-		}
-		
-		public Point getLocationInsideRoom() {
-			return locationInsideRoom;
-		}
+	public boolean removePlayerFromRoom(Player p) {
+		Room room = rooms.get(p.getRoomID());
+		return room.removePlayer(p);
 	}
 }
