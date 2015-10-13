@@ -61,6 +61,7 @@ public class UserInterface extends JFrame {
 	private final JLabel boulder = new JLabel();
 	private final int contentHeight = 82;			// Height of the inventory pane/message box
 	
+	private boolean firstGame = true;
 	private boolean playing = false;	// Set true only when the game state and renderer are ready.
 	private int keyCount = 0;				// Number of keys player is currently holding
 	private int uid = -1;				// this player's ID
@@ -180,18 +181,21 @@ public class UserInterface extends JFrame {
 	 * @param ordinal The Action that caused the game state change (Actions.NEWGAME.ordinal() etc.)
 	 */
 	public void setChangedGameState(int ordinal){
-		playing = false;		// Stop the current game. When this changes, it is restarted.
-		if (ordinal == Actions.NEWGAME.ordinal()){
-			splash.setVisibleInform("The host player has created a new game.");
-		}
-		else if (ordinal == Actions.LOAD.ordinal()){
-			splash.setVisibleInform("The host player has loaded a saved game.");
-		}
-		else if (ordinal == Actions.RESTART.ordinal()){
-			splash.setVisibleInform("The host player has restarted the current level.");
-		}
-		else {
-			splash.setVisibleInform("The host player has changed the state of the game.");
+		if (!firstGame){
+			splash.setSavedCard();
+			playing = false;		// Stop the current game. When this changes, it is restarted.
+			if (ordinal == Actions.NEWGAME.ordinal()){
+				splash.setVisibleInform("A new game has been created.");
+			}
+			else if (ordinal == Actions.LOAD.ordinal()){
+				splash.setVisibleInform("A saved game has been loaded.");
+			}
+			else if (ordinal == Actions.RESTART.ordinal()){
+				splash.setVisibleInform("The level has been restarted.");
+			}
+			else {
+				splash.setVisibleInform("The game state has been changed.");
+			}
 		}
 	}
 	
@@ -397,6 +401,7 @@ public class UserInterface extends JFrame {
 			if (splash.getOpenCard() != SplashScreen.INFORM_CARD){	// Inform card needs to stay up until the player has read it.
 				splash.setVisibleCard(SplashScreen.READY_CARD);		// Show player key bindings and allow them to start
 			}
+			if (firstGame){ firstGame = false; }
 		}
 		this.repaint();
 	}

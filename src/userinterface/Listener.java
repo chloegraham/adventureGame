@@ -128,7 +128,7 @@ public class Listener extends JPanel implements KeyListener, ActionListener {
 			}
 			if (openCard == SplashScreen.CONFIRM_CARD){
 				if (ac.equals("Cancel")){
-					splash.loadSavedCard();		// if no saved card, will go straight to game. 
+					splash.loadSavedCard();		// if no saved card, will go straight to game. Needed for exit case. 
 				}	// Changed mind, ignore
 				else if (ac.equals("Restart")){
 					splash.setVisibleStartup("Restarting the level. Waiting for game state ...");

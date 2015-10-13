@@ -149,8 +149,10 @@ public class SplashScreen extends JPanel {
 	/** Returns the card that is currently displaying to the user. */
 	public int getOpenCard(){ return openCard; }
 	
-	/** Save the currently opened card. */
-	public void setSavedCard(){ savedCard = openCard; }
+	/** Save the currently opened card. If card is an inform card, will not save it. */
+	public void setSavedCard(){
+		if (openCard != INFORM_CARD && openCard != STARTUP_CARD){ savedCard = openCard; }
+	}
 	
 	/** Load the saved card. If nothing is saved, shows invisible card. */
 	public void loadSavedCard(){
@@ -186,7 +188,7 @@ public class SplashScreen extends JPanel {
 		}
 		else if (openCard == INFORM_CARD){
 			if (ui.getPlaying()){	// A game state is available
-				setVisibleCard(READY_CARD);
+				loadSavedCard();
 			}
 			else {		// still waiting on a game state. Show the startup menu.
 				setVisibleStartup("Waiting for game state ...");
@@ -258,7 +260,7 @@ public class SplashScreen extends JPanel {
 		
 		allPanels[READY_CARD].add(Box.createVerticalGlue());
 		
-		JLabel message = new JLabel("Press any key to play the game.");
+		JLabel message = new JLabel("Press any key to continue.");
 		message.setAlignmentX(CENTER_ALIGNMENT);
 		allPanels[READY_CARD].add(message);
 		allPanels[READY_CARD].add(Box.createVerticalGlue());
@@ -380,7 +382,9 @@ public class SplashScreen extends JPanel {
 		
 		allPanels[INFORM_CARD].add(Box.createVerticalGlue());
 		
-		allPanels[INFORM_CARD].add(new JLabel("Press any key to continue."));
+		JLabel message = new JLabel("Press any key to continue.");
+		message.setAlignmentX(CENTER_ALIGNMENT);
+		allPanels[INFORM_CARD].add(message);
 		
 		allPanels[INFORM_CARD].add(Box.createVerticalGlue());
 	}
