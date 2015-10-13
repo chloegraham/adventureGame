@@ -9,7 +9,6 @@ import testenums.DoorTransfers;
 import testenums.Doors;
 import tiles.Chest;
 import tiles.Door;
-import tiles.DoorLevel;
 import tiles.DoorNormal;
 import tiles.Passable;
 import tiles.PressurePad;
