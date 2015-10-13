@@ -41,9 +41,4 @@ public class Chest implements Tile, Impassable, Furniture {
 			return "C";
 		return "c";
 	}
-
-
-
-
-	
 }

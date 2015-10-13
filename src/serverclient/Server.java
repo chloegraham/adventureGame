@@ -224,9 +224,6 @@ public class Server implements Runnable {
 	 *  Ask Logic to handle users action & then Broadcast the results back to the Clients
 	 */
 	private void handleAction(int ordinal, int userID) throws IOException {
-//		if (ordinal == Actions.SAVE.ordinal())
-//			if (save())
-//				// tell the game to stop
 		String message = logic.handleAction(ordinal, userID);
 		broadcast(userID, message);
 	}
@@ -243,15 +240,10 @@ public class Server implements Runnable {
 		String other = gameWorld.getEncodedGameWorld(otherUserID);
 		
 		if (userID == Msgs.PLAYER_ONE) {
-			//System.out.println("--- Server:    broadcasting game after PlayerONE handle action.");
-					
 			outputOne.writeUTF(current);
 			outputTwo.writeUTF(other);
-		} else {
-			//System.out.println("--- Server:    broadcasting game after PlayerTWO handle action.");
 			
-			System.out.println("other is: " + other);
-			System.out.println("current is: " + current);
+		} else {
 			outputOne.writeUTF(other);
 			outputTwo.writeUTF(current);
 		}
@@ -268,9 +260,10 @@ public class Server implements Runnable {
 		System.out.println(encodedGameWorld);
 		
 		// Create the GameWorld based of the encoded new game + initialize Game Logic
+		System.out.println("--- Server:    attempting to start a NewGame");
 		gameWorld = new GameWorld(encodedGameWorld);
 		logic = gameWorld.getLogic();
-		System.out.println("--- Server:    NewGame created.");
+		System.out.println("--- Server:    expected that a NewGame has stated");
 
 		this.timer = new TimerSpikes(this);
 		this.timerThread = new Thread(timer);
@@ -284,9 +277,10 @@ public class Server implements Runnable {
 		System.out.println(encodedGameWorld);
 		
 		// Create the GameWorld based of the encoded previously saved game + initialize Game Logic
+		System.out.println("--- Server:    attempting to start a Loaded Game");
 		gameWorld = new GameWorld(encodedGameWorld);
 		logic = gameWorld.getLogic();
-		System.out.println("--- Server:    Loaded Game created.");
+		System.out.println("--- Server:    expected that a Loaded Game has stated");
 
 		this.timer = new TimerSpikes(this);
 		this.timerThread = new Thread(timer);
@@ -308,6 +302,18 @@ public class Server implements Runnable {
 	
 	@Override
 	public String toString() {
-		return "--- Server(ServerSocket- " +(serverSocket!=null)+ "):    socketONEstatus- " +(socketOne!=null)+ "    socketTWOstatus- " +(socketTwo!=null)+ "  ";
+		String serverSock = "NOT STARTED";
+		if (serverSocket!=null)
+			serverSock = "RUNNING";
+		
+		String sockOne = "WAITING";
+		if (socketOne!=null)
+			sockOne = "CONNECTED";
+		
+		String sockTwo = "WAITING";
+		if (socketTwo!=null)
+			sockTwo = "CONNECTED";
+			
+		return "--- Server(ServerSocket- " + serverSock + "):    socketONEstatus- " + sockOne + "    socketTWOstatus- " + sockTwo;
 	}
 }

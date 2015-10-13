@@ -230,14 +230,15 @@ public class RenderPane extends JPanel {
 		    case 'C' : tilePainter.drawOpenedChest(g2, isoTile.x, isoTile.y); break;
 		    case 'd' : tilePainter.drawDoor(g2, isoTile.x, isoTile.y); break;
 		    case 'D' : tilePainter.drawOpenDoor(g2, isoTile.x, isoTile.y); break;
-		    case 'M' : tilePainter.drawGoalTile(g2, isoTile.x, isoTile.y); break;
-		    case 'x' : tilePainter.drawDoor(g2, isoTile.x, isoTile.y); break;
-		    case 'X' : tilePainter.drawOpenDoor(g2, isoTile.x, isoTile.y); break;
+		    case 'y' : tilePainter.drawGoalTile(g2, isoTile.x, isoTile.y); break;
+		    case 'Y' : tilePainter.drawGoalTile(g2, isoTile.x, isoTile.y); break;
+		    
 		    case 'z' : tilePainter.drawPressurePad(g2, isoTile.x, isoTile.y); break;
 		    case 'Z' : tilePainter.drawPressurePadActive(g2, isoTile.x, isoTile.y); break;
 		    case 'b' : tilePainter.drawBoulder(g2,  isoTile.x, isoTile.y); break;
 		    case 'S' : tilePainter.drawSpikesUp(g2,  isoTile.x, isoTile.y); break;
 	        case 's' : tilePainter.drawSpikesDown(g2,  isoTile.x, isoTile.y); break;
+	        
 	        case 'i' : tilePainter.drawCharachterNorth(g2, isoTile.x, isoTile.y); break;
 	        case 'j' : tilePainter.drawCharachterWest(g2, isoTile.x, isoTile.y); break;
 	        case 'l' : tilePainter.drawCharachterEast(g2, isoTile.x, isoTile.y); break;

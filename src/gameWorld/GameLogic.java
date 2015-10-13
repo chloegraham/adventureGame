@@ -5,8 +5,8 @@ import java.util.List;
 
 import movable.Boulder;
 import movable.Player;
-import testenums.DoorTransfers;
-import testenums.Doors;
+import testenums.TileConnections;
+import testenums.TileFullLocation;
 import tiles.Chest;
 import tiles.Door;
 import tiles.DoorNormal;
@@ -148,7 +148,7 @@ public class GameLogic {
 		if(currTile instanceof PressurePad){
 			((PressurePad)currTile).activate();
 			
-			Doors d = DoorTransfers.transfer(player.getStageID(), player.getRoomID(), currLoc);
+			TileFullLocation d = TileConnections.getConnectedTile(player.getStageID(), player.getRoomID(), currLoc);
 			
 			if (d != null) {
 				Point doorPoint = d.getLocation();
@@ -168,7 +168,7 @@ public class GameLogic {
 		if (nextTile instanceof PressurePad){
 			((PressurePad)nextTile).activate();
 			
-			Doors d = DoorTransfers.transfer(player.getStageID(), player.getRoomID(), nextLoc);
+			TileFullLocation d = TileConnections.getConnectedTile(player.getStageID(), player.getRoomID(), nextLoc);
 			
 			if (d != null) {
 				Point doorPoint = d.getLocation();
@@ -184,7 +184,7 @@ public class GameLogic {
 		// The Passable check above ensure LevelDoor is also Passable
 		if (nextTile instanceof Door) {
 			if ( ((Passable)nextTile).isPassable() ) {
-				Doors d = DoorTransfers.transfer(player.getStageID(), player.getRoomID(), nextLoc);
+				TileFullLocation d = TileConnections.getConnectedTile(player.getStageID(), player.getRoomID(), nextLoc);
 				gameWorld.removePlayers();
 				player.setLocation(d.getStage(), d.getRoom(), d.getLocation());
 				gameWorld.addPlayersToRooms();
@@ -199,37 +199,7 @@ public class GameLogic {
 		// If made it to here return true because move is valid.
 		return player.setLocation(nextLoc);		
 	}
-	
-	
-	
-	
-	//this method is called when either a player or a boulder is placed on a pressure pad
-	private void activateDoor(Tile tile, Room room, Point newLoc) {
-		PressurePad pad = (PressurePad) tile;
-		pad.activate();
-		Point door = room.getDoorFromPad(newLoc);
-		DoorNormal doorTile = (DoorNormal)room.getTiles()[door.y][door.x];	
-		doorTile.unlock();
-	}
-	//this method is called when either a player or a boulder is removed from a pressure pad, killing a player if present on door position
-	private void deactivateDoor(Tile tile, Room room, Point currentLoc) {
-		PressurePad pad = (PressurePad) room.getTiles()[currentLoc.y][currentLoc.x];
-		pad.activate();
-		Point doorPoint = room.getDoorFromPad(currentLoc);
-		DoorNormal doorTile = (DoorNormal)room.getTiles()[doorPoint.y][doorPoint.x];	
-		doorTile.lock();
-		//if there's a player in the doorway when getting off the activated pressure pad then kill them
-		for(Player p: this.players){
-			if(p.getLocation().equals(doorPoint)){
-				//TODO: kill player
-//				p.murder();
-				System.out.println("you dead");
-			}
-		}
-	}
-
-
-	
+		
 	
 	private String interact(Player player, Room room, Point now) {
 		

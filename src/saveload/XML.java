@@ -168,7 +168,7 @@ public class XML {
 										  "1%" +							// Facing Direction
 										  "0%" +							// # of Keys Player has
 										  "0%" +							// Holding Boulder 0=false, 1=true
-										  "@" +
+										  "@" +								// a delimiter which i don't think we actually need anymore
 										  "<Player>";
 	
 	private static final String PLAYER2 = Msgs.PLAYER_TWO + "%" +			// UserID
@@ -179,6 +179,6 @@ public class XML {
 										  "1%" +							// Facing Direction
 										  "0%" +							// # of Keys Player has
 										  "0%" +							// Holding Boulder 0=false, 1=true
-										  "@" +
+										  "@" +								// a delimiter which i don't think we actually need anymore
 										  "<Player>";
 }

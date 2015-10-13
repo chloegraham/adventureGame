@@ -165,7 +165,7 @@ public class Client implements Runnable {
 			
 			layers = new Layers();
 			layers.decode(encodedLayers);
-			ui.setLayersWithCoordinate(layers.getDecodedLevel(), layers.getDecodedObjects(), layers.getDecodedMovables(), playerX, playerY);
+			ui.setLayersWithCoordinate(layers.getDecodedWallsEmpties(), layers.getDecodedFurniture(), layers.getDecodedBouldersPlayers(), playerX, playerY);
 			
 			if (encodedSplit.length > 2) {
 				encodedMessages = encodedSplit[2];
@@ -185,7 +185,7 @@ public class Client implements Runnable {
 	@Override
 	public String toString() {
 		if (clientSocket == null)
-			return "*** Client( testid-" +testID+ "  userid-" +userID+ "):    socketStatus- null    isHost?- " +hostORguest;
-		return "*** Client( testid-" +testID+ "  userid-" +userID+ "):    socketStatus- " +clientSocket.getPort()+"/"+clientSocket.getLocalPort()+ "    isHost?- " +hostORguest;
+			return "*** Client( testid-" +testID+ "  userid-" +userID+ "):    socketStatus- NOT CONNECTED    isHost?- " +hostORguest;
+		return "*** Client( testid-" +testID+ "  userid-" +userID+ "):    socketStatus- CONNECTED " +clientSocket.getPort()+"/"+clientSocket.getLocalPort()+ "    isHost?- " +hostORguest;
 	}
 }

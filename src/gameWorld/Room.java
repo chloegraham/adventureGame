@@ -29,7 +29,6 @@ public class Room {
 	private Set<Boulder> boulders;
 	private Set<Spikes> spikes;
 	private Set<Player> players;
-	private Map<Point, Point> padsToDoors;
 	
 	public Room(String encodedRoom, int roomID) {
 		this.roomID = roomID;
@@ -67,7 +66,7 @@ public class Room {
 		
 		
 		
-		System.out.println(toString());
+		System.out.println("	Constructor-" + toStringConstructor());
 	}
 	
 	
@@ -354,39 +353,37 @@ public class Room {
 			}
 		}
 	}
-	
+
+	public String toStringConstructor() {
+		String str = toString();
+		
+		str += "\n";
+		
+		for (int y = 0; y < height; y++) {
+			str += "\n";
+			for (int x = 0; x < width; x++) {
+				str += tiles[y][x].toString();
+			}
+		}
+		
+		return str;
+	}
 	
 	@Override
 	public String toString() {
-		return "   Room( roomID- " + roomID + "):   #players:  " + players.size() + "    #boulders:  " + boulders.size();
-	}
-
-	
-	
-	
-	
-	public Map<Point,Point> getMapOfPads(){
-		return this.padsToDoors;
-	}
-
-	public Point getDoorFromPad(Point newLoc) {
+		String str = "   ROOM:   roomID:  " + roomID + "    #players:  " + players.size() + ".   IDs of those Players:  "; 
 		
-		//TODO: throw illegal argument if not present
-		Point door = this.padsToDoors.get(newLoc);
-		return door;
+		for (Player p : players)
+			str += p.getUserID() + ",  ";
+		
+		str += "   	#boulders:   " + boulders.size();
+		str += "	#spikes:   " + spikes.size();
+		
+		str += "\n";
+		
+		for (Player p : players)
+			str += p.toStringConstructor();
+		
+		return str;
 	}
-	
-	private void connectPadsToDoors(String[] points) {
-		padsToDoors = new HashMap<Point, Point>();
-		if(points.length == 1)return;
-		if(points.length %4 != 0) throw new IllegalArgumentException("A level has the wrong number of coordinates connecting pads to doors");
-		//for(int i = 0; i < points.length; i = i + 3){
-		int i = 0;
-		Point pressurePad = new Point(Integer.parseInt(points[i+1]), Integer.parseInt(points[i]));
-		Point door = new Point(Integer.parseInt(points[i+3]), Integer.parseInt(points[i+2]));
-		System.out.println("pressure pad: x = " + pressurePad.getX() + " y = " + pressurePad.getY());
-		System.out.println("door: x = " + door.getX() + " y = " + door.getY());
-		this.padsToDoors.put(pressurePad, door);
-		//}	
-}
 }

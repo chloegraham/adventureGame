@@ -59,15 +59,16 @@ public class Player extends Moveable{
 		str += stageID + "%";
 		str += roomID + "%";
 		str += keys + "%";
-		int boulder = hasBoulder() ? 1 : 0;
-		str += boulder + "%";
-		str += direction.ordinal() + "%";
 		
 		Point point = getLocation();
 		int x = point.x;
 		str += x + "%";
 		int y = point.y;
 		str += y + "%";
+		
+		str += direction.ordinal() + "%";
+		int boulder = hasBoulder() ? 1 : 0;
+		str += boulder + "%";
 		
 		str += Msgs.DELIM_PLAYER;
 		str += Msgs.DELIM_SPLIT;
@@ -160,7 +161,35 @@ public class Player extends Moveable{
 		setLocation(location);
 		return true;
 	}
-			
+	
+	public String toStringConstructor() {
+		String str = "		Constructor:  Player-";
+		
+		str += "  userID: ";
+		str += userID;
+		
+		str += "  stageID: ";
+		str += stageID;
+		
+		str += "  roomID: ";
+		str += roomID;
+		
+		str += "  location: ";
+		str += getLocation().x + ", ";
+		str += getLocation().y;
+		
+		str += "  direction: ";
+		str += direction.toString() + "%";
+		
+		str += "  #keys: ";
+		str += keys;
+		
+		str += "  hasBoulder: ";
+		str += hasBoulder();
+		
+		return str;
+	}
+	
 	
 	@Override
 	public String toString() {

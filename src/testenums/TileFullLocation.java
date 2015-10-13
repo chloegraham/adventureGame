@@ -2,12 +2,12 @@ package testenums;
 
 import java.awt.Point;
 
-public class Doors {
+public class TileFullLocation {
 	protected int stage;
 	protected int room;
 	protected Point location;
 	
-	public Doors(int stage, int room, Point location) {
+	public TileFullLocation(int stage, int room, Point location) {
 		this.stage = stage;
 		this.room = room;
 		this.location = location;
@@ -27,8 +27,8 @@ public class Doors {
 	
 	@Override
 	public boolean equals(Object o) {
-		if (o instanceof Doors) {
-			Doors d = (Doors) o;
+		if (o instanceof TileFullLocation) {
+			TileFullLocation d = (TileFullLocation) o;
 			if (d.stage == this.stage)
 				if (d.room == this.room)
 					if (d.location.equals(this.location))

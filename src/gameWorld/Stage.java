@@ -21,7 +21,7 @@ public class Stage {
 		for (String s : split)
 			rooms.add(new Room(s, index++));
 		
-		System.out.println(toString());
+		System.out.println("	Constructor-" + toString());
 	}
 	
 	
@@ -57,5 +57,17 @@ public class Stage {
 	public boolean removePlayerFromRoom(Player p) {
 		Room room = rooms.get(p.getRoomID());
 		return room.removePlayer(p);
+	}
+	
+	
+	
+	@Override
+	public String toString() {
+		String str = "   STAGE:   ID of this Stage:   " + stageID + "#Rooms:  " + rooms.size() + ".   IDs of those Rooms:  "; 
+		
+		for (Room r : rooms)
+			str += r.getRoomID() + ",  ";
+		
+		return str;
 	}
 }
