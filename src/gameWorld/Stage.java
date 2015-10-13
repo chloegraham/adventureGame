@@ -1,32 +1,49 @@
 package gameWorld;
 
 import java.awt.Point;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
+import movable.Player;
+import convertors.Msgs;
+
 public class Stage {
-	private Level[] level;
+	private int stageID;
+	private List<Room> rooms;
 	private Map<DoorAddress, DoorAddress> doorToDoor;	// Need to know about moving between Rooms(called Levels atm)
 	
-	
-	
 	public Stage(String encodedStage) {
-		/*
-		 * 
-		 * Decode the string in to Levels
-		 * 
-		 * 
-		 */
+		encodedStage = encodedStage.replace(Msgs.DELIM_STAGE, "");
+		String[] split = encodedStage.split(Msgs.DELIM_ROOM);
+		
+		rooms = new ArrayList<>();
+		
+		for (String s : split)
+			rooms.add(new Room(s));
+		
+		System.out.println(toString());
 	}
+	
+	
+	public int getStageID() { return stageID; }
+	public List<Room> getRooms() { return rooms; }
+	
 	
 	
 	
 	public String getEncodedStage() {
+		StringBuilder sb = new StringBuilder();
 		
-		/*
-		 * 	Encode this stage object as a String to pass to gameworld
-		 */
+		for (Room r : rooms) 
+			sb.append(r.getEncodedRoom());
 		
-		return "";
+		sb.append('@');
+		sb.append(stageID);
+		sb.append('@');
+		return sb.toString() +
+			   Msgs.DELIM_STAGE +
+			   Msgs.DELIM_SPLIT;
 	}
 	
 	

@@ -1,7 +1,11 @@
 package saveload;
 
+import gameWorld.Direction;
+
+import java.awt.Point;
 import java.io.FileOutputStream;
 import java.io.IOException;
+
 import javax.xml.parsers.*;
 import javax.xml.transform.*;
 import javax.xml.transform.dom.*;
@@ -9,6 +13,8 @@ import javax.xml.transform.stream.*;
 
 import org.xml.sax.*;
 import org.w3c.dom.*;
+
+import convertors.Msgs;
 
 public class XML {
 	
@@ -109,7 +115,7 @@ public class XML {
 		
 		String demo = level901 + level902 + level903 + playerOne + playerTwo;
 		
-		return demo;
+		return STAGE1 + "<Split>" + STAGE2 + "<Split>" + PLAYER1 + "<Split>" + PLAYER2 + "<Split>";
 	}
 	
 	private static String getTextValue(String def, Element doc, String tag) {
@@ -121,4 +127,65 @@ public class XML {
 	    }
 	    return value;
 	}
+	
+	
+	
+	/*
+	 *  Rooms for Stage 1 + Stage 1
+	 */
+	private static final String S1ROOM1 = "wwwweww%weeeeee%weeeeee%weeeeee%weeeeee%@" +
+										  "nnnnxnn%nnsnnnn%nnnnnnn%Mnnnnnn%ncnnnnn%@" +
+										  "nnnnnnn%nnnnnnn%nnnlnnn%nnnnnnn%nnnnnnn%@" +
+										  "<Room>";
+	
+	private static final String S1ROOM2 = "wwwweww%weeeeee%weeeeee%weeeeee%weeeeee%@" +
+			  							  "nnnnxnn%nnsnnnn%nnnnnnn%Mnnnnnn%ncnnnnn%@" +
+			  							  "nnnnnnn%nnnnnnn%nnnlnnn%nnnnnnn%nnnnnnn%@" +
+			  							  "<Room>";
+	
+	private static final String STAGE1 = S1ROOM1 + S1ROOM2 + "<Stage>";
+	
+	
+	
+	/*
+	 *  Rooms for Stage 2 + Stage 2
+	 */
+	private static final String S2ROOM1 = "wwwweww%weeeeee%weeeeee%weeeeee%weeeeee%@" +
+			  							  "nnnnxnn%nnsnnnn%nnnnnnn%Mnnnnnn%ncnnnnn%@" +
+			  							  "nnnnnnn%nnnnnnn%nnnlnnn%nnnnnnn%nnnnnnn%@" +
+			  							  "<Room>";
+
+	private static final String S2ROOM2 = "wwwweww%weeeeee%weeeeee%weeeeee%weeeeee%@" +
+										  "nnnnxnn%nnsnnnn%nnnnnnn%Mnnnnnn%ncnnnnn%@" +
+										  "nnnnnnn%nnnnnnn%nnnlnnn%nnnnnnn%nnnnnnn%@" +
+										  "<Room>";
+
+	private static final String STAGE2 = S2ROOM1 + S2ROOM2 + "<Stage>";
+	
+	
+	
+	/*
+	 *  Players
+	 */
+	private static final String PLAYER1 = Msgs.PLAYER_ONE + "%" +			// UserID
+										  "000%" +							// StageID    Current Stage ('000' default start) 
+										  "000%" +							// RoomID
+										  "3%" +							// Point.x
+										  "3%" + 							// Point.y
+										  "1%" +							// Facing Direction
+										  "0%" +							// # of Keys Player has
+										  "0%" +							// Holding Boulder 0=false, 1=true
+										  "@" +
+										  "<Player>";
+	
+	private static final String PLAYER2 = Msgs.PLAYER_TWO + "%" +			// UserID
+										  "000%" +							// StageID    Current Stage ('000' default start) 
+										  "000%" +							// RoomID
+										  "3%" +							// Point.x
+										  "3%" + 							// Point.y
+										  "1%" +							// Facing Direction
+										  "0%" +							// # of Keys Player has
+										  "0%" +							// Holding Boulder 0=false, 1=true
+										  "@" +
+										  "<Player>";
 }

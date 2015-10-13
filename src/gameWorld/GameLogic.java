@@ -1,6 +1,7 @@
 package gameWorld;
 
 import java.awt.Point;
+import java.util.List;
 
 import movable.Boulder;
 import movable.Player;
@@ -16,35 +17,34 @@ import userinterface.Action.Actions;
 import convertors.Msgs;
 
 public class GameLogic {
-	private Level[] levels;
-	private Player[] players;
+	private List<Stage> stages;
+	private List<Player> players;
 	
-	public GameLogic(Level[] levels, Player[] players){
-		this.levels = levels;
+	public GameLogic(List<Stage> stages, List<Player> players){
+		this.stages = stages;
 		this.players = players;
 	}
 	
 	
 	public String handleAction(int ordinal, int userID) {
 		Player player = null;
-		Level level = null;
+		Stage stage = null;
+		Room room = null;
 		
 		
-		if (userID == 101)
-			player = players[0];
-		else if (userID == 202)
-			player = players[1];
-		else
-			throw new IllegalArgumentException();
+		for (Player p : players)
+			if (userID == p.getUserID())
+				player = p;
 		
 		
-		for (Level l : levels)
-			if (l.getLevelID() == player.getLevelID())
-				level = l;
+		for (Stage s : stages)
+			if (s.getStageID() == player.getRoomID())
+				stage = s;
 		
 		
-		if (level == null)
-			throw new IllegalArgumentException();
+		for (Room r : stage.getRooms())
+			if (r.getRoomID() == player.getRoomID())
+				room = s;
 		
 		
 		String message = "";
@@ -54,37 +54,37 @@ public class GameLogic {
 		if(Actions.NORTH.ordinal() == ordinal) {
 			player.setDirection(Direction.NORTH);
 			newLocation = new Point(current.x, current.y-1);
-			boolean success = move(player, level, newLocation);
+			boolean success = move(player, room, newLocation);
 			message = Msgs.moveMsg(player.getDirection(), success);
 			
 		}
 		else if (Actions.EAST.ordinal() == ordinal) {
 			player.setDirection(Direction.EAST);
 			newLocation = new Point(current.x+1, current.y);
-			boolean success = move(player, level, newLocation);
+			boolean success = move(player, room, newLocation);
 			message = Msgs.moveMsg(player.getDirection(), success);
 			
 		}
 		else if (Actions.SOUTH.ordinal() == ordinal) {
 			player.setDirection(Direction.SOUTH);
 			newLocation = new Point(current.x, current.y+1);
-			boolean success = move(player, level, newLocation);
+			boolean success = move(player, room, newLocation);
 			message = Msgs.moveMsg(player.getDirection(), success);
 			
 		}
 		else if (Actions.WEST.ordinal() == ordinal) {
 			player.setDirection(Direction.WEST);
 			newLocation = new Point(current.x-1, current.y);
-			boolean success = move(player, level, newLocation);
+			boolean success = move(player, room, newLocation);
 			message = Msgs.moveMsg(player.getDirection(), success);
 			
 		}
 		else if (Actions.INTERACT.ordinal() == ordinal) { 
-			message = interact(player, level, current);
+			message = interact(player, room, current);
 			
 		}
 		else if (Actions.INSPECT.ordinal() == ordinal) { 
-			message = inspect(player, level, current);
+			message = inspect(player, room, current);
 			
 			
 		}
@@ -101,21 +101,21 @@ public class GameLogic {
 		return message;
 	}
 	
-	private boolean move(Player player, Level level, Point newLoc) {
+	private boolean move(Player player, Room room, Point newLoc) {
 		
 		// Check for out of bounds
-		if (newLoc.y < 0 || newLoc.y > level.getTiles().length-1 || newLoc.x < 0 || newLoc.x > level.getTiles()[0].length-1)
+		if (newLoc.y < 0 || newLoc.y > room.getTiles().length-1 || newLoc.x < 0 || newLoc.x > room.getTiles()[0].length-1)
 			return false;
 		
 		
 		
-		Tile tile = level.getTiles()[newLoc.y][newLoc.x];
+		Tile tile = room.getTiles()[newLoc.y][newLoc.x];
 		Point currentTile =  player.getLocation();
 		
 		
 		
 		// Check Boulders because Players can't move on to Boulders
-		for(Boulder b: level.getBoulders())
+		for(Boulder b: room.getBoulders())
 			if(b.getLocation().equals(newLoc))
 				return false;
 			
@@ -128,17 +128,16 @@ public class GameLogic {
 		
 		
 		
-		if(level.getTiles()[currentTile.y][currentTile.x] instanceof PressurePad){
-			PressurePad pad = (PressurePad) level.getTiles()[currentTile.y][currentTile.x];
+		if(room.getTiles()[currentTile.y][currentTile.x] instanceof PressurePad){
+			PressurePad pad = (PressurePad) room.getTiles()[currentTile.y][currentTile.x];
 			pad.activate();
-			Point doorPoint = level.getDoorFromPad(player.getLocation());
-			Door doorTile = (Door)level.getTiles()[doorPoint.y][doorPoint.x];	
+			Point doorPoint = room.getDoorFromPad(player.getLocation());
+			Door doorTile = (Door)room.getTiles()[doorPoint.y][doorPoint.x];	
 			doorTile.lock();
 			//if there's a player in the doorway when getting off the activated pressure pad then kill them
 			for(Player p: this.players){
 				if(p.getLocation().equals(doorPoint)){
-					//TODO: kill player
-					p.murder();
+					
 					System.out.println("you dead");
 				}
 			}
@@ -178,9 +177,9 @@ public class GameLogic {
 		if (tile instanceof PressurePad){
 			PressurePad pad = (PressurePad) tile;
 			pad.activate();
-			Point door = level.getDoorFromPad(newLoc);
+			Point door = room.getDoorFromPad(newLoc);
 			System.out.println("door point = " + door);
-			Door doorTile = (Door)level.getTiles()[door.y][door.x];	
+			Door doorTile = (Door)room.getTiles()[door.y][door.x];	
 			doorTile.unlock();
 		}
 		
@@ -193,7 +192,7 @@ public class GameLogic {
 
 
 
-	private String interact(Player player, Level level, Point now) {
+	private String interact(Player player, Room room, Point now) {
 		
 		Direction direction = player.getDirection();
 		Point interactWith;
@@ -217,12 +216,12 @@ public class GameLogic {
 		
 		
 		
-		if (interactWith.y < 0 || interactWith.y > level.getTiles().length-1 || interactWith.x < 0 || interactWith.x > level.getTiles()[0].length-1)
+		if (interactWith.y < 0 || interactWith.y > room.getTiles().length-1 || interactWith.x < 0 || interactWith.x > room.getTiles()[0].length-1)
 			return "temp - you are trying to interact with a tile outside the bounds of the game.";	
 		
 		
 		
-		Tile tile = level.getTiles()[interactWith.y][interactWith.x];	
+		Tile tile = room.getTiles()[interactWith.y][interactWith.x];	
 		
 		/*
 		 *  Chest interaction or inspection code & messages
@@ -302,7 +301,7 @@ public class GameLogic {
 		if (!player.hasBoulder()) {
 			
 			// facingBoulder() true = There is Boulder in front of player (which is now removed from the list of boulders in the level)
-			boolean facingBoulder = level.removeBoulder(new Boulder(interactWith));
+			boolean facingBoulder = room.removeBoulder(new Boulder(interactWith));
 			// If Boulder there pick it up
 			// If no Boulder this section of code is irrelevant
 			if(facingBoulder) {
@@ -314,13 +313,13 @@ public class GameLogic {
 		}
 		else if (player.hasBoulder()) {
 			// If there's a boulder in front of you, you can't drop your current boulder or pick another
-			boolean facingBoulder = level.containsBoulder(new Boulder(interactWith));
+			boolean facingBoulder = room.containsBoulder(new Boulder(interactWith));
 
 			// Check if there's a player present on the tile you're trying to drop the boulder onto. If Player there you can't drop.
-			boolean facingPlayer = level.playerAt(interactWith);
+			boolean facingPlayer = room.playerAt(interactWith);
 				
 			if (tile instanceof PutDownOnable) {
-				level.addBoulder(new Boulder(interactWith));
+				room.addBoulder(new Boulder(interactWith));
 				player.dropBoulder();
 				
 				if (tile instanceof PressurePad) 
@@ -343,7 +342,7 @@ public class GameLogic {
 	
 
 	
-	private String inspect(Player player, Level level, Point now) {
+	private String inspect(Player player, Room room, Point now) {
 		
 		Direction direction = player.getDirection();
 		Point interactWith;
@@ -365,11 +364,11 @@ public class GameLogic {
 				throw new IllegalArgumentException();
 		}
 		
-		if (interactWith.y < 0 || interactWith.y > level.getTiles().length-1 || interactWith.x < 0 || interactWith.x > level.getTiles()[0].length-1){
+		if (interactWith.y < 0 || interactWith.y > room.getTiles().length-1 || interactWith.x < 0 || interactWith.x > room.getTiles()[0].length-1){
 			return "Why are you trying to inspect a tile outside the bounds of the game? Jesus.";
 		}	
 		
-		Tile tile = level.getTiles()[interactWith.y][interactWith.x];
+		Tile tile = room.getTiles()[interactWith.y][interactWith.x];
 		
 //		if(tile instanceof Furniture && !(tile instanceof PressurePad)){	//doesn't include pressure pad
 //			return Msgs.inspectUnmovable((Furniture) tile);
@@ -406,12 +405,12 @@ public class GameLogic {
 	 */
 	private boolean moveNextDoor(Player p) {
 		// what level is the player on?
-		int currentLvl = p.getLevelID();
+		int currentLvl = p.getRoomID();
 		
 		// what index is the current lvl?
 		int indexCurrentLvl = 8989;
-		for (int i = 0; i != levels.length; i++) {
-			if (levels[i].getLevelID() == currentLvl) {
+		for (int i = 0; i != rooms.length; i++) {
+			if (rooms[i].getRoomID() == currentLvl) {
 				if (indexCurrentLvl == 8989)
 					indexCurrentLvl = i;
 				else
@@ -420,27 +419,27 @@ public class GameLogic {
 		}
 		
 		// is there another level after indexCurrentLvl?
-		if (indexCurrentLvl >= levels.length-1)
+		if (indexCurrentLvl >= rooms.length-1)
 			return false;
 			
 		int indexNextLvl = indexCurrentLvl+1;
-		Level lvl = levels[indexNextLvl];
+		Room lvl = rooms[indexNextLvl];
 		int nextLvlID = lvl.getLevelID();
 		p.setLevelID(nextLvlID, lvl.getPrev());
-		levels[indexCurrentLvl].removePlayer(p);
-		levels[indexNextLvl].addPlayer(p);
+		rooms[indexCurrentLvl].removePlayer(p);
+		rooms[indexNextLvl].addPlayer(p);
 		
 		return true;
 	}
 	
 	private boolean movePrevDoor(Player p) {
 		// what level is the player on?
-		int currentLvl = p.getLevelID();
+		int currentLvl = p.getRoomID();
 		
 		// what index is the current lvl?
 		int indexCurrentLvl = 8989;
-		for (int i = 0; i != levels.length; i++) {
-			if (levels[i].getLevelID() == currentLvl) {
+		for (int i = 0; i != rooms.length; i++) {
+			if (rooms[i].getRoomID() == currentLvl) {
 				if (indexCurrentLvl == 8989) {
 					indexCurrentLvl = i;
 				} else {
@@ -454,17 +453,17 @@ public class GameLogic {
 			return false;
 			
 		int indexPrevLvl = indexCurrentLvl-1;
-		Level lvl = levels[indexPrevLvl];
+		Room lvl = rooms[indexPrevLvl];
 		int prevLvlID = lvl.getLevelID();
 		p.setLevelID(prevLvlID, lvl.getNext());
-		levels[indexCurrentLvl].removePlayer(p);
-		levels[indexPrevLvl].addPlayer(p);
+		rooms[indexCurrentLvl].removePlayer(p);
+		rooms[indexPrevLvl].addPlayer(p);
 		
 		return true;
 	}
 	
 	public void activateSpikes() {
-		for (Level l : levels) {
+		for (Room l : rooms) {
 			if (l.containsPlayer()) {
 				l.activateSpikes();
 			}

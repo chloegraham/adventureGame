@@ -3,41 +3,29 @@ package movable;
 import gameWorld.Direction;
 
 import java.awt.Point;
-import java.util.ArrayList;
-import java.util.List;
 
 import convertors.Msgs;
 
 public class Player extends Moveable{
-
 	private int userID;
-	private int levelID;
-	private Direction direction = Direction.NORTH; 	//String representing which direction player is facing
-	private List<Item> inventory = new ArrayList<Item>();
+	private int stageID;
+	private int roomID;
+	private Direction direction; 	//String representing which direction player is facing
+	private int keys;
 	private boolean hasBoulder;
-	private boolean dead;
-	
-	
-	/*
-	 *  Basic constructor
-	 */
-	public Player(Point location) {
-		super(location);
-		hasBoulder = false;
-		this.dead = false;
-	}
 	
 	
 	
 	/*
 	 *  For opening a Saved/Stored Game
 	 */
-	public Player(int userID, int levelID, int keyAmount, boolean boulder, Direction dir, Point point) {
-		super(point);
+	public Player(int userID, int stageID, int roomID, Point location, Direction dir, int keyAmount, boolean boulder) {
+		super(location);
 		this.userID = userID;
-		this.levelID = levelID;
+		this.stageID = stageID;
+		this.roomID = roomID;
 		this.direction = dir;
-		createKeys(keyAmount);
+		this.keys = keyAmount;
 		this.hasBoulder = boulder;
 	}
 
@@ -51,15 +39,17 @@ public class Player extends Moveable{
 		String[] parts = encodedPlayer.split("%");
 		
 		userID = Integer.parseInt(parts[0]);
-		levelID = Integer.parseInt(parts[1]);
-		int keyAmount = Integer.parseInt(parts[2]);
-		createKeys(keyAmount);
-		hasBoulder = Integer.parseInt(parts[3]) == 1;
-		direction = Direction.getMsg( Integer.parseInt(parts[4]) );
+		stageID = Integer.parseInt(parts[1]);
+		roomID = Integer.parseInt(parts[2]);
 		
-		int x = Integer.parseInt(parts[5]);
-		int y = Integer.parseInt(parts[6]);
+		int x = Integer.parseInt(parts[6]);
+		int y = Integer.parseInt(parts[7]);
 		Point point = new Point(x, y);
+		direction = Direction.getMsg( Integer.parseInt(parts[5]) );
+		
+		keys = Integer.parseInt(parts[3]);
+		hasBoulder = Integer.parseInt(parts[4]) == 1;
+		
 		setLocation(point);
 	}
 	
@@ -69,7 +59,8 @@ public class Player extends Moveable{
 	 *  Get UserID & Get LevelID
 	 */
 	public int getUserID() { return this.userID; }
-	public int getLevelID() { return levelID; }
+	public int getStageID() { return stageID; }
+	public int getRoomID() { return roomID; }
 	
 	
 	
@@ -80,8 +71,9 @@ public class Player extends Moveable{
 		String str = "";
 		
 		str += userID + "%";
-		str += levelID + "%";
-		str += getNumberOfKeys() + "%";
+		str += stageID + "%";
+		str += roomID + "%";
+		str += keys + "%";
 		int boulder = hasBoulder() ? 1 : 0;
 		str += boulder + "%";
 		str += direction.ordinal() + "%";
@@ -113,14 +105,12 @@ public class Player extends Moveable{
 	 *  Key
 	 */
 	public boolean addKey() {
-		return inventory.add(new Key());
+		keys = keys+1;
+		return true;
 	}
 	
 	public boolean hasKey() {
-		for(Item i: inventory)
-			if(i instanceof Key)
-				return true;
-		return false;
+		return keys > 0;
 	}
 	
 	public boolean useKey(){
@@ -131,27 +121,11 @@ public class Player extends Moveable{
 	}
 	
 	private void removeKey() {
-		for(Item i: inventory) {
-			if(i instanceof Key) {
-				inventory.remove(i);
-				return;
-			}
-		}
-		throw new IllegalArgumentException("Should be impossible to remove a key if Player has no keys.");
-	}
-	
-	public void createKeys(int amount){
-		for(int i = 0; i < amount; i++){
-			inventory.add(new Key());
-		}
+		keys = keys-1;
 	}
 	
 	public int getNumberOfKeys() {
-		int amount = 0;
-		for(Item i: inventory)
-			if(i instanceof Key)
-				amount++;	
-		return amount;
+		return keys;
 	}
 
 	
@@ -176,18 +150,11 @@ public class Player extends Moveable{
 	public boolean hasBoulder(){
 		return hasBoulder;
 	}
+
 	
-	/*
-	 *  Change Level
-	 */
-	public void setLevelID(int lvlID, Point loc) {
-		levelID = lvlID;
-		setLocation(loc);
-	}	
 	
 	@Override
 	public String toString() {
-		if(dead) return "0";
 		switch (this.direction) {
 		case NORTH:
 			if(hasBoulder) return "I";
@@ -198,15 +165,11 @@ public class Player extends Moveable{
 		case EAST:
 			if(hasBoulder) return "L";
 			else return "l";
-		default:
+		case WEST:
 			if(hasBoulder) return "J";
 			else return "j";
+		default:
+			throw new IllegalArgumentException();
 		}
-	}
-
-
-
-	public void murder() {
-		this.dead = true;
 	}
 }

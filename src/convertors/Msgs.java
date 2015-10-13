@@ -11,6 +11,8 @@ public class Msgs {
 	public static final int PLAYER_TWO = 202;
 	
 	public static final String DELIM_SPLIT = "<Split>";
+	public static final String DELIM_STAGE = "<Stage>";
+	public static final String DELIM_ROOM = "<Room>";
 	public static final String DELIM_MSG = "<Msg>";
 	public static final String DELIM_PLAYER = "<Player>";
 	public static final String DELIM_LEVEL = "<Level>";
@@ -51,6 +53,7 @@ public class Msgs {
 	private static final String INSPECT_PLAYER = "HI FRIEND";
 	private static final String INSPECT_PLAYER_WITH_BOULDER = "HI FRIEND WITH BOULDER";
 	private static final String INSPECT_PLAYER_ON_PAD = "HI FRIEND ON PRESSURE PAD";
+	
 	
 	
 	

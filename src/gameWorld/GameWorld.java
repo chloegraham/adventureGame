@@ -1,105 +1,102 @@
 package gameWorld;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import movable.Player;
 import convertors.Msgs;
 
 public class GameWorld {
 	private GameLogic logic;
-	private Level[] levels;
-	private Player[] players;
+	private List<Stage> stages;
+	private List<Player> players;
 	
 	public GameWorld(String encodedGameWorld){
 		String[] split = encodedGameWorld.split(Msgs.DELIM_SPLIT);
 		
-		int levelAmount = 0;
-		int playerAmount = 0;
+		stages = new ArrayList<>();
+		players = new ArrayList<>();
 		
-		for (String s : split) {
-			if (s.contains(Msgs.DELIM_LEVEL)) {
-				levelAmount++;
-			}
-			else if (s.contains(Msgs.DELIM_PLAYER)) {
-				playerAmount++;
-			}
-			else {
-				throw new IllegalArgumentException();
-			}
-		}
-		
-		levels = new Level[levelAmount];
-		players = new Player[playerAmount];
-		
-		int levelIndex = 0;
-		int playerIndex = 0;
 		for (String s  : split) {
-			if (s.contains(Msgs.DELIM_LEVEL)) {
-				String encodedLevel = s;
-				levels[levelIndex++] = new Level(encodedLevel);
+			if (s.contains(Msgs.DELIM_STAGE)) {
+				stages.add(new Stage(s));
 			}
 			else if (s.contains(Msgs.DELIM_PLAYER)) {
-				String encodedPlayer = s;
-				players[playerIndex++] = new Player(encodedPlayer);
-			}
-			else {
-				throw new IllegalArgumentException();
+				players.add(new Player(s));
 			}
 		}
 		
-		int playerOnelvlID = players[0].getLevelID();
-		int playerTwolvlID = players[1].getLevelID();
-		for (Level l : levels) {
-			if (l.getLevelID() == playerOnelvlID)
-				l.addPlayer(players[0]);
-			if (l.getLevelID() == playerTwolvlID)
-				l.addPlayer(players[1]);
-		}
-			
-		logic = new GameLogic(levels, players);
-		
+		logic = new GameLogic(stages, players);
 		System.out.println(toString());
 	}
 	
+	
+	
+	/*
+	 * 
+	 */
 	public GameLogic getLogic() { return logic; }
 	
 	
+	
+	/*
+	 * 
+	 */
 	public String getEncodedGameWorld(int userID){
-		String str = "";
-		
-		// Find player using userid
+		// find player with given userID
 		Player currentPlayer = null;
 		for (Player p : players)
 			if (p.getUserID() == userID)
 				currentPlayer = p;
 				
-		if(currentPlayer == null)
-			throw new IllegalArgumentException("Passed in userID doesn't belong to a player");
-
-		// Find level using players levelid
-		int levelID = currentPlayer.getLevelID();
+		assert(currentPlayer != null);
 		
-		// return the encoded level which the player is on
-		for(int i = 0; i < levels.length; i++)
-			if(levels[i].getLevelID() == levelID)
-				return str += levels[i].getEncodedLevel() + logic.bouldersKeysLocation(userID);
-			
-		throw new IllegalArgumentException("No such level that matches player's level");
+		
+		// get the stage player is in
+		int stageID = currentPlayer.getStageID();
+		Stage stage = null;
+		for (Stage s : stages)
+			if (s.getStageID() == stageID)
+				stage = s;
+		
+		assert(stage != null);
+		
+		
+		// get the room of given stage player is in
+		int roomID = currentPlayer.getRoomID();
+		Room room = null;
+		for (Room r : stage.getRooms())
+			if (r.getRoomID() == roomID)
+				room = r;
+		
+		assert(room != null);
+		
+		// return the encoded room which the player is on
+		String encodedRoom = room.getEncodedRoom();
+		encodedRoom += logic.bouldersKeysLocation(userID);
+		
+		return encodedRoom;
 	}
 	
 	
+	
+	/*
+	 * 
+	 */
 	public String getEncodedGameSave(){
-		String str = "";
+		StringBuilder sb = new StringBuilder();
 		
-		for (int i = 0; i != levels.length; i++)
-			str += levels[i].getEncodedLevel();
+		for (Stage s : stages) 
+			sb.append(s.getEncodedStage());
 		
-		for (int i = 0; i != players.length; i++)
-			str += players[i].getEncodedPlayer();
+		for (Player p : players)
+			sb.append(p.getEncodedPlayer());
 		
-		return str;
+		return sb.toString();
 	}
 	
 	@Override
 	public String toString() {
-		return "   GameWorld:   #levels:  " + levels.length + "   #players:  " + players.length;
+		return "   GameWorld:   #stages:  " + stages.size() + "   #players:  " + players.size();
 	}
 }
