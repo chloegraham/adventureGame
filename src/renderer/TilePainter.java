@@ -5,9 +5,11 @@ import java.awt.*;
 /**
  * Created by Eliot on 21/09/15.
  * 
- * This class only does one thing, you give it a graphics context, an X and a Y, and it paints a tile onto that spot.
+ * Mercy on ye who enter this class
  * 
- * This class holds all the info about how to paint every tile. Everything is draw manually, we don't use any images.
+ * This class only does one thing, you give it a graphics context, an X and a Y, and it paints a tile onto that spot.
+ * This class holds all the info about how to paint every tile in the game. Everything is draw manually, we don't use
+ * any images. Its not a complex class, its just long, and verbose.
  */
 public class TilePainter {
     private int tilesize;
@@ -306,6 +308,17 @@ protected void drawCharachterWestWithBoulder(Graphics2D g2, int x, int y){
 protected void drawCharachterEastWithBoulder(Graphics2D g2, int x, int y){
 	drawCharachterEast(g2, x, y);
 	drawTinyBoulder(g2, x, y - tilesize / 8);
+}
+
+protected void drawGoalTile(Graphics2D g2, int x, int y){
+    int xPoints[] = {x, x + (tilesize / 2), x, x - (tilesize / 2)};
+    int yPoints[] = {y, y + (tilesize / 4), y + (tilesize / 2), y + (tilesize / 4)};
+
+    g2.setPaint(new Color(79, 255, 106));
+    g2.fillPolygon(xPoints, yPoints, 4);
+
+    g2.setPaint(new Color(50, 50, 50));
+    g2.drawPolygon(xPoints, yPoints, 4);
 }
 
 

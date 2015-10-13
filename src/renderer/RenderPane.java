@@ -219,7 +219,7 @@ public class RenderPane extends JPanel {
 		    case 'C' : tilePainter.drawOpenedChest(g2, isoTile.x, isoTile.y); break;
 		    case 'd' : tilePainter.drawDoor(g2, isoTile.x, isoTile.y); break;
 		    case 'D' : tilePainter.drawOpenDoor(g2, isoTile.x, isoTile.y); break;
-		    case 'M' : tilePainter.drawOpenDoor(g2, isoTile.x, isoTile.y); break;
+		    case 'M' : tilePainter.drawGoalTile(g2, isoTile.x, isoTile.y); break;
 		    case 'x' : tilePainter.drawDoor(g2, isoTile.x, isoTile.y); break;
 		    case 'X' : tilePainter.drawOpenDoor(g2, isoTile.x, isoTile.y); break;
 		    case 'z' : tilePainter.drawPressurePad(g2, isoTile.x, isoTile.y); break;

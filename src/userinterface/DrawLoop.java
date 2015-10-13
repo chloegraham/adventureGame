@@ -4,6 +4,11 @@ import java.util.TimerTask;
 
 import renderer.RenderPane;
 
+/**
+ * Draw loop for animations
+ * @author Eliot
+ *
+ */
 public class DrawLoop extends TimerTask {
 	private RenderPane graphics;
 	
