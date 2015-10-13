@@ -17,14 +17,17 @@ public class GameWorld {
 		stages = new ArrayList<>();
 		players = new ArrayList<>();
 		
+		int index = 0;
 		for (String s  : split) {
 			if (s.contains(Msgs.DELIM_STAGE)) {
-				stages.add(new Stage(s));
+				stages.add(new Stage(s, index++));
 			}
 			else if (s.contains(Msgs.DELIM_PLAYER)) {
 				players.add(new Player(s));
 			}
 		}
+		
+		addPlayersToRooms();
 		
 		logic = new GameLogic(stages, players);
 		System.out.println(toString());
@@ -32,6 +35,15 @@ public class GameWorld {
 	
 	
 	
+	private void addPlayersToRooms() {
+		for (Player p : players) {
+			Stage stage = stages.get(p.getStageID());
+			stage.addPlayerToRoom(p);
+		}
+	}
+
+
+
 	/*
 	 * 
 	 */

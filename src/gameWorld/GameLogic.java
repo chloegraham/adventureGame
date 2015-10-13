@@ -7,7 +7,6 @@ import movable.Boulder;
 import movable.Player;
 import tiles.Chest;
 import tiles.Door;
-import tiles.EmptyTile;
 import tiles.LevelDoor;
 import tiles.Passable;
 import tiles.PressurePad;
@@ -27,24 +26,31 @@ public class GameLogic {
 	
 	
 	public String handleAction(int ordinal, int userID) {
+		// absdjkfasj
 		Player player = null;
-		Stage stage = null;
-		Room room = null;
-		
-		
 		for (Player p : players)
 			if (userID == p.getUserID())
 				player = p;
 		
+		assert(player != null);
 		
+		
+		// ansjfknsadjkf
+		Stage stage = null;
 		for (Stage s : stages)
 			if (s.getStageID() == player.getRoomID())
 				stage = s;
 		
+		assert(stage != null);
 		
+		
+		// sajndfjaskd
+		Room room = null;
 		for (Room r : stage.getRooms())
 			if (r.getRoomID() == player.getRoomID())
-				room = s;
+				room = r;
+		
+		assert(room != null);
 		
 		
 		String message = "";
@@ -98,60 +104,64 @@ public class GameLogic {
 			throw new IllegalArgumentException("GameLogic:  received an unexpected ordinal. It might be 'Inspect' which we have't coded yet.");
 		}
 		
+		/*
+		 *  // TODO check player is dead here??
+		 */
+		
 		return message;
 	}
 	
-	private boolean move(Player player, Room room, Point newLoc) {
+	private boolean move(Player player, Room room, Point nextLoc) {
 		
 		// Check for out of bounds
-		if (newLoc.y < 0 || newLoc.y > room.getTiles().length-1 || newLoc.x < 0 || newLoc.x > room.getTiles()[0].length-1)
+		if (nextLoc.y < 0 || nextLoc.y > room.getTiles().length-1 || nextLoc.x < 0 || nextLoc.x > room.getTiles()[0].length-1)
 			return false;
 		
 		
 		
-		Tile tile = room.getTiles()[newLoc.y][newLoc.x];
-		Point currentTile =  player.getLocation();
+		Tile nextTile = room.getTiles()[nextLoc.y][nextLoc.x];
+		Point currLoc =  player.getLocation();
+		Tile currTile = room.getTiles()[currLoc.y][currLoc.x];
+		
 		
 		
 		
 		// Check Boulders because Players can't move on to Boulders
 		for(Boulder b: room.getBoulders())
-			if(b.getLocation().equals(newLoc))
+			if(b.getLocation().equals(nextLoc))
 				return false;
 			
 		
 		
 		// If Tile is not type Passable = can't move on to.
 		// If Tile is type Passable but state is !isPassable() = can't move on to.
-		if (!(tile instanceof Passable) || (tile instanceof Passable && !((Passable)tile).isPassable()))
+		if (!(nextTile instanceof Passable) || (nextTile instanceof Passable && !((Passable)nextTile).isPassable()))
 			return false;
 		
 		
 		
-		if(room.getTiles()[currentTile.y][currentTile.x] instanceof PressurePad){
-			PressurePad pad = (PressurePad) room.getTiles()[currentTile.y][currentTile.x];
-			pad.activate();
-			Point doorPoint = room.getDoorFromPad(player.getLocation());
-			Door doorTile = (Door)room.getTiles()[doorPoint.y][doorPoint.x];	
-			doorTile.lock();
-			//if there's a player in the doorway when getting off the activated pressure pad then kill them
-			for(Player p: this.players){
-				if(p.getLocation().equals(doorPoint)){
-					
-					System.out.println("you dead");
-				}
-			}
+		if(currTile instanceof PressurePad){
+			((PressurePad)currTile).activate();
+			
+//			Point doorPoint = room.getDoorFromPad(player.getLocation());
+//			Door doorTile = (Door)room.getTiles()[doorPoint.y][doorPoint.x];
+//			
+//			doorTile.lock();
+//			
+//			//if there's a player in the doorway when getting off the activated pressure pad then kill them
+//			for(Player p : players){
+//				if(p.getLocation().equals(doorPoint)){
+//					
+//					System.out.println("you dead");
+//				}
+//			}
 		}
 		
 		
 		
 		// If Tile is a LevelDoor
 		// The Passable check above ensure LevelDoor is also Passable
-		if (tile instanceof LevelDoor) {
-			moveNextLevel();
-			System.out.println("--------- MOVED TO THE NEXT LEVEL");
-			return true;
-			
+		if (nextTile instanceof LevelDoor) {
 			/*
 			 *  I could instead write a method to change the New Location for tidier code
 			 */
@@ -162,11 +172,7 @@ public class GameLogic {
 		
 		// If Tile is a Door
 		// The Passable check above ensure LevelDoor is also Passable
-		if (tile instanceof Door) {
-			moveNextDoor(player);
-			System.out.println("--------- TRANSFER TO ANOTHER DOOR");
-			return true;
-			
+		if (nextTile instanceof Door) {
 			/*
 			 *  I could instead write a method to change the New Location for tidier code
 			 */
@@ -174,19 +180,19 @@ public class GameLogic {
 
 
 
-		if (tile instanceof PressurePad){
-			PressurePad pad = (PressurePad) tile;
-			pad.activate();
-			Point door = room.getDoorFromPad(newLoc);
-			System.out.println("door point = " + door);
-			Door doorTile = (Door)room.getTiles()[door.y][door.x];	
-			doorTile.unlock();
+		if (nextTile instanceof PressurePad){
+			((PressurePad)nextTile).activate();
+			
+//			Point doorLoc = room.getDoorFromPad(nextLoc);
+//			Door doorTile = (Door)room.getTiles()[doorLoc.y][doorLoc.x];	
+//			
+//			doorTile.unlock();
 		}
 		
 		
 		
 		// If made it to here return true because move is valid.
-		return player.setLocation(newLoc);		
+		return player.setLocation(nextLoc);		
 	}	
 
 
@@ -400,103 +406,28 @@ public class GameLogic {
 	}
 
 	
-	/*
-	 *  // TODO need to add some sort of message for changing level
-	 */
-	private boolean moveNextDoor(Player p) {
-		// what level is the player on?
-		int currentLvl = p.getRoomID();
-		
-		// what index is the current lvl?
-		int indexCurrentLvl = 8989;
-		for (int i = 0; i != rooms.length; i++) {
-			if (rooms[i].getRoomID() == currentLvl) {
-				if (indexCurrentLvl == 8989)
-					indexCurrentLvl = i;
-				else
-					throw new IllegalArgumentException("Found a bug. There shouldn't be two levels with the same levelID.");
-			}
-		}
-		
-		// is there another level after indexCurrentLvl?
-		if (indexCurrentLvl >= rooms.length-1)
-			return false;
-			
-		int indexNextLvl = indexCurrentLvl+1;
-		Room lvl = rooms[indexNextLvl];
-		int nextLvlID = lvl.getLevelID();
-		p.setLevelID(nextLvlID, lvl.getPrev());
-		rooms[indexCurrentLvl].removePlayer(p);
-		rooms[indexNextLvl].addPlayer(p);
-		
-		return true;
-	}
-	
-	private boolean movePrevDoor(Player p) {
-		// what level is the player on?
-		int currentLvl = p.getRoomID();
-		
-		// what index is the current lvl?
-		int indexCurrentLvl = 8989;
-		for (int i = 0; i != rooms.length; i++) {
-			if (rooms[i].getRoomID() == currentLvl) {
-				if (indexCurrentLvl == 8989) {
-					indexCurrentLvl = i;
-				} else {
-					throw new IllegalArgumentException("Found a bug. There shouldn't be two levels with the same levelID.");
-				}
-			}
-		}
-		
-		// is there another level after indexCurrentLvl?
-		if (indexCurrentLvl <= 0)
-			return false;
-			
-		int indexPrevLvl = indexCurrentLvl-1;
-		Room lvl = rooms[indexPrevLvl];
-		int prevLvlID = lvl.getLevelID();
-		p.setLevelID(prevLvlID, lvl.getNext());
-		rooms[indexCurrentLvl].removePlayer(p);
-		rooms[indexPrevLvl].addPlayer(p);
-		
-		return true;
-	}
 	
 	public void activateSpikes() {
-		for (Room l : rooms) {
-			if (l.containsPlayer()) {
-				l.activateSpikes();
-			}
-		}
-		
-		
-	}
-	
-	
-	
-	private void moveNextLevel() {
-		// TODO Auto-generated method stub
-		
+		for (Stage s : stages)
+			for (Room r : s.getRooms())
+				r.activateSpikes();
 	}
 	
 	
 	
 	public String bouldersKeysLocation(int userID) {
-		int index = 8989;
-		for (int i = 0; i != players.length; i++) {
-			if (players[i].getUserID() == userID) {
-				if (index == 8989) {
-					index = i;
-				} else {
-					throw new IllegalArgumentException("bouldersKeysLocation(): There were two players with the same ID. This is a bug, investigate.");
-				}
-			}
-		}
+		Player player = null;
+		for (Player p : players)
+			if (p.getUserID() == userID)
+				player = p;
 		
-		boolean hasBoulder = players[index].hasBoulder();
-		int keyNumber = players[index].getNumberOfKeys();
-		int playerX = players[index].getLocation().x;
-		int playerY = players[index].getLocation().y;
+		assert(player != null);
+		
+		
+		boolean hasBoulder = player.hasBoulder();
+		int keyNumber = player.getNumberOfKeys();
+		int playerX = player.getLocation().x;
+		int playerY = player.getLocation().y;
 		String bouldersKeysLocation = hasBoulder + Msgs.DELIM_DETAILS + keyNumber + Msgs.DELIM_DETAILS +
 									  playerX + Msgs.DELIM_DETAILS + playerY + Msgs.DELIM_DETAILS +
 									  Msgs.DELIM_SPLIT;

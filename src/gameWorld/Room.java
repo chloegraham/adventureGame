@@ -31,7 +31,8 @@ public class Room {
 	private Set<Player> players;
 	private Map<Point, Point> padsToDoors;
 	
-	public Room(String encodedRoom) {
+	public Room(String encodedRoom, int roomID) {
+		this.roomID = roomID;
 		encodedRoom = encodedRoom.replace(Msgs.DELIM_ROOM, "");
 		
 		// Split String up in to x3 Strings which will be converted to char[][]
@@ -124,11 +125,12 @@ public class Room {
 	/*
 	 *  Method to Transfer Players between Levels
 	 */
-	public void addPlayer(Player player) {
+	public boolean addPlayer(Player player) {
 		boolean success = players.add(player);
 		if (!success)
 			throw new IllegalArgumentException("Should never be able to add two of the same player to one Level.");
 		System.out.println(toString() + "  added a player");
+		return success;
 	}
 	
 	public boolean containsPlayer() {

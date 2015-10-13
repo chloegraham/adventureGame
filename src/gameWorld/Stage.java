@@ -13,22 +13,24 @@ public class Stage {
 	private List<Room> rooms;
 	private Map<DoorAddress, DoorAddress> doorToDoor;	// Need to know about moving between Rooms(called Levels atm)
 	
-	public Stage(String encodedStage) {
+	public Stage(String encodedStage, int stageID) {
+		this.stageID = stageID;
 		encodedStage = encodedStage.replace(Msgs.DELIM_STAGE, "");
 		String[] split = encodedStage.split(Msgs.DELIM_ROOM);
 		
 		rooms = new ArrayList<>();
 		
+		int index = 0;
 		for (String s : split)
-			rooms.add(new Room(s));
+			rooms.add(new Room(s, index++));
 		
 		System.out.println(toString());
 	}
 	
 	
+	
 	public int getStageID() { return stageID; }
 	public List<Room> getRooms() { return rooms; }
-	
 	
 	
 	
@@ -45,6 +47,17 @@ public class Stage {
 			   Msgs.DELIM_STAGE +
 			   Msgs.DELIM_SPLIT;
 	}
+	
+	
+	
+	public boolean addPlayerToRoom(Player p) {
+		Room room = rooms.get(p.getRoomID());
+		return room.addPlayer(p);
+	}
+	
+	
+	
+	
 	
 	
 	
