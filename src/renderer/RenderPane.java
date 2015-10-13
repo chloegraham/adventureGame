@@ -33,6 +33,9 @@ public class RenderPane extends JPanel {
     private char[][] objects;
     private char[][] moveables;
     private Point camOffset = new Point(0,0);
+    private float xLerpOffset = 0;
+    private float yLerpOffset = 0;
+
     
     private Direction viewDir = Direction.NORTH;
 
@@ -147,7 +150,7 @@ public class RenderPane extends JPanel {
                 
        
                 //Take the Cartesian point and convert to isometric
-                Point isoTile = IsoHelper.twoDToIsoWithTileOffset(tile, camOffset.x, camOffset.y);
+                Point isoTile = IsoHelper.twoDToIsoWithLerpOffset(tile, xLerpOffset, yLerpOffset);
                 
                 //Check each layer and draw the right tile at that point.
                 parseAndDrawTile(rotatedLevel[i][j], isoTile, g2);
@@ -159,6 +162,32 @@ public class RenderPane extends JPanel {
     }
     
     
+    public void update(){
+    	int xGoal = camOffset.x;
+    	int yGoal = camOffset.y;
+    	
+    	float nearestX = (float)Math.round(xLerpOffset * 10f) / 10f;
+    	float nearestY = (float)Math.round(yLerpOffset * 10f) / 10f;
+    	
+    	//System.out.println(nearestX + " " + xGoal);
+    	
+    	if(nearestX != xGoal){
+    		if(xGoal > xLerpOffset){
+        		xLerpOffset = xLerpOffset + (float) 0.2;
+        	}else{
+        		xLerpOffset = xLerpOffset - (float) 0.2;
+        	}
+    	}
+    	
+    	if(nearestY != yGoal){
+    		if(yGoal > yLerpOffset){
+    			yLerpOffset = yLerpOffset + (float) 0.2;
+        	}else{
+        		yLerpOffset = yLerpOffset - (float) 0.2;
+        	}
+    	}
+   	
+    }
     
     
     

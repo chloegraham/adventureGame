@@ -401,6 +401,23 @@ public class UserInterface extends JFrame {
 		this.repaint();
 	}
 	
+	public void setLayersWithCoordinate(char[][]level, char[][]objects, char[][]moveables, int x, int y){
+		graphics.setCamOffset(x, y);
+		graphics.setLayers(level, objects, moveables);
+		if (!playing){
+			playing = true;
+			if (splash.getOpenCard() != SplashScreen.INFORM_CARD){	// Inform card needs to stay up until the player has read it.
+				splash.setVisibleCard(SplashScreen.READY_CARD);		// Show player key bindings and allow them to start
+			}
+		}
+	}
+	
+	public void reDraw(){
+		if(graphics != null){
+			graphics.update();
+		}
+		this.repaint();
+	}
 	
 	
 	
