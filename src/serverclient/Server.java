@@ -124,12 +124,13 @@ public class Server implements Runnable {
 			    	
 			    	if (ordinal == Actions.NEWGAME.ordinal()){
 			    		newGame();
-			    		System.out.println("Actions ordinal inside server is: " + Actions.NEWGAME.ordinal());
 			    		outputOne.writeUTF(String.valueOf(Actions.NEWGAME.ordinal()));
+			    		outputTwo.writeUTF(String.valueOf(Actions.NEWGAME.ordinal()));
 			    	}
 			    	else if (ordinal == Actions.LOAD.ordinal()){
 			    		load();
 			    		outputOne.writeUTF(String.valueOf(Actions.LOAD.ordinal()));
+			    		outputTwo.writeUTF(String.valueOf(Actions.LOAD.ordinal()));
 			    	}
 			    	else if (ordinal == Actions.SAVE.ordinal()){
 			    		boolean temp = save();
@@ -168,10 +169,12 @@ public class Server implements Runnable {
 			    	
 			    	if (ordinal == Actions.NEWGAME.ordinal()){
 			    		newGame();
+			    		outputOne.writeUTF(String.valueOf(Actions.NEWGAME.ordinal()));
 			    		outputTwo.writeUTF(String.valueOf(Actions.NEWGAME.ordinal()));
 			    	}
 			    	else if (ordinal == Actions.LOAD.ordinal()){
 			    		load();
+			    		outputOne.writeUTF(String.valueOf(Actions.LOAD.ordinal()));
 			    		outputTwo.writeUTF(String.valueOf(Actions.LOAD.ordinal()));
 			    	}
 			    	else if (ordinal == Actions.SAVE.ordinal()){
@@ -268,8 +271,6 @@ public class Server implements Runnable {
 		gameWorld = new GameWorld(encodedGameWorld);
 		logic = gameWorld.getLogic();
 		System.out.println("--- Server:    NewGame created.");
-
-		handleAction(Actions.NEWGAME.ordinal(), Msgs.PLAYER_ONE);
 
 		this.timer = new TimerSpikes(this);
 		this.timerThread = new Thread(timer);
