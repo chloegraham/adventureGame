@@ -122,16 +122,23 @@ public class Server implements Runnable {
 		    				throw new IllegalArgumentException("GameWorld still null and Client is trying to send Actions that aren't New or Load");
 			    	
 			    	
-					if (ordinal == Actions.NEWGAME.ordinal())
+			    	if (ordinal == Actions.NEWGAME.ordinal()){
 			    		newGame();
-			    	else if (ordinal == Actions.LOAD.ordinal())
+			    		System.out.println("Actions ordinal inside server is: " + Actions.NEWGAME.ordinal());
+			    		outputOne.writeUTF(String.valueOf(Actions.NEWGAME.ordinal()));
+			    	}
+			    	else if (ordinal == Actions.LOAD.ordinal()){
 			    		load();
+			    		outputOne.writeUTF(String.valueOf(Actions.LOAD.ordinal()));
+			    	}
 			    	else if (ordinal == Actions.SAVE.ordinal()){
 			    		boolean temp = save();
 			    		if (temp == true){
 			    			broadcast(Msgs.PLAYER_ONE, "Player one called save successfully");
+			    			broadcast(Msgs.PLAYER_TWO, "Player one called save successfully");
 			    		} else {
-			    			broadcast(Msgs.PLAYER_ONE, "Player two failed to save successfully");
+			    			broadcast(Msgs.PLAYER_ONE, "Player one failed to save successfully");
+			    			broadcast(Msgs.PLAYER_TWO, "Player one failed to save successfully");
 			    		}
 			    	}
 			    	else
@@ -159,16 +166,22 @@ public class Server implements Runnable {
 			    	if (gameWorld == null)
 			    			throw new IllegalArgumentException("Player TWO should never be able to send Action with null GameWorld. Also Player TWO should never be able to New or Load Game.");
 			    	
-			    	if (ordinal == Actions.NEWGAME.ordinal())
+			    	if (ordinal == Actions.NEWGAME.ordinal()){
 			    		newGame();
-			    	else if (ordinal == Actions.LOAD.ordinal())
+			    		outputTwo.writeUTF(String.valueOf(Actions.NEWGAME.ordinal()));
+			    	}
+			    	else if (ordinal == Actions.LOAD.ordinal()){
 			    		load();
+			    		outputTwo.writeUTF(String.valueOf(Actions.LOAD.ordinal()));
+			    	}
 			    	else if (ordinal == Actions.SAVE.ordinal()){
 			    		boolean temp = save();
 			    		if (temp == true){
-			    			broadcast(Msgs.PLAYER_TWO, "Player two called save successfully");
+			    			broadcast(Msgs.PLAYER_ONE, "Player one called save successfully");
+			    			broadcast(Msgs.PLAYER_TWO, "Player one called save successfully");
 			    		} else {
-			    			broadcast(Msgs.PLAYER_TWO, "Player two failed to save successfully");
+			    			broadcast(Msgs.PLAYER_ONE, "Player one failed to save successfully");
+			    			broadcast(Msgs.PLAYER_TWO, "Player one failed to save successfully");
 			    		}
 			    	}
 			    	else
@@ -255,11 +268,11 @@ public class Server implements Runnable {
 		gameWorld = new GameWorld(encodedGameWorld);
 		logic = gameWorld.getLogic();
 		System.out.println("--- Server:    NewGame created.");
-		
+
 		handleAction(Actions.NEWGAME.ordinal(), Msgs.PLAYER_ONE);
-		
+
 		this.timer = new TimerSpikes(this);
-    	this.timerThread = new Thread(timer);
+		this.timerThread = new Thread(timer);
 		timerThread.start();
 	}
 	
@@ -269,21 +282,14 @@ public class Server implements Runnable {
 		String encodedGameWorld = XML.load();
 		System.out.println(encodedGameWorld);
 		
-		String loadMe = "load me";
-		outputOne.writeUTF(loadMe);
-		outputTwo.writeUTF(loadMe);
-		String temp1 = inputOne.readUTF();
-		String temp2 = inputTwo.readUTF();
-		if (temp1.equals("0") && temp2.equals("0")){
-			// Create the GameWorld based of the encoded previously saved game + initialize Game Logic
-			gameWorld = new GameWorld(encodedGameWorld);
-			logic = gameWorld.getLogic();
-			System.out.println("--- Server:    Loaded Game created.");
-							
-			this.timer = new TimerSpikes(this);
-			this.timerThread = new Thread(timer);
-			timerThread.start();
-		}
+		// Create the GameWorld based of the encoded previously saved game + initialize Game Logic
+		gameWorld = new GameWorld(encodedGameWorld);
+		logic = gameWorld.getLogic();
+		System.out.println("--- Server:    Loaded Game created.");
+
+		this.timer = new TimerSpikes(this);
+		this.timerThread = new Thread(timer);
+		timerThread.start();
 	}
 	
 	
