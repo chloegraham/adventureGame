@@ -59,6 +59,27 @@ public final class IsoHelper {
     }
     
     
+    public static Point twoDToIsoWithLerpOffset(Point twoDee, float xoffset, float yoffset){
+        Point tempPoint = new Point(0,0);
+        
+        double camX = xoffset * (tileSize / 2);
+        double camY = yoffset * (tileSize / 2);
+        
+        double x = twoDee.x;
+        double y = twoDee.y;
+        
+        x -= camX;
+        y -= camY;
+                
+//        //Camera Offset
+//        twoDee.x -= camX;
+//        twoDee.y -= camY;
+        
+        tempPoint.x = (int) ((x - y) + 400); // Half the screen width, to center 0,0.
+        tempPoint.y = (int) (((x + y) / 2) + 300); // Half the screen height
+        return tempPoint;
+    }
+    
     
     /**
      * Rotates a 2d level array 90 degrees clockwise. 

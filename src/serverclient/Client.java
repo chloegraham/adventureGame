@@ -165,7 +165,7 @@ public class Client implements Runnable {
 			
 			layers = new Layers();
 			layers.decode(encodedLayers);
-			ui.redrawFromLayersWithCoordinate(layers.getDecodedLevel(), layers.getDecodedObjects(), layers.getDecodedMovables(), playerX, playerY);
+			ui.setLayersWithCoordinate(layers.getDecodedLevel(), layers.getDecodedObjects(), layers.getDecodedMovables(), playerX, playerY);
 			
 			if (encodedSplit.length > 2) {
 				encodedMessages = encodedSplit[2];
@@ -181,7 +181,12 @@ public class Client implements Runnable {
 		}
 	}
 	
-	
+	public void reDraw(){
+		//System.out.println("Client Redraw");
+		if(this.ui != null){
+			this.ui.reDraw();
+		}
+	}
 	
 	@Override
 	public String toString() {
