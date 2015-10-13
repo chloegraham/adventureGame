@@ -181,12 +181,6 @@ public class Client implements Runnable {
 		}
 	}
 	
-	public void reDraw(){
-		//System.out.println("Client Redraw");
-		if(this.ui != null){
-			this.ui.reDraw();
-		}
-	}
 	
 	@Override
 	public String toString() {
