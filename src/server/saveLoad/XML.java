@@ -117,8 +117,8 @@ public class XML {
 		/*
 		 *  TODO still to sort
 		 */
-//		return TUTORIAL + "<Split>" + TUTORIALPLAYER1 + "<Split>" + TUTORIALPLAYER2 + "<Split>";
-		return ZEBRA + "<Split>" + ZEBRAPLAYER1 + "<Split>" + ZEBRAPLAYER2 + "<Split>";
+		return TUTORIAL + "<Split>" + ZEBRA + "<Split>" + TUTORIALPLAYER1 + "<Split>" + TUTORIALPLAYER2 + "<Split>";
+//		return ZEBRA + "<Split>" + ZEBRAPLAYER1 + "<Split>" + ZEBRAPLAYER2 + "<Split>";
 //		return STAGE1 + "<Split>" + PLAYER1 + "<Split>" + PLAYER2 + "<Split>";
 //		return STAGE1 + "<Split>" + STAGE2 + "<Split>" + PLAYER1 + "<Split>" + PLAYER2 + "<Split>";
 	}
@@ -234,13 +234,8 @@ public class XML {
 										 "<Room>";
 	
 	private static final String ZROOM3 = "wwwwwwwwwwwwweeeeeww%weeeeeeeeeeeeewweeww%eeeeeeeeeeeeeeeeeeee%eeeeeeeeeeeeewwwwwww%@" +
-										 "nnnnnnnnnnnnndddndnn%nzzzzzzzzzzzzdnnndnn%Dnnnnnnnnnnnndddnddd%nnnnnnnnnnnnnnnnnnnn%@" +
+										 "nnnnnnnnnnnnndddndnn%nzzzzzzzzzzzzdnnndnn%Dnnnnnnnnnnnndddnddy%nnnnnnnnnnnnnnnnnnnn%@" +
 			  							 "nnnnnnnnnnnnnnnnnnnn%nnnnnnnnnnnnnnnnnnnn%nbbbbbbbbbbbbnnnnnnn%nnnnnnnnnnnnnnnnnnnn%@" +
-			  							 "<Room>";
-
-	private static final String ZROOM4 = "eeeeeeeeee%@" +
-			  							 "Dsnsnsnsny%@" +
-			  							 "nnnnnnnnnn%@" +
 			  							 "<Room>";
 
 	private static final String ZEBRA = ZROOM1 + ZROOM2 + ZROOM3 + "<Stage>";

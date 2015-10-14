@@ -5,6 +5,7 @@ package server.tiles;
  * Usually activated by pressure pads, keys, and can
  * bring the player through to another room.
  */
+
 public class DoorNormal implements Tile, Passable, Furniture, Door {	
 	private boolean locked;
 

@@ -23,6 +23,7 @@ public class Player extends Moveable{
 	private int keys;
 	private boolean hasBoulder;
 	private boolean dead = false;
+	private boolean won = false;
 	
 	/**
 	 * Creates a player from an encodeded string. The string is 
@@ -165,7 +166,13 @@ public class Player extends Moveable{
 		return dead;
 	}
 	
+	public void win(){
+		won = true;
+	}
 	
+	public boolean hasWon() {
+		return won;
+	}
 	
 	/**
 	 * Sets the location of the player
