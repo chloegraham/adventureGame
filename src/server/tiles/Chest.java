@@ -1,6 +1,9 @@
 package server.tiles;
 
-
+/**
+ * A chest. Chests contain keys, and are either 
+ * open or closed
+ */
 public class Chest implements Tile, Impassable, Furniture {
 	
 	private boolean hasKey;
@@ -28,6 +31,10 @@ public class Chest implements Tile, Impassable, Furniture {
 		return hasKey;
 	}
 	
+	/**
+	 * Takes the key from the chest.
+	 * @return
+	 */
 	public boolean takeKey() {
 		if (!hasKey)
 			return false;

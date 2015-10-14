@@ -1,6 +1,6 @@
 package server.tiles;
 
-public class Wall implements Tile, DrawFirst, Furniture{
+public class Wall implements Tile, DrawFirst{
 	@Override
 	public String toString() {
 		return "w";

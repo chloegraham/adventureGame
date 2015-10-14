@@ -1,7 +1,11 @@
 package server.tiles;
 
-
-public class DoorNormal implements Tile, Passable, PutDownOnable, Furniture, Door {	
+/**
+ * A regular door. Can be open or locked. 
+ * Usually activated by pressure pads, keys, and can
+ * bring the player through to another room.
+ */
+public class DoorNormal implements Tile, Passable, Furniture, Door {	
 	private boolean locked;
 
 	public DoorNormal(String symbol) {
@@ -41,11 +45,7 @@ public class DoorNormal implements Tile, Passable, PutDownOnable, Furniture, Doo
 	public boolean isPassable() {
 		return !isLocked();
 	}
-	
-	@Override
-	public boolean isPutDownOnable() {
-		return !isLocked();
-	}
+
 	
 	@Override
 	public String toString() {

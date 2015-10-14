@@ -1,7 +1,7 @@
 package server.tiles;
 
 
-public class DoorLevel implements Tile, Passable, PutDownOnable, Furniture, Door {	
+public class DoorLevel implements Tile, Passable, Furniture, Door {	
 	private boolean locked;
 
 	public DoorLevel(String symbol) {
@@ -43,10 +43,6 @@ public class DoorLevel implements Tile, Passable, PutDownOnable, Furniture, Door
 		return !isLocked();
 	}
 	
-	@Override
-	public boolean isPutDownOnable() {
-		return !isLocked();
-	}
 	
 	@Override
 	public String toString() {
