@@ -12,12 +12,19 @@ import server.movable.Boulder;
 import server.movable.Player;
 import server.tiles.Chest;
 import server.tiles.Door;
+import server.tiles.DoorLevel;
 import server.tiles.DoorNormal;
+import server.tiles.Furniture;
 import server.tiles.Passable;
 import server.tiles.PressurePad;
 import server.tiles.PutDownOnable;
 import server.tiles.Tile;
 
+/**
+ * The main class for controlling game logic
+ * @author Chloe
+ *
+ */
 public class GameLogic {
 	private GameWorld gameWorld;
 	private List<Stage> stages;
@@ -33,9 +40,11 @@ public class GameLogic {
 	public String handleAction(int ordinal, int userID) {
 		// absdjkfasj
 		Player player = null;
-		for (Player p : players)
-			if (userID == p.getUserID())
+		for (Player p : players){
+			if (userID == p.getUserID()){
 				player = p;
+			}
+		}
 		
 		assert(player != null);
 		
@@ -109,12 +118,15 @@ public class GameLogic {
 			throw new IllegalArgumentException("GameLogic:  received an unexpected ordinal. It might be 'Inspect' which we have't coded yet.");
 		}
 		
-		/*
-		 *  // TODO check player is dead here??
-		 *  // TODO check player is dead here??
-		 *  
-		 */
-
+		for (Player p : players){
+			//CHECK IF EITHER PLAYERS ARE DEAD OR HAVE WON and return this to the server
+			if(p.isDead()){
+				return "You're dead";
+			} 
+			if(p.hasWon()){
+				return "You've won";
+			}
+		}
 		return message;
 	}
 	
@@ -123,28 +135,20 @@ public class GameLogic {
 		// Check for out of bounds
 		if (nextLoc.y < 0 || nextLoc.y > room.getTiles().length-1 || nextLoc.x < 0 || nextLoc.x > room.getTiles()[0].length-1)
 			return false;
-		
-		
-		
+			
 		Tile nextTile = room.getTiles()[nextLoc.y][nextLoc.x];
 		Point currLoc =  player.getLocation();
 		Tile currTile = room.getTiles()[currLoc.y][currLoc.x];
 		
-		
-		
 		// Check Boulders because Players can't move on to Boulders
 		for(Boulder b: room.getBoulders())
 			if(b.getLocation().equals(nextLoc))
-				return false;
-			
-		
+				return false;	
 		
 		// If Tile is not type Passable = can't move on to.
 		// If Tile is type Passable but state is !isPassable() = can't move on to.
 		if (!(nextTile instanceof Passable) || (nextTile instanceof Passable && !((Passable)nextTile).isPassable()))
 			return false;
-		
-		
 		
 		if(currTile instanceof PressurePad){
 			((PressurePad)currTile).activate();
@@ -164,8 +168,6 @@ public class GameLogic {
 			}
 		}
 		
-		
-		
 		if (nextTile instanceof PressurePad) {
 			((PressurePad)nextTile).activate();
 			
@@ -178,17 +180,34 @@ public class GameLogic {
 				doorTile.unlock();
 			}
 		}
-
 		
-		
-		// If Tile is a Door
-		// The Passable check above ensure LevelDoor is also Passable
 		if (nextTile instanceof Door) {
-			if ( ((Passable)nextTile).isPassable() ) {
+			if (((Passable)nextTile).isPassable()) {
+				if(nextTile instanceof DoorLevel){
+					int id = player.getStageID();
+					int numStages = stages.size();
+					System.out.println("stages list size = " + this.stages.size());
+					System.out.println("stage id = " + id);
+					if(numStages > id + 1){
+						//there is a next stage that the player can reach
+						System.out.println("there is a next stage");
+						TileFullLocation d = TileConnections.getConnectedTile(player.getStageID(), player.getRoomID(), nextLoc);
+						gameWorld.removePlayers();
+						player.setLocation(d.getStage(), d.getRoom(), d.getLocation());
+						gameWorld.addPlayersToRooms();
+					} else {
+						//the player has reached the end of the game!
+						System.out.println("there is not a next stage, you won");
+						player.win();
+						return true;
+					}
+				}
+				
 				TileFullLocation d = TileConnections.getConnectedTile(player.getStageID(), player.getRoomID(), nextLoc);
 				gameWorld.removePlayers();
 				player.setLocation(d.getStage(), d.getRoom(), d.getLocation());
 				gameWorld.addPlayersToRooms();
+				
 				
 				// TODO I think this fucks up messages
 				return true;
@@ -226,21 +245,23 @@ public class GameLogic {
 		
 		
 		
-		if (interactWith.y < 0 || interactWith.y > room.getTiles().length-1 || interactWith.x < 0 || interactWith.x > room.getTiles()[0].length-1)
-			return "temp - you are trying to interact with a tile outside the bounds of the game.";	
-		
-		
-		
-		Tile tile = room.getTiles()[interactWith.y][interactWith.x];	
-		
+		if (interactWith.y < 0 || interactWith.y > room.getTiles().length-1 || interactWith.x < 0 || interactWith.x > room.getTiles()[0].length-1){
+			if(player.hasBoulder()){
+				return "DON'T CHUCK YOUR BABY OVERBOARD!";
+			} else {
+				return "You are trying to interact with a tile outside the bounds of the game.";
+			}	
+		}
+			
+		Tile interactTile = room.getTiles()[interactWith.y][interactWith.x];	
 		
 		
 		/*
 		 *  Chest interaction or inspection code & messages
 		 */
-		if (tile instanceof Chest){
+		if (interactTile instanceof Chest){
 
-			Chest chest = (Chest) tile;
+			Chest chest = (Chest) interactTile;
 			
 			// OPEN
 			// true - "Chest already open"
@@ -276,9 +297,9 @@ public class GameLogic {
 		/*
 		 *  Door interaction code & message
 		 */
-		if (tile instanceof DoorNormal){
+		if (interactTile instanceof DoorNormal){
 			
-			DoorNormal doorNormal = (DoorNormal) tile;
+			DoorNormal doorNormal = (DoorNormal) interactTile;
 			
 			// ISLOCKED
 			// true - "The Door is locked"
@@ -306,7 +327,7 @@ public class GameLogic {
 		 *  Boulder interaction code & message
 		 */
 		boolean hadBoulder = player.hasBoulder();
-		boolean isBoulderRelavent = true;
+		boolean isBoulderRelavent = false;
 		boolean infrontBoulder = false;
 		boolean emptyORpressure = false;
 		
@@ -317,29 +338,58 @@ public class GameLogic {
 			// If Boulder there pick it up
 			// If no Boulder this section of code is irrelevant
 			if(facingBoulder) {
+				isBoulderRelavent = true;
 				player.addBoulder();		// true - "You picked up a Boulder"	
-				/*
-				 *  IF pressure pad then call activate() on PressurePad in level so level can manage openeing closing doors
-				 */
-
+				if(interactTile instanceof PressurePad){
+					
+					((PressurePad)interactTile).activate();			
+					TileFullLocation d = TileConnections.getConnectedTile(player.getStageID(), player.getRoomID(), interactWith);
+					
+					if (d != null) {
+						Point doorPoint = d.getLocation();
+						Door doorTile = (Door)room.getTiles()[doorPoint.y][doorPoint.x];
+						
+						doorTile.lock();
+						
+						//if there's a player in the doorway when getting off the activated pressure pad then kill them
+						for(Player p : players){
+							if(p.getLocation().equals(doorPoint)){
+								p.murder();
+							}
+						}
+					}
+				}
 			}
 		}
 		else if (player.hasBoulder()) {
+			
 			// If there's a boulder in front of you, you can't drop your current boulder or pick another
-			boolean facingBoulder = room.containsBoulder(new Boulder(interactWith));
-
+			if(room.containsBoulder(new Boulder(interactWith))){
+				return "Don't pile yo eggs..";
+			}
 			// Check if there's a player present on the tile you're trying to drop the boulder onto. If Player there you can't drop.
-			boolean facingPlayer = room.playerAt(interactWith);
-				
+			if(room.playerAt(interactWith)){
+				return "Don't squish your friend silly CHICKIE";
+			}
 
-			if (tile instanceof PutDownOnable) {
+			if (interactTile instanceof PutDownOnable) {
+
 				room.addBoulder(new Boulder(interactWith));
 				player.dropBoulder();
 				
-				if (tile instanceof PressurePad) 
-					((PressurePad)tile).activate();
-
+				if (interactTile instanceof PressurePad) {
+					
+					((PressurePad)interactTile).activate();
+					TileFullLocation d = TileConnections.getConnectedTile(player.getStageID(), player.getRoomID(), interactWith);
+					if (d != null) {
+						Point doorPoint = d.getLocation();
+						Door doorTile = (Door)room.getTiles()[doorPoint.y][doorPoint.x];	
+						doorTile.unlock();
+					}
+					
+				}
 			}
+					
 		}
 			
 		if (hadBoulder) {
@@ -354,6 +404,12 @@ public class GameLogic {
 	
 
 	
+	/**
+	 * @param player 
+	 * @param room
+	 * @param now
+	 * @return
+	 */
 	private String inspect(Player player, Room room, Point now) {
 		
 		Direction direction = player.getDirection();
@@ -382,41 +438,45 @@ public class GameLogic {
 		
 		Tile tile = room.getTiles()[interactWith.y][interactWith.x];
 		
-//		if(tile instanceof Furniture && !(tile instanceof PressurePad)){	//doesn't include pressure pad
-//			return Msgs.inspectUnmovable((Furniture) tile);
-//		}
-//		//if code reaches here, might be trying to inspect an empty tile (empty tile doesn't extend unmoveable) boulders and players (moveables) can be on empty tiles
-//		for(Boulder b: level.getBoulders()){
-//			if(b.getLocation().equals(interactWith)){
-//				if(tile instanceof PressurePad){
-//					return Msgs.inspectMoveable(b, true);
-//				}
-//				return Msgs.inspectMoveable(b, false);
-//			}
-//		}
-//		//check both players in list, if one is present on the tile you're inspecting then return a string that says so
-//		for(Player p: this.players){
-//			if(p.getLocation().equals(interactWith)){
-//				if(tile instanceof PressurePad){
-//					return Msgs.inspectMoveable(p, true);
-//				}
-//				return Msgs.inspectMoveable(p, false);
-//			}
-//		}
-//		
-//		//if code reaches here, pressure pad can't contain a moveable object and so return message stating it's a pressure pad
-//		if(tile instanceof PressurePad){
-//			return Msgs.inspectPressurePad();
-//		}
+		if(tile instanceof Furniture && !(tile instanceof PressurePad)){	//doesn't include pressure pad
+			return Msgs.inspectUnmovable((Furniture) tile);
+		}
+		//if code reaches here, might be trying to inspect an empty tile (empty tile doesn't extend unmoveable) boulders and players (moveables) can be on empty tiles
+		for(Boulder b: room.getBoulders()){
+			if(b.getLocation().equals(interactWith)){
+				if(tile instanceof PressurePad){
+					return Msgs.inspectMoveable(b, true);
+				}
+				return Msgs.inspectMoveable(b, false);
+			}
+		}
+		//check both players in list, if one is present on the tile you're inspecting then return a string that says so
+		for(Player p: this.players){
+			if(p.getLocation().equals(interactWith)){
+				if(tile instanceof PressurePad){
+					return Msgs.inspectMoveable(p, true);
+				}
+				return Msgs.inspectMoveable(p, false);
+			}
+		}
+		
+		//if code reaches here, pressure pad can't contain a moveable object and so return message stating it's a pressure pad
+		if(tile instanceof PressurePad){
+			return Msgs.inspectPressurePad();
+		}
 		return "BEN TURNED OFF INSPECT TEMPORARILY";
 	}
 
 	
 	
-	public void activateSpikes() {
-		for (Stage s : stages)
-			for (Room r : s.getRooms())
-				r.activateSpikes();
+	public String activateSpikes() {
+		String temp = "";
+		for (Stage s : stages){
+			for (Room r : s.getRooms()){
+				temp = r.activateSpikes();		
+			}
+		}
+		return temp;
 	}
 	
 	

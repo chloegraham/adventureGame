@@ -1,5 +1,6 @@
 package client.userinterface;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Toolkit;
@@ -24,7 +25,6 @@ import javax.swing.JLayeredPane;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -36,8 +36,8 @@ import client.Client;
 import client.renderer.RenderPane;
 
 /**
- * Organises the content that is displayed to the user, and passes data between the server and the interface.
- * @author Kirsty
+ * Organises the content that is displayed to the user, and receives data from the client.
+ * @author Kirsty Thorburn 300316972
  */
 public class UserInterface extends JFrame {
 	private RenderPane graphics = new RenderPane();
@@ -45,9 +45,9 @@ public class UserInterface extends JFrame {
 	private SplashScreen splash;
 	
 	/* Images */
-	private final ImageIcon iconKey = loadImageIcon("icon-key.png");
-	private final ImageIcon iconBoulT = loadImageIcon("icon-boulder-true.png");
-	private final ImageIcon iconBoulF = loadImageIcon("icon-boulder-false.png");
+	private final ImageIcon iconKey = loadImageIcon("src/images/icon-key.png");
+	private final ImageIcon iconEggT = loadImageIcon("src/images/icon-egg-true.png");
+	private final ImageIcon iconEggF = loadImageIcon("src/images/icon-egg-false.png");
 
 	/* Panel content */
 	private final JTextArea messagePane = new JTextArea();
@@ -59,20 +59,20 @@ public class UserInterface extends JFrame {
 	
 	/* Inventory pane */
 	private final JLabel keys = new JLabel("0");
-	private final JLabel boulder = new JLabel();
-	private final int contentHeight = 82;			// Height of the inventory pane/message box
+	private final JLabel egg = new JLabel();
+	private final int contentHeight = 88;			// Height of the inventory pane/message box
 	
-	private boolean firstGame = true;
+	private boolean firstGame = true;	// Don't show the inform screen when the game is first loaded.
 	private boolean playing = false;	// Set true only when the game state and renderer are ready.
-	private int keyCount = 0;				// Number of keys player is currently holding
+	private int keyCount = 0;			// Number of keys player is currently holding
 	private int uid = -1;				// this player's ID
 	
 	public UserInterface(Client client) {
 		super("Chicken Little");
 		
-		listener = new Listener(client, graphics);
-		splash = new SplashScreen(this, listener);
-		listener.addSplash(splash);
+		listener = new Listener(client, graphics, this);
+		splash = listener.getSplash();
+		splash.setVisibleCard(SplashScreen.NO_CARD);
 		setListeners();
 	
 		/* Build panes */
@@ -81,7 +81,8 @@ public class UserInterface extends JFrame {
 		JScrollPane scrollPane = buildMessagePane();
 		setBounds(scrollPane);
 		
-		/* Add panes to content pane with z coordinate */
+		/* Add panes to content pane with z coordinate. Lower numbers are further from
+		 * the user and may be hidden behind higher numbered content. */
 		this.add(contentPane);
 		contentPane.add(graphics, new Integer(0));
 		contentPane.add(menuBar, new Integer(1));
@@ -95,20 +96,22 @@ public class UserInterface extends JFrame {
 		setVisible(true);	// Finished building the frame. Show it and wait until the userID is added.
 		
 		
-		// Starting the render loop
+		// Setting up the draw loop
 		DrawLoop drawLooper = new DrawLoop();
 		drawLooper.setGraphics(this.graphics);
 		
+		//Running the loop at about 30fps
 		Timer timer = new Timer();
 		timer.schedule(drawLooper, 0, 33);
 		
 	}
 	
-	/** Sets the unique ID for this user and changes the SplashScreen. */
+	/** Sets the unique ID for this user and changes the SplashScreen.
+	 * If the player is the host, show the menu and wait for input. */
 	public void setUserID(int uid, boolean loadGame){
 		this.uid = uid;
-		if (uid == 101){ splash.setVisibleMenu(loadGame); }													// Host Player
-		else if (uid == 202){ splash.setVisibleStartup("Successfully connected. Waiting for game state ..."); }	// Remote player
+		if (uid == 101){ splash.setVisibleMenu(loadGame); }							// Host Player
+		else { splash.setVisibleStartup("Successfully connected. Waiting for game state ..."); }// Remote player
 		this.setTitle("Chicken Little : User " + this.uid);
 	}
 	
@@ -124,34 +127,18 @@ public class UserInterface extends JFrame {
 	/** Erases all messages from the text box history. */
 	public void clearMessageHistory(){ messagePane.setText(""); }
 	
-	/** Increments the number of keys displayed to the user */
-	public void addKey(){ keys.setText(Integer.toString(++keyCount)); }
-	
-	/**
-	 * Attempts to decrement the number of keys displayed to the user.
-	 * @return true if a key was removed, false otherwise.
-	 */
-	public boolean removeKey(){
-		if (keyCount > 0){
-			keys.setText(Integer.toString(--keyCount));
-			return true;
-		}
-		return false;
-	}
-	
 	/** Directly set the number of keys that show up on UI. */
-	public void setKeyCount(int keyCount){
-		this.keyCount = keyCount;
+	public void setKeyCount(int totalKeys){
+		this.keyCount = totalKeys;
 		keys.setText(Integer.toString(keyCount));
 	}
 	
-	/** If true, show a boulder being carried in inventory. Otherwise, show no boulder. */
+	/** If true, show an egg being carried in inventory. Otherwise, show faded egg. */
 	public void setBoulder(boolean carrying){
 		if (carrying){
-			if (iconBoulT != null){ boulder.setIcon(iconBoulT); }
+			if (iconEggT != null){ egg.setIcon(iconEggT); }
 		}
-		else{ if (iconBoulF != null){ boulder.setIcon(iconBoulF); } }
-		
+		else{ if (iconEggF != null){ egg.setIcon(iconEggF); } }
 	}
 	
 	// ========================================================
@@ -163,49 +150,33 @@ public class UserInterface extends JFrame {
 	 */
 	public void setPlayerDeath(){
 		splash.setVisibleCard(SplashScreen.DEATH_CARD);
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {}
 	}
 	
-	/**
-	 * Alert the user that they have won the game.
-	 */
+	/** Alert the user that they have completed the game. Runs an infinite trivia until user quits. */
 	public void setPlayerWon(){
 		splash.setVisibleCard(SplashScreen.WIN_CARD);
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {}
 	}
-	
-	//TODO: test method implemented for checking save process
-		public int getPlayerResponse(){
-			int temp = JOptionPane.showConfirmDialog(getFocusOwner(), "Annie are you ok, are you ok Annie?");
-			System.out.println("int value is: " + String.valueOf(temp));
-			return temp;
-		}
 	
 	/**
 	 * Tell this player that the game state is currently being changed.
-	 * Returns player to startup screen to wait for new game state.
-	 * @param ordinal The Action that caused the game state change (Actions.NEWGAME.ordinal() etc.)
+	 * Returns player to startup screen to wait for new game level to be passed through.
+	 * @param ordinal The Action that caused the game state change (e.g. Actions.NEWGAME.ordinal())
 	 */
 	public void setChangedGameState(int ordinal){
-		if (!firstGame){
-			splash.setSavedCard();
-			playing = false;		// Stop the current game. When this changes, it is restarted.
-			if (ordinal == Actions.NEWGAME.ordinal()){
-				splash.setVisibleInform("A new game has been created.");
-			}
-			else if (ordinal == Actions.LOAD.ordinal()){
-				splash.setVisibleInform("A saved game has been loaded.");
-			}
-			else if (ordinal == Actions.RESTART.ordinal()){
-				splash.setVisibleInform("The level has been restarted.");
-			}
-			else {
-				splash.setVisibleInform("The game state has been changed.");
-			}
+		if (firstGame){ return; }
+		splash.setSavedCard();	// If the player has a splash screen open, return to it after closing inform.
+		playing = false;		// Stop the current game. When this changes, it is restarted.
+		if (ordinal == Actions.NEWGAME.ordinal()){
+			splash.setVisibleInform("A new game has been created.");
+		}
+		else if (ordinal == Actions.LOAD.ordinal()){
+			splash.setVisibleInform("A saved game has been loaded.");
+		}
+		else if (ordinal == Actions.RESTART.ordinal()){
+			splash.setVisibleInform("The level has been restarted.");
+		}
+		else {
+			splash.setVisibleInform("The game state has been changed.");
 		}
 	}
 	
@@ -231,6 +202,7 @@ public class UserInterface extends JFrame {
 	public void setContentEnabled(boolean enabled){
 		file.setEnabled(enabled);
 		help.setEnabled(enabled);
+		System.out.println(listener + " ... Listener");
 		listener.setSplashLocked(enabled);
 	}
 	
@@ -245,61 +217,68 @@ public class UserInterface extends JFrame {
 	// ========================================================
 	
 	/**
-	 * Set the sizes and positions of all items in the frame.
+	 * Set the sizes and positions of all frame content.
 	 */
 	private void setBounds(JScrollPane scrollPane){
+		// Sizes set
 		Dimension dim = graphics.getPreferredSize();
 		int menuHeight = 20;
 		int renderWidth = (int) dim.getWidth();
 		int renderHeight = (int) dim.getHeight();
 
-		int frameWidth = (renderWidth + 16);		// Needs extra width for border
-		int frameHeight = (renderHeight + contentHeight + menuHeight + 16);
+		// Total size of the frame
+		int frameWidth = (renderWidth);
+		int frameHeight = (renderHeight + menuHeight);
+		this.setResizable(false);
 		setPreferredSize(new Dimension(frameWidth, frameHeight));
 		
-		// Position Frame in screen
+		// Position Frame in centre of screen
 		Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
 		int frameX = (int) ((screen.getWidth()/2)-(frameWidth/2));
 		int frameY = (int) ((screen.getHeight()/2)-(frameHeight/2));
-		setLocation(frameX, frameY);	// Position in centre of screen
+		setLocation(frameX, frameY);
 		
 		// Set position and size of items inside frame
 		graphics.setBounds(0, menuHeight, renderWidth, renderHeight);
 		splash.setBounds(0, 0, frameWidth, frameHeight);
-		inventoryPane.setBounds((renderWidth-contentHeight), renderHeight, contentHeight, contentHeight);
-		scrollPane.setBounds(0, renderHeight, (renderWidth-contentHeight), contentHeight);
+		inventoryPane.setBounds((renderWidth-contentHeight), (renderHeight-contentHeight), contentHeight, contentHeight);
+		scrollPane.setBounds(0, renderHeight-contentHeight, (renderWidth-contentHeight), contentHeight);
 		menuBar.setBounds(0, 0, frameWidth, menuHeight);
 	}
 	
 	/**
 	 * Create the inventory panel to display number of keys the player is carrying
-	 * and whether the player is carrying a boulder.
+	 * and whether the player is carrying an egg.
 	 */
 	private void buildInventoryPane(){
 		Dimension dim = new Dimension(contentHeight, 25);
 		inventoryPane.setLayout(new BoxLayout(inventoryPane, BoxLayout.Y_AXIS));
 		inventoryPane.setBorder(BorderFactory.createTitledBorder("Inventory"));
-		//Keys
+		inventoryPane.setBackground(new Color(230, 230, 230, 220));
+		//Key icon
 		if (iconKey != null){ keys.setIcon(iconKey); }
 		keys.setMaximumSize(dim);
 		keys.setToolTipText("Keys");
+		keys.setOpaque(false);
 		inventoryPane.add(keys);
-		//Boulder
-		if (iconBoulF != null){ boulder.setIcon(iconBoulF); }
-		boulder.setMaximumSize(dim);
-		inventoryPane.add(boulder);
-		boulder.setToolTipText("Boulder");
-		
-		inventoryPane.setOpaque(false);
+		//Egg icon
+		if (iconEggF != null){ egg.setIcon(iconEggF); }
+		egg.setMaximumSize(dim);
+		egg.setToolTipText("Egg");
+		egg.setOpaque(false);
+		inventoryPane.add(egg);
 	}
 	
 	/**
-	 * Build the pane to display messages to the player
+	 * Build the pane to display messages to the player.
+	 * Creates and returns a scroll pane containing the message pane.
+	 * Scrolls to the end when new messages are added.
 	 */
 	private JScrollPane buildMessagePane(){
 		JScrollPane scrollPane = new JScrollPane(messagePane,
 				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		messagePane.setOpaque(false);
+		scrollPane.setOpaque(false);
+		messagePane.setBackground(new Color(230, 230, 230, 220));	// On top of graphics, should be partially transparent
 		messagePane.setEditable(false);
 		// Set the pane to always be scrolled to the end
 		((DefaultCaret)messagePane.getCaret()).setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
@@ -326,6 +305,7 @@ public class UserInterface extends JFrame {
 	}
 	
 	/**
+	 * Helper for building the menu bar.
 	 * Create a menu item with a listener, and a Ctrl+KeyEvent accelerator.
 	 */
 	private JMenuItem createMenuItem(String name, int keyEvent){
@@ -370,7 +350,8 @@ public class UserInterface extends JFrame {
 		try {
 			img = ImageIO.read(new File(imageAddress));
 			icon = new ImageIcon(img);
-		} catch (IOException e) { e.printStackTrace(); }
+		} catch (IOException e) {// e.printStackTrace();
+		System.out.println("Image: " + imageAddress); }
 		return icon;
 	}
 	
@@ -393,6 +374,7 @@ public class UserInterface extends JFrame {
 			if (splash.getOpenCard() != SplashScreen.INFORM_CARD){	// Inform card needs to stay up until the player has read it.
 				splash.setVisibleCard(SplashScreen.READY_CARD);		// Show player key bindings and allow them to start
 			}
+			if (firstGame){ firstGame = false; }
 		}
 	}
 	

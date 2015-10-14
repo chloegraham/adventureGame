@@ -64,7 +64,7 @@ public class Server implements Runnable {
     }
 	
 	
-
+	
 	/*
 	 *  Handle Action
 	 */
@@ -77,6 +77,14 @@ public class Server implements Runnable {
     		save();
 		} else {
 			String message = logic.handleAction(ordinal, userID);
+			if(message.equals("You're dead")){
+				outputOne.writeUTF("You're dead");
+				outputTwo.writeUTF("You're dead");
+			}
+			if(message.equals("You've won")){
+				outputOne.writeUTF("You've won");
+				outputTwo.writeUTF("You've won");
+			}
 			broadcast(userID, message);
 		}
 	}
@@ -84,7 +92,7 @@ public class Server implements Runnable {
 	private void broadcast(int userID, String message) {
 		String current = gameWorld.getEncodedGameWorld(userID);
 		current += message;
-		
+		//System.out.println("current = " + current);
 		int otherUserID = Msgs.PLAYER_TWO;
 		if (userID == Msgs.PLAYER_TWO)
 			otherUserID = Msgs.PLAYER_ONE;
@@ -188,9 +196,13 @@ public class Server implements Runnable {
 	public void activateSpikes() throws IOException {
 		lock.lock();
 		
-		logic.activateSpikes();				// activate all the spikes
-		broadcast(Msgs.PLAYER_ONE, "");		// broadcast to both Players
-		broadcast(Msgs.PLAYER_TWO, "");		// broadcast to both Players
+		String temp = logic.activateSpikes();	// activate all the spikes
+		if(temp.equals("You're dead")){
+			socketOneWriteUTF(temp);
+			socketTwoWriteUTF(temp);
+		}
+		broadcast(Msgs.PLAYER_ONE, "");			// broadcast to both Players
+		broadcast(Msgs.PLAYER_TWO, "");			// broadcast to both Players
 		
 		lock.unlock();
 	}

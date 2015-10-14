@@ -14,27 +14,24 @@ import client.renderer.RenderPane;
 /**
  * Notifies master connection of player input.
  * Organises camera rotation.
- * @author Kirsty
+ * @author Kirsty Thorburn 300316972
  */
 public class Listener extends JPanel implements KeyListener, ActionListener {
-	private final Action directions = new Action(); 
+	private final Action directionKeys = new Action();		// Rotateable movement keys.  
 	private final Actions[] acValues = Actions.values();	// All possible movements the player may make
-	private final Client client;						// Where to send data for the master connection
+	private final Client client;							// Where to send data for the master connection
 	private final RenderPane graphics;
-	private SplashScreen splash;
+	private final SplashScreen splash;
 	
 	private boolean splashLocked = true;				// If false: a splash is open, don't allow key input for the GameWorld
 	
-	/**
-	 * Required to call addSplash(SplashScreen).
-	 */
-	public Listener(Client client, RenderPane graphics) {
+	public Listener(Client client, RenderPane graphics, UserInterface ui) {
 		this.client = client;
 		this.graphics = graphics;
+		this.splash = new SplashScreen(ui, this);
 	}
 	
-	/** Add SplashScreen. */
-	public void addSplash(SplashScreen splash){ this.splash = splash; }
+	public SplashScreen getSplash(){ return splash; }
 	
 	/**
 	 * If true, key input will be sent to the game world
@@ -52,18 +49,8 @@ public class Listener extends JPanel implements KeyListener, ActionListener {
 		/* Splash Screen controls */
 		if (!splashLocked){
 			String ac = splash.performKeyPress(event);
-			actionPerformed(ac);
+			if (ac.length() > 0){ actionPerformed(ac); }	// Not all keys will have an action event
 			return;				// If splash screen is open, don't check game controls.
-		}
-		
-		// TESTING KEYS
-		if (event == KeyEvent.VK_F1){
-			splash.setVisibleCard(SplashScreen.DEATH_CARD);
-			return;
-		}
-		else if (event == KeyEvent.VK_F2){
-			splash.setVisibleCard(SplashScreen.WIN_CARD);
-			return;
 		}
 
 		/* Game controls */
@@ -73,20 +60,20 @@ public class Listener extends JPanel implements KeyListener, ActionListener {
 		
 		// Rotation
 		if (Actions.CLOCKWISE.getKeyCode() == event){
-			directions.rotate(true);
+			directionKeys.rotate(true);
 			graphics.rotateViewClockwise(true);
 			graphics.repaint();
 			return;
 		}
 		else if (Actions.COUNTERCLOCKWISE.getKeyCode() == event){
-			directions.rotate(false);
+			directionKeys.rotate(false);
 			graphics.rotateViewClockwise(false);
 			graphics.repaint();
 			return;
 		}
 		
 		// Check directional keys first
-		int dir  = directions.getDirectionOrdinal(event);
+		int dir  = directionKeys.getDirectionOrdinal(event);
 		if (dir != -1){
 			client.handleAction(dir);
 			return;
@@ -116,7 +103,7 @@ public class Listener extends JPanel implements KeyListener, ActionListener {
 		/* Splash screen controls */
 		if (!splashLocked){
 			int openCard = splash.getOpenCard();
-			if (openCard == SplashScreen.HOST_CARD || openCard == SplashScreen.CONFIRM_CARD ){
+			if (openCard == SplashScreen.HOST_CARD || openCard == SplashScreen.CONFIRM_CARD || openCard == SplashScreen.DEATH_CARD){
 				if (ac.equals("New Game")){
 					splash.setVisibleStartup("Creating a new game. Waiting for game state ...");
 					client.handleAction(Actions.NEWGAME.ordinal());
@@ -129,13 +116,24 @@ public class Listener extends JPanel implements KeyListener, ActionListener {
 			if (openCard == SplashScreen.CONFIRM_CARD){
 				if (ac.equals("Cancel")){
 					splash.loadSavedCard();		// if no saved card, will go straight to game. Needed for exit case. 
-				}	// Changed mind, ignore
+				}
 				else if (ac.equals("Restart")){
 					splash.setVisibleStartup("Restarting the level. Waiting for game state ...");
-					client.handleAction(Actions.RESTART.ordinal());
+					client.handleAction(Actions.NEWGAME.ordinal());
 				}
 				else if (ac.equals("Quit")){
 					System.exit(0);
+				}
+			}
+			if (openCard == SplashScreen.WIN_CARD){
+				if (ac.equals("Egg")){
+					splash.updateWinCard("'Egg' is the wrong answer! You've got one guess left ... ");
+				}
+				else if (ac.equals("Chicken")){
+					splash.updateWinCard("'Chicken' is the wrong answer! You've got one guess left ... ");
+				}
+				else if (ac.equals("Dinosaur")){
+					splash.updateWinCard("CHEATER! Try again, but follow the rules this time!");
 				}
 			}
 			return;				// If splash screen is unlocked, do not check game controls

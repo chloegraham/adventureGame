@@ -2,6 +2,10 @@ package server.tiles;
 
 import java.awt.Point;
 
+/**
+ * Deadly spikes. Spikes are either up, or down. 
+ *
+ */
 public class Spikes implements Tile, Passable, Furniture {
 
 	private boolean isActivated;

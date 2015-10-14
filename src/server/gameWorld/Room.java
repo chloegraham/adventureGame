@@ -18,6 +18,15 @@ import server.tiles.Spikes;
 import server.tiles.Tile;
 import server.tiles.Wall;
 
+
+/**
+ * A room is essentially a fancy collection of tiles. 
+ * 
+ * Every room is part of a stage, and have a specific order in that stage. 
+ * For example a room could be  "the second room in the third stage".
+ * 
+ * Rooms also keep track of players, spikes, and boulders inside them.
+ */
 public class Room {
 	private int stageID;
 	private int roomID;
@@ -143,15 +152,22 @@ public class Room {
 	/*
 	 *  Activate all the Spikes on this Level
 	 */
-	public void activateSpikes() {
+	public String activateSpikes() {
+		String temp = "";
 		for (Spikes s : spikes)
 			s.activate();
 		
-		for (Player p : players)
-			for (Spikes s : spikes)
-				if (p.getLocation().equals(s.getLocation()))
-					if (s.isActivated())
-						p.getUserID();
+		for (Player p : players){
+			for (Spikes s : spikes){
+				if (p.getLocation().equals(s.getLocation())){
+					if (s.isActivated()){
+						p.murder();
+						temp = "You're dead";
+					}
+				}		
+			}
+		}
+		return temp;
 	}
 	
 	/*
@@ -180,11 +196,8 @@ public class Room {
 			sb.append('%');
 		}
 		sb.append('@');
-		sb.append(roomID);
-		sb.append('@');
 		return sb.toString() +
-			   Msgs.DELIM_ROOM +
-			   Msgs.DELIM_SPLIT;
+			   Msgs.DELIM_ROOM;
 	}
 	
 	

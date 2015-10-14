@@ -1,19 +1,11 @@
 package server.tiles;
 
 
-public class DoorLevel implements Tile, Passable, PutDownOnable, Furniture, Door {	
-	private boolean locked;
+public class DoorLevel implements Tile, Passable, Furniture, Door {	
 
 	public DoorLevel(String symbol) {
-		if (symbol.equals("y")){
-			locked = true;
-		}
-		else if (symbol.equals("Y")) {
-			locked = false;
-		}
-		else {
+		if (!symbol.equals("y"))
 			throw new IllegalArgumentException("Level Door Constructor: Passed an invalid character(  " + symbol + " ). Should be one of the following: 'y', 'Y' .");
-		}
 	}
 
 	
@@ -23,35 +15,27 @@ public class DoorLevel implements Tile, Passable, PutDownOnable, Furniture, Door
 	 */
 	@Override
 	public boolean isLocked(){
-		return locked;
+		return false;
 	}
 	
 	@Override
 	public void unlock() {
-		locked = false;
 	}
 	
 	@Override
 	public void lock() {
-		locked = true;
 	}
 	
 	
 	
 	@Override
 	public boolean isPassable() {
-		return !isLocked();
-	}
-	
-	@Override
-	public boolean isPutDownOnable() {
-		return !isLocked();
+
+		return true;
 	}
 	
 	@Override
 	public String toString() {
-		if (locked = true)
-			return "y";
-		return "Y";
+		return "y";
 	}
 }

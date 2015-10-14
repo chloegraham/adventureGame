@@ -11,6 +11,7 @@ import server.helpers.Actions;
 import server.helpers.Msgs;
 
 /**
+ * 
  * Opens the Users UserInterface and connects to the Game Server.
  * 
  * @author benscully
@@ -138,10 +139,21 @@ public class Client implements Runnable {
 				ui.setChangedGameState(Actions.NEWGAME.ordinal());
 				return;
 			}
+			if(encodedInput.equals("You're dead")){
+				System.out.println("HEY SET THIS TO DEAD");
+				ui.setPlayerDeath();
+				return;
+			}
+			if(encodedInput.equals("You've won")){
+				System.out.println("HEY SET THIS TO WON!!");
+				ui.setPlayerWon();;
+				return;
+			}
 			
 			String[] encodedSplit = encodedInput.split("<Split>");
 			
 			String encodedLayers = encodedSplit[0];
+			encodedLayers = encodedLayers.replace(Msgs.DELIM_ROOM, "");
 			String encodedPlayer;
 			String encodedMessages;
 			
