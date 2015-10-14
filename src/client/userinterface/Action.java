@@ -2,6 +2,10 @@ package client.userinterface;
 
 import server.helpers.Actions;
 
+/**
+ * Holds the ordinals for possible key events to send to the server.
+ * @author Kirsty Thorburn 300316972
+ */
 public class Action {
 	
 	// ============================================================
