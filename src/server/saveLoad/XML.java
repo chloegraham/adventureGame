@@ -20,7 +20,7 @@ import org.xml.sax.SAXException;
 
 import sharedHelpers.Msgs;
 
-/*
+/**
  * Xml class for handling saving, loading and creating new game from xml files.
  * @author Chris
  */
