@@ -60,7 +60,7 @@ public class UserInterface extends JFrame {
 	/* Inventory pane */
 	private final JLabel keys = new JLabel("0");
 	private final JLabel egg = new JLabel();
-	private final int contentHeight = 86;			// Height of the inventory pane/message box
+	private final int contentHeight = 88;			// Height of the inventory pane/message box
 	
 	private boolean firstGame = true;	// Don't show the inform screen when the game is first loaded.
 	private boolean playing = false;	// Set true only when the game state and renderer are ready.
@@ -227,8 +227,8 @@ public class UserInterface extends JFrame {
 		int renderHeight = (int) dim.getHeight();
 
 		// Total size of the frame
-		int frameWidth = (renderWidth + 16);		// Needs extra width for border
-		int frameHeight = (renderHeight + menuHeight + 16);
+		int frameWidth = (renderWidth);		// Needs extra width for border
+		int frameHeight = (renderHeight + menuHeight);
 		this.setResizable(false);
 		setPreferredSize(new Dimension(frameWidth, frameHeight));
 		
