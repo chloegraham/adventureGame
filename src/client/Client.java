@@ -6,9 +6,9 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
 
-import serverHelpers.Actions;
-import serverHelpers.Msgs;
-import userinterface.UserInterface;
+import client.userinterface.UserInterface;
+import server.helpers.Actions;
+import server.helpers.Msgs;
 
 /**
  * Opens the Users UserInterface and connects to the Game Server.

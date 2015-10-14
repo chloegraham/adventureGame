@@ -1,8 +1,5 @@
 package server;
 
-import gameWorld.GameLogic;
-import gameWorld.GameWorld;
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -11,9 +8,11 @@ import java.net.Socket;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import saveload.XML;
-import serverHelpers.Actions;
-import serverHelpers.Msgs;
+import server.gameWorld.GameLogic;
+import server.gameWorld.GameWorld;
+import server.helpers.Actions;
+import server.helpers.Msgs;
+import server.saveLoad.XML;
 
 public class Server implements Runnable {
 	
