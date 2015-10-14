@@ -37,11 +37,14 @@ public class SplashScreen extends JPanel {
 	private final JButton[] menuButtons = new JButton[]{new JButton("New Game"), new JButton("Load Game")};
 	private final int[] menuMnemonics = new int[]{KeyEvent.VK_N, KeyEvent.VK_L};	// Mnemonics matching each menu button
 	private final JButton confirmButton = new JButton();
+	private final JButton[] winButtons = new JButton[]{ new JButton("Chicken"), new JButton("Egg"), new JButton("") };
+	private final int[] winMnemonics = new int[]{ KeyEvent.VK_C, KeyEvent.VK_E, KeyEvent.VK_D };
 
 	/* Labels for screens with changing messages. */
 	private final JLabel startupMessage = new JLabel("Waiting for connection ...");
 	private final JLabel confirmMessage = new JLabel("");
 	private final JLabel informMessage = new JLabel("");
+	private final JLabel winMessage = new JLabel("Congratulations, you've almost beaten the game! Just one last question ... ");
 	private final JLabel genericMessage = new JLabel("");
 	
 	private final CardLayout layout = new CardLayout();
@@ -63,7 +66,7 @@ public class SplashScreen extends JPanel {
 		createMenuCard(listener);
 		createReadyCard();
 		createDeathCard();
-		createWinCard();
+		createWinCard(listener);
 		createAboutCard();
 		createConfirmCard(listener);
 		createInformCard();
@@ -146,6 +149,13 @@ public class SplashScreen extends JPanel {
 		ui.setPlayingFalse();
 	}
 	
+	/**
+	 * Change the message displayed on the end game card.
+	 */
+	public void updateWinCard(String message){
+		winMessage.setText(message);
+	}
+	
 	/** Returns the card that is currently displaying to the user. */
 	public int getOpenCard(){ return openCard; }
 	
@@ -183,7 +193,7 @@ public class SplashScreen extends JPanel {
 			if (event == KeyEvent.VK_C){ setVisibleCard(NO_CARD); }	// Cancel
 			else if (event == confirmButton.getMnemonic()){ return confirmButton.getActionCommand(); }
 		}
-		else if (openCard == READY_CARD || openCard == ABOUT_CARD || openCard == WIN_CARD){	// Cards that can be closed by key press
+		else if (openCard == READY_CARD || openCard == ABOUT_CARD){	// Cards that can be closed by key press
 			setVisibleCard(NO_CARD);
 		}
 		else if (openCard == DEATH_CARD){
@@ -195,6 +205,11 @@ public class SplashScreen extends JPanel {
 			}
 			else {		// still waiting on a game state. Show the startup menu.
 				setVisibleStartup("Waiting for game state ...");
+			}
+		}
+		else if (openCard == WIN_CARD){
+			for (int i=0; i<winMnemonics.length; i++){
+				if (winMnemonics[i] == event){ return winButtons[i].getActionCommand(); }
 			}
 		}
 		return "";
@@ -231,7 +246,7 @@ public class SplashScreen extends JPanel {
 	private void createMenuCard(Listener listener){
 		Dimension btnSize = new Dimension(100, 25);
 		allPanels[HOST_CARD] = new JPanel();
-		allPanels[HOST_CARD].setBackground(new Color(220, 220, 220));
+		allPanels[HOST_CARD].setBackground(new Color(105, 206, 236));
 		allPanels[HOST_CARD].setLayout(new BoxLayout(allPanels[HOST_CARD], BoxLayout.Y_AXIS));
 		
 		allPanels[HOST_CARD].add(Box.createVerticalGlue());
@@ -298,7 +313,8 @@ public class SplashScreen extends JPanel {
 	 * Build the card that shows when the player wins the game.
 	 * Partially transparent, expects a game behind this card.
 	 */
-	private void createWinCard(){
+	private void createWinCard(Listener listener){
+		Dimension size = new Dimension(100, 25);
 		allPanels[WIN_CARD] = new JPanel();
 		allPanels[WIN_CARD].setLayout(new BoxLayout(allPanels[WIN_CARD], BoxLayout.Y_AXIS));
 		allPanels[WIN_CARD].setBackground(new Color(250, 200, 100, 240));		// Yellow/Orange, slightly transparent.
@@ -306,6 +322,34 @@ public class SplashScreen extends JPanel {
 		allPanels[WIN_CARD].add(Box.createVerticalGlue());
 		
 		addImage(WIN_CARD, "img-win.png");
+		
+		allPanels[WIN_CARD].add(Box.createVerticalGlue());
+		
+		winMessage.setAlignmentX(CENTER_ALIGNMENT);
+		allPanels[WIN_CARD].add(winMessage);
+		
+		allPanels[WIN_CARD].add(Box.createVerticalGlue());
+		
+		JLabel message = new JLabel("Which came first, the chicken or the egg?");
+		message.setAlignmentX(CENTER_ALIGNMENT);
+		allPanels[WIN_CARD].add(message);
+		allPanels[WIN_CARD].add(Box.createVerticalGlue());
+		
+		makeButton(listener, winButtons[0], size, winMnemonics[0]);
+		makeButton(listener, winButtons[1], size, winMnemonics[1]);
+		makeButton(listener, winButtons[2], size, winMnemonics[2]);
+		allPanels[WIN_CARD].add(winButtons[0]);
+		allPanels[WIN_CARD].add(winButtons[1]);
+		allPanels[WIN_CARD].add(winButtons[2]);
+		
+		winButtons[0].setToolTipText("Chicken");
+		winButtons[1].setToolTipText("Egg");
+		winButtons[2].setToolTipText("Dinosaur");
+		
+		//winButtons[2].setOpaque(false);
+		winButtons[2].setBorderPainted(false);
+		winButtons[2].setContentAreaFilled(false);
+		winButtons[2].setActionCommand("Dinosaur");
 		
 		allPanels[WIN_CARD].add(Box.createVerticalGlue());
 

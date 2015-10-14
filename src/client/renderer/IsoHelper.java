@@ -5,61 +5,19 @@ import java.awt.Point;
 /**
  * Created by Eliot on 15/09/2015.
  * 
- * A helper class to convert between Cartesian and Isometric, and rotate arrays. 
+ * A helper class to convert from Cartesian Coordinates to Isometric, and rotate arrays. 
  */
 public final class IsoHelper {
     private IsoHelper(){}
-   // public static Point cameraOffset = new Point(0,0);
     private static int tileSize = 128;
     
-    /**
-     * Sets what tile is the center of the screen, in tile coordinates 
-     * @param camPoint
-     */
-    public static void setCameraOffset(int x, int y){
-//    	cameraOffset.x = x;
-//    	cameraOffset.y = y;
-    	System.out.println("I shouldnt' be used");
-    }
-
     
     /**
      * Converts a Cartesian Coordinate into an isometric point in screen space, offset by the camera position.
      * @param twoDee
      * @return
      */
-    public static Point twoDToIso(Point twoDee){
-        Point tempPoint = new Point(0,0);
-        
-//        int camX = cameraOffset.x * (tileSize / 2);
-//        int camY = cameraOffset.y * (tileSize / 2);
-//                
-//        //Camera Offset
-//        twoDee.x -= camX;
-//        twoDee.y -= camY;
-        
-        tempPoint.x = (twoDee.x - twoDee.y) + 400; // Half the screen width, to center 0,0.
-        tempPoint.y = ((twoDee.x + twoDee.y) / 2) + 300; // Half the screen height
-        return tempPoint;
-    }
-    
-    public static Point twoDToIsoWithTileOffset(Point twoDee, int xoffset, int yoffset){
-        Point tempPoint = new Point(0,0);
-        
-        int camX = xoffset * (tileSize / 2);
-        int camY = yoffset * (tileSize / 2);
-                
-        //Camera Offset
-        twoDee.x -= camX;
-        twoDee.y -= camY;
-        
-        tempPoint.x = (twoDee.x - twoDee.y) + 400; // Half the screen width, to center 0,0.
-        tempPoint.y = ((twoDee.x + twoDee.y) / 2) + 300; // Half the screen height
-        return tempPoint;
-    }
-    
-    
-    public static Point twoDToIsoWithLerpOffset(Point twoDee, float xoffset, float yoffset){
+    protected static Point twoDToIsoWithLerpOffset(Point twoDee, float xoffset, float yoffset){
         Point tempPoint = new Point(0,0);
         
         double camX = xoffset * (tileSize / 2);
@@ -70,10 +28,6 @@ public final class IsoHelper {
         
         x -= camX;
         y -= camY;
-                
-//        //Camera Offset
-//        twoDee.x -= camX;
-//        twoDee.y -= camY;
         
         tempPoint.x = (int) ((x - y) + 400); // Half the screen width, to center 0,0.
         tempPoint.y = (int) (((x + y) / 2) + 300); // Half the screen height
@@ -84,10 +38,12 @@ public final class IsoHelper {
     /**
      * Rotates a 2d level array 90 degrees clockwise. 
      * Will also rotate player tiles which have direction
+     * 
+     * Based off this stack overflow answer http://stackoverflow.com/questions/2799755/rotate-array-clockwise
      * @param mat
      * @return
      */
-    static char[][] rotateCW(char[][] mat) {
+    protected static char[][] rotateCW(char[][] mat) {
         final int M = mat.length;
         final int N = mat[0].length;
         char[][] ret = new char[N][M];
@@ -116,7 +72,7 @@ public final class IsoHelper {
      * @param mat
      * @return
      */
-    static char[][] rotateCCW(char[][] mat) {
+    protected static char[][] rotateCCW(char[][] mat) {
        return rotateCW(rotateCW(rotateCW(mat)));
     }
     
@@ -125,7 +81,7 @@ public final class IsoHelper {
      * @param mat
      * @return
      */
-    static char[][] rotate180(char[][] mat) {
+    protected static char[][] rotate180(char[][] mat) {
         return rotateCW(rotateCW(mat));
      }
 

@@ -17,6 +17,7 @@ import server.tiles.Furniture;
 import server.tiles.Passable;
 import server.tiles.PressurePad;
 import server.tiles.PutDownOnable;
+import server.tiles.Spikes;
 import server.tiles.Tile;
 
 public class GameLogic {
@@ -126,28 +127,20 @@ public class GameLogic {
 		// Check for out of bounds
 		if (nextLoc.y < 0 || nextLoc.y > room.getTiles().length-1 || nextLoc.x < 0 || nextLoc.x > room.getTiles()[0].length-1)
 			return false;
-		
-		
-		
+			
 		Tile nextTile = room.getTiles()[nextLoc.y][nextLoc.x];
 		Point currLoc =  player.getLocation();
 		Tile currTile = room.getTiles()[currLoc.y][currLoc.x];
 		
-		
-		
 		// Check Boulders because Players can't move on to Boulders
 		for(Boulder b: room.getBoulders())
 			if(b.getLocation().equals(nextLoc))
-				return false;
-			
-		
+				return false;	
 		
 		// If Tile is not type Passable = can't move on to.
 		// If Tile is type Passable but state is !isPassable() = can't move on to.
 		if (!(nextTile instanceof Passable) || (nextTile instanceof Passable && !((Passable)nextTile).isPassable()))
 			return false;
-		
-		
 		
 		if(currTile instanceof PressurePad){
 			((PressurePad)currTile).activate();
@@ -181,8 +174,6 @@ public class GameLogic {
 				doorTile.unlock();
 			}
 		}
-
-		
 		
 		// If Tile is a Door
 		// The Passable check above ensure LevelDoor is also Passable
@@ -229,11 +220,14 @@ public class GameLogic {
 		
 		
 		
-		if (interactWith.y < 0 || interactWith.y > room.getTiles().length-1 || interactWith.x < 0 || interactWith.x > room.getTiles()[0].length-1)
-			return "You are trying to interact with a tile outside the bounds of the game.";	
-		
-		
-		
+		if (interactWith.y < 0 || interactWith.y > room.getTiles().length-1 || interactWith.x < 0 || interactWith.x > room.getTiles()[0].length-1){
+			if(player.hasBoulder()){
+				return "DON'T CHUCK YOUR BABY OVERBOARD!";
+			} else {
+				return "You are trying to interact with a tile outside the bounds of the game.";
+			}	
+		}
+			
 		Tile interactTile = room.getTiles()[interactWith.y][interactWith.x];	
 		
 		
@@ -343,13 +337,18 @@ public class GameLogic {
 			}
 		}
 		else if (player.hasBoulder()) {
+			
 			// If there's a boulder in front of you, you can't drop your current boulder or pick another
-			boolean facingBoulder = room.containsBoulder(new Boulder(interactWith));
-
+			if(room.containsBoulder(new Boulder(interactWith))){
+				return "Don't pile yo eggs..";
+			}
 			// Check if there's a player present on the tile you're trying to drop the boulder onto. If Player there you can't drop.
-			boolean facingPlayer = room.playerAt(interactWith);			
+			if(room.playerAt(interactWith)){
+				return "Don't squish your friend silly CHICKIE";
+			}
 
 			if (interactTile instanceof PutDownOnable) {
+
 				room.addBoulder(new Boulder(interactWith));
 				player.dropBoulder();
 				
@@ -439,10 +438,14 @@ public class GameLogic {
 
 	
 	
-	public void activateSpikes() {
-		for (Stage s : stages)
-			for (Room r : s.getRooms())
-				r.activateSpikes();
+	public String activateSpikes() {
+		String temp = "";
+		for (Stage s : stages){
+			for (Room r : s.getRooms()){
+				temp = r.activateSpikes();		
+			}
+		}
+		return temp;
 	}
 	
 	

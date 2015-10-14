@@ -138,6 +138,17 @@ public class Listener extends JPanel implements KeyListener, ActionListener {
 					System.exit(0);
 				}
 			}
+			if (openCard == SplashScreen.WIN_CARD){
+				if (ac.equals("Egg")){
+					splash.updateWinCard("'Egg' is the wrong answer! You've got one guess left ... ");
+				}
+				else if (ac.equals("Chicken")){
+					splash.updateWinCard("'Chicken' is the wrong answer! You've got one guess left ... ");
+				}
+				else if (ac.equals("Dinosaur")){
+					splash.updateWinCard("CHEATER! Try again, but follow the rules this time!");
+				}
+			}
 			return;				// If splash screen is unlocked, do not check game controls
 		}
 		
