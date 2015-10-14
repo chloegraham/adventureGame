@@ -225,7 +225,11 @@ public class Server implements Runnable {
 	private void handleAction(int ordinal, int userID) throws IOException {
 		String message = logic.handleAction(ordinal, userID);
 		//if received message from logic states a player has died, deal with the death here
-		if(message.equals("You're dead")) System.out.println("server knows dead");
+		if(message.equals("You're dead")){
+			outputOne.writeUTF("You're dead");
+			outputTwo.writeUTF("You're dead");
+		}
+		
 		broadcast(userID, message);
 	}
 	
@@ -233,7 +237,7 @@ public class Server implements Runnable {
 	private void broadcast(int userID, String message) throws IOException {
 		String current = gameWorld.getEncodedGameWorld(userID);
 		current += message;
-		
+		System.out.println("current = " + current);
 		int otherUserID = Msgs.PLAYER_TWO;
 		if (userID == Msgs.PLAYER_TWO)
 			otherUserID = Msgs.PLAYER_ONE;

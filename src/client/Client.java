@@ -139,6 +139,11 @@ public class Client implements Runnable {
 				ui.setChangedGameState(Actions.NEWGAME.ordinal());
 				return;
 			}
+			if(encodedInput.equals("You're dead")){
+				System.out.println("HEY SET THIS TO DEAD");
+				ui.setPlayerDeath();
+				return;
+			}
 			
 			String[] encodedSplit = encodedInput.split("<Split>");
 			
