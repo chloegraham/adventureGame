@@ -24,7 +24,6 @@ import javax.swing.JLayeredPane;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -177,13 +176,6 @@ public class UserInterface extends JFrame {
 			Thread.sleep(1000);
 		} catch (InterruptedException e) {}
 	}
-	
-	//TODO: test method implemented for checking save process
-		public int getPlayerResponse(){
-			int temp = JOptionPane.showConfirmDialog(getFocusOwner(), "Annie are you ok, are you ok Annie?");
-			System.out.println("int value is: " + String.valueOf(temp));
-			return temp;
-		}
 	
 	/**
 	 * Tell this player that the game state is currently being changed.
