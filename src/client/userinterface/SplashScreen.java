@@ -231,7 +231,7 @@ public class SplashScreen extends JPanel {
 	private void createMenuCard(Listener listener){
 		Dimension btnSize = new Dimension(100, 25);
 		allPanels[HOST_CARD] = new JPanel();
-		allPanels[HOST_CARD].setBackground(new Color(220, 220, 220));
+		allPanels[HOST_CARD].setBackground(new Color(105, 206, 236));
 		allPanels[HOST_CARD].setLayout(new BoxLayout(allPanels[HOST_CARD], BoxLayout.Y_AXIS));
 		
 		allPanels[HOST_CARD].add(Box.createVerticalGlue());

@@ -24,6 +24,10 @@ public class TilePainter {
     private BufferedImage chickenSpriteEast;
     private BufferedImage chickenSpriteWest;
     private BufferedImage goal;
+    private BufferedImage chestOpen;
+    private BufferedImage chestClosed;
+
+
 
 
 
@@ -36,6 +40,10 @@ public class TilePainter {
         	chickenSpriteWest = ImageIO.read(new File("chicken3.png"));
         	chickenSpriteEast = ImageIO.read(new File("chicken1.png"));
         	goal = ImageIO.read(new File("goal.png"));
+        	
+        	chestOpen = ImageIO.read(new File("chest.png"));
+        	chestClosed = ImageIO.read(new File("chest-closed.png"));
+
 
 
         } catch (IOException ex) {
@@ -110,24 +118,27 @@ public class TilePainter {
         int forth = tilesize / 4;
         
         // top bit
-        int xPoints[] = {x, x + forth, x, x - forth};
-        int yPoints[] = {y + eigth, y, y - eigth, y};
+//        int xPoints[] = {x, x + forth, x, x - forth};
+//        int yPoints[] = {y + eigth, y, y - eigth, y};
+//
+//        
+//        int xrPoints[] = {x, 			x + forth, 		x + forth, 	x};
+//        int yrPoints[] = {y + eigth, 	y, 				y + forth, 	y + (eigth * 3)};
+//        
+//        int xlPoints[] = {x, 			x - forth, 		x - forth, 	x};
+//        int ylPoints[] = {y + eigth, 	y, 				y + forth, 	y + (eigth * 3)};
+//        
+//        g2.setPaint(new Color(104, 76, 53));
+//        g2.fillPolygon(xlPoints, ylPoints, 4);
+//        
+//        g2.setPaint(new Color(135, 97, 69));
+//        g2.fillPolygon(xrPoints, yrPoints, 4);
+//        
+//        g2.setPaint(new Color(166, 124, 82));
+//        g2.fillPolygon(xPoints, yPoints, 4);
+//        
+        g2.drawImage(chestClosed, x - (tilesize / 2), y - (tilesize / 2), null);    
 
-        
-        int xrPoints[] = {x, 			x + forth, 		x + forth, 	x};
-        int yrPoints[] = {y + eigth, 	y, 				y + forth, 	y + (eigth * 3)};
-        
-        int xlPoints[] = {x, 			x - forth, 		x - forth, 	x};
-        int ylPoints[] = {y + eigth, 	y, 				y + forth, 	y + (eigth * 3)};
-        
-        g2.setPaint(new Color(104, 76, 53));
-        g2.fillPolygon(xlPoints, ylPoints, 4);
-        
-        g2.setPaint(new Color(135, 97, 69));
-        g2.fillPolygon(xrPoints, yrPoints, 4);
-        
-        g2.setPaint(new Color(166, 124, 82));
-        g2.fillPolygon(xPoints, yPoints, 4);   
     }
     
     protected void drawOpenedChest(Graphics2D g2, int x, int y){
@@ -136,25 +147,28 @@ public class TilePainter {
         int eigth = tilesize / 8;
         int forth = tilesize / 4;
         
-        // top bit
-        int xPoints[] = {x, x + forth, x, x - forth};
-        int yPoints[] = {y + eigth, y, y - eigth, y};
+//        // top bit
+//        int xPoints[] = {x, x + forth, x, x - forth};
+//        int yPoints[] = {y + eigth, y, y - eigth, y};
+//
+//        
+//        int xrPoints[] = {x, 			x + forth, 		x + forth, 	x};
+//        int yrPoints[] = {y + eigth, 	y, 				y + forth, 	y + (eigth * 3)};
+//        
+//        int xlPoints[] = {x, 			x - forth, 		x - forth, 	x};
+//        int ylPoints[] = {y + eigth, 	y, 				y + forth, 	y + (eigth * 3)};
+//        
+//        g2.setPaint(new Color(104, 76, 53));
+//        g2.fillPolygon(xlPoints, ylPoints, 4);
+//        
+//        g2.setPaint(new Color(135, 97, 69));
+//        g2.fillPolygon(xrPoints, yrPoints, 4);
+//        
+//        g2.setPaint(new Color(61, 45, 31));
+//        g2.fillPolygon(xPoints, yPoints, 4);   
+        
+        g2.drawImage(chestOpen, x - (tilesize / 2), y - (tilesize / 2), null);    
 
-        
-        int xrPoints[] = {x, 			x + forth, 		x + forth, 	x};
-        int yrPoints[] = {y + eigth, 	y, 				y + forth, 	y + (eigth * 3)};
-        
-        int xlPoints[] = {x, 			x - forth, 		x - forth, 	x};
-        int ylPoints[] = {y + eigth, 	y, 				y + forth, 	y + (eigth * 3)};
-        
-        g2.setPaint(new Color(104, 76, 53));
-        g2.fillPolygon(xlPoints, ylPoints, 4);
-        
-        g2.setPaint(new Color(135, 97, 69));
-        g2.fillPolygon(xrPoints, yrPoints, 4);
-        
-        g2.setPaint(new Color(61, 45, 31));
-        g2.fillPolygon(xPoints, yPoints, 4);   
     }
     
     protected void drawDoor(Graphics2D g2, int x, int y){
