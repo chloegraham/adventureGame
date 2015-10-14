@@ -14,7 +14,7 @@ public class GameWorld {
 	public GameWorld(String encodedGameWorld){
 		String[] split = encodedGameWorld.split(Msgs.DELIM_SPLIT);
 		
-		stages = new ArrayList<>();
+		stages = new ArrayList<>(); 
 		players = new ArrayList<>();
 		
 		int index = 0;

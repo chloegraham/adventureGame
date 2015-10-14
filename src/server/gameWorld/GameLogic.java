@@ -13,6 +13,7 @@ import server.movable.Player;
 import server.tiles.Chest;
 import server.tiles.Door;
 import server.tiles.DoorNormal;
+import server.tiles.Furniture;
 import server.tiles.Passable;
 import server.tiles.PressurePad;
 import server.tiles.PutDownOnable;
@@ -33,9 +34,11 @@ public class GameLogic {
 	public String handleAction(int ordinal, int userID) {
 		// absdjkfasj
 		Player player = null;
-		for (Player p : players)
-			if (userID == p.getUserID())
+		for (Player p : players){
+			if (userID == p.getUserID()){
 				player = p;
+			}
+		}
 		
 		assert(player != null);
 		
@@ -109,12 +112,12 @@ public class GameLogic {
 			throw new IllegalArgumentException("GameLogic:  received an unexpected ordinal. It might be 'Inspect' which we have't coded yet.");
 		}
 		
-		/*
-		 *  // TODO check player is dead here??
-		 *  // TODO check player is dead here??
-		 *  
-		 */
-
+		for (Player p : players){
+			//CHECK IF EITHER PLAYERS ARE DEAD and return this to the server
+			if(p.isDead()){
+				return "You're dead";
+			}
+		}
 		return message;
 	}
 	
@@ -227,20 +230,19 @@ public class GameLogic {
 		
 		
 		if (interactWith.y < 0 || interactWith.y > room.getTiles().length-1 || interactWith.x < 0 || interactWith.x > room.getTiles()[0].length-1)
-			return "temp - you are trying to interact with a tile outside the bounds of the game.";	
+			return "You are trying to interact with a tile outside the bounds of the game.";	
 		
 		
 		
-		Tile tile = room.getTiles()[interactWith.y][interactWith.x];	
-		
+		Tile interactTile = room.getTiles()[interactWith.y][interactWith.x];	
 		
 		
 		/*
 		 *  Chest interaction or inspection code & messages
 		 */
-		if (tile instanceof Chest){
+		if (interactTile instanceof Chest){
 
-			Chest chest = (Chest) tile;
+			Chest chest = (Chest) interactTile;
 			
 			// OPEN
 			// true - "Chest already open"
@@ -276,9 +278,9 @@ public class GameLogic {
 		/*
 		 *  Door interaction code & message
 		 */
-		if (tile instanceof DoorNormal){
+		if (interactTile instanceof DoorNormal){
 			
-			DoorNormal doorNormal = (DoorNormal) tile;
+			DoorNormal doorNormal = (DoorNormal) interactTile;
 			
 			// ISLOCKED
 			// true - "The Door is locked"
@@ -306,7 +308,7 @@ public class GameLogic {
 		 *  Boulder interaction code & message
 		 */
 		boolean hadBoulder = player.hasBoulder();
-		boolean isBoulderRelavent = true;
+		boolean isBoulderRelavent = false;
 		boolean infrontBoulder = false;
 		boolean emptyORpressure = false;
 		
@@ -317,11 +319,27 @@ public class GameLogic {
 			// If Boulder there pick it up
 			// If no Boulder this section of code is irrelevant
 			if(facingBoulder) {
+				isBoulderRelavent = true;
 				player.addBoulder();		// true - "You picked up a Boulder"	
-				/*
-				 *  IF pressure pad then call activate() on PressurePad in level so level can manage openeing closing doors
-				 */
-
+				if(interactTile instanceof PressurePad){
+					
+					((PressurePad)interactTile).activate();			
+					TileFullLocation d = TileConnections.getConnectedTile(player.getStageID(), player.getRoomID(), interactWith);
+					
+					if (d != null) {
+						Point doorPoint = d.getLocation();
+						Door doorTile = (Door)room.getTiles()[doorPoint.y][doorPoint.x];
+						
+						doorTile.lock();
+						
+						//if there's a player in the doorway when getting off the activated pressure pad then kill them
+						for(Player p : players){
+							if(p.getLocation().equals(doorPoint)){
+								p.murder();
+							}
+						}
+					}
+				}
 			}
 		}
 		else if (player.hasBoulder()) {
@@ -329,17 +347,25 @@ public class GameLogic {
 			boolean facingBoulder = room.containsBoulder(new Boulder(interactWith));
 
 			// Check if there's a player present on the tile you're trying to drop the boulder onto. If Player there you can't drop.
-			boolean facingPlayer = room.playerAt(interactWith);
-				
+			boolean facingPlayer = room.playerAt(interactWith);			
 
-			if (tile instanceof PutDownOnable) {
+			if (interactTile instanceof PutDownOnable) {
 				room.addBoulder(new Boulder(interactWith));
 				player.dropBoulder();
 				
-				if (tile instanceof PressurePad) 
-					((PressurePad)tile).activate();
-
+				if (interactTile instanceof PressurePad) {
+					
+					((PressurePad)interactTile).activate();
+					TileFullLocation d = TileConnections.getConnectedTile(player.getStageID(), player.getRoomID(), interactWith);
+					if (d != null) {
+						Point doorPoint = d.getLocation();
+						Door doorTile = (Door)room.getTiles()[doorPoint.y][doorPoint.x];	
+						doorTile.unlock();
+					}
+					
+				}
 			}
+					
 		}
 			
 		if (hadBoulder) {
@@ -382,32 +408,32 @@ public class GameLogic {
 		
 		Tile tile = room.getTiles()[interactWith.y][interactWith.x];
 		
-//		if(tile instanceof Furniture && !(tile instanceof PressurePad)){	//doesn't include pressure pad
-//			return Msgs.inspectUnmovable((Furniture) tile);
-//		}
-//		//if code reaches here, might be trying to inspect an empty tile (empty tile doesn't extend unmoveable) boulders and players (moveables) can be on empty tiles
-//		for(Boulder b: level.getBoulders()){
-//			if(b.getLocation().equals(interactWith)){
-//				if(tile instanceof PressurePad){
-//					return Msgs.inspectMoveable(b, true);
-//				}
-//				return Msgs.inspectMoveable(b, false);
-//			}
-//		}
-//		//check both players in list, if one is present on the tile you're inspecting then return a string that says so
-//		for(Player p: this.players){
-//			if(p.getLocation().equals(interactWith)){
-//				if(tile instanceof PressurePad){
-//					return Msgs.inspectMoveable(p, true);
-//				}
-//				return Msgs.inspectMoveable(p, false);
-//			}
-//		}
-//		
-//		//if code reaches here, pressure pad can't contain a moveable object and so return message stating it's a pressure pad
-//		if(tile instanceof PressurePad){
-//			return Msgs.inspectPressurePad();
-//		}
+		if(tile instanceof Furniture && !(tile instanceof PressurePad)){	//doesn't include pressure pad
+			return Msgs.inspectUnmovable((Furniture) tile);
+		}
+		//if code reaches here, might be trying to inspect an empty tile (empty tile doesn't extend unmoveable) boulders and players (moveables) can be on empty tiles
+		for(Boulder b: room.getBoulders()){
+			if(b.getLocation().equals(interactWith)){
+				if(tile instanceof PressurePad){
+					return Msgs.inspectMoveable(b, true);
+				}
+				return Msgs.inspectMoveable(b, false);
+			}
+		}
+		//check both players in list, if one is present on the tile you're inspecting then return a string that says so
+		for(Player p: this.players){
+			if(p.getLocation().equals(interactWith)){
+				if(tile instanceof PressurePad){
+					return Msgs.inspectMoveable(p, true);
+				}
+				return Msgs.inspectMoveable(p, false);
+			}
+		}
+		
+		//if code reaches here, pressure pad can't contain a moveable object and so return message stating it's a pressure pad
+		if(tile instanceof PressurePad){
+			return Msgs.inspectPressurePad();
+		}
 		return "BEN TURNED OFF INSPECT TEMPORARILY";
 	}
 
