@@ -27,6 +27,8 @@ import server.helpers.Direction;
  * 
  * The renderer draws each layer one by one, layering them up. This is so we can have complex tile states (player holding a
  * boulder on an active pressure pad).
+ * 
+ * The renderpane also keeps track of what tile to center on, and an interpolated version of this value
  */
 
 
@@ -67,8 +69,6 @@ public class RenderPane extends JPanel {
     public Dimension getPreferredSize() {
         return new Dimension(800,600);
     }
-   
-    
     
     
     /**
@@ -83,15 +83,21 @@ public class RenderPane extends JPanel {
     	this.moveables = moveables;
     }
     
-    
+    /**
+     * Set the camera offset, as tile coordinates.
+     * E.g 4, 5, would mean tile 4, 5 is the center of the screen when drawn
+     * @param x
+     * @param y
+     */
     public void setCamOffset(int x, int y){
     	this.camOffset.x = x;
     	this.camOffset.y = y;
     }
 
+    
     /**
      * Rotates the this.viewDir variable. 
-     * True for clockwise, false for counter-clockwise
+     * False for clockwise, true for counter-clockwise
      * @param direction
      */
     public void rotateViewClockwise(boolean dir){
@@ -104,8 +110,6 @@ public class RenderPane extends JPanel {
     }
     
     
-
-
     
     /**
      * Paints from all 3 game layers, to the supplied graphics context. 
@@ -134,6 +138,8 @@ public class RenderPane extends JPanel {
         	rotatedMoveables = IsoHelper.rotateCW(this.moveables);
         	
         	//Rotate cam
+        	//Rotating the camera coordinate was easily the most challenging part,
+
         	rotatedXOffset = - yLerpOffset + rotatedLevel[0].length - 1;
         	rotatedYOffset = xLerpOffset;
         	     
@@ -144,8 +150,7 @@ public class RenderPane extends JPanel {
         	rotatedMoveables = IsoHelper.rotateCCW(this.moveables);
         	
 
-        	// rotating camera location
-        	// You would not believe the amount of thought and failure going into these two lines.
+        	// rotating camera clockwise
         	rotatedXOffset = yLerpOffset;
         	rotatedYOffset = - xLerpOffset + rotatedLevel.length - 1;
 
@@ -155,16 +160,15 @@ public class RenderPane extends JPanel {
         	rotatedObjects = IsoHelper.rotate180(this.objects);
         	rotatedMoveables = IsoHelper.rotate180(this.moveables);        	
         	
+        	// Rotating camera 180
         	rotatedXOffset = rotatedLevel[0].length - xLerpOffset - 1;
         	rotatedYOffset =  rotatedLevel.length - yLerpOffset - 1;
         	
         }
-        else
-        	throw new RuntimeException("Invalid direction.");
+        
         
         int numberOfRows = rotatedLevel.length;
         int numberOfColums = rotatedLevel[0].length;
-        
 		 
 		//Loop through each tile position
         for (int i = 0; i < numberOfRows; i++) {
@@ -179,7 +183,7 @@ public class RenderPane extends JPanel {
                 //Take the Cartesian point and convert to isometric
                 Point isoTile = IsoHelper.twoDToIsoWithLerpOffset(tile, rotatedXOffset, rotatedYOffset);
                 
-                //Check each layer and draw the right tile at that point.
+                //See what tile is in that position in each layer, and draw it
                 parseAndDrawTile(rotatedLevel[i][j], isoTile, g2);
                 parseAndDrawTile(rotatedObjects[i][j], isoTile, g2);
                 parseAndDrawTile(rotatedMoveables[i][j], isoTile, g2);
@@ -188,33 +192,31 @@ public class RenderPane extends JPanel {
         }
     }
     
-    
-    public void update(){
+    /**
+     * Advances the camera animation one tick. 
+     * 
+     * Every time this method runs, it moves the interpolated
+     * camera towards the actual camera offset.
+     */
+    public void cameraTick(){
+    	
     	float xGoal = camOffset.x;
     	float yGoal = camOffset.y;
-    	
-    	float nearestX = (float)Math.round(xLerpOffset * 10f) / 10f;
-    	float nearestY = (float)Math.round(yLerpOffset * 10f) / 10f;
-    	    	
     	
     	float xDifference = Math.abs(xGoal - xLerpOffset);
     	float yDifference = Math.abs(yGoal - yLerpOffset);
 
-    	
-    	if(nearestX != xGoal){
-    		if(xGoal > xLerpOffset){
-        		xLerpOffset = xLerpOffset + (xDifference / 4);
-        	}else{
-        		xLerpOffset = xLerpOffset - (xDifference / 4);
-        	}
+	
+		if(xGoal > xLerpOffset){
+    		xLerpOffset = xLerpOffset + (xDifference / 4);
+    	}else{
+    		xLerpOffset = xLerpOffset - (xDifference / 4);
     	}
-    	
-    	if(nearestY != yGoal){
-    		if(yGoal > yLerpOffset){
-    			yLerpOffset = yLerpOffset + (yDifference / 3);
-        	}else{
-        		yLerpOffset = yLerpOffset - (yDifference / 3);
-        	}
+
+		if(yGoal > yLerpOffset){
+			yLerpOffset = yLerpOffset + (yDifference / 3);
+    	}else{
+    		yLerpOffset = yLerpOffset - (yDifference / 3);
     	}
    	
     }
@@ -253,7 +255,6 @@ public class RenderPane extends JPanel {
 	        case 'J' : tilePainter.drawCharachterWestWithBoulder(g2, isoTile.x, isoTile.y); break;       		
 	        case 'L' : tilePainter.drawCharachterEastWithBoulder(g2, isoTile.x, isoTile.y); break;
 	        case 'K' : tilePainter.drawCharachterSouthWithBoulder(g2, isoTile.x, isoTile.y); break;
-	        //TODO: handle player being 0 as dead? we can chat about that
     	}
     }
 

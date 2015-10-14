@@ -114,29 +114,6 @@ public class TilePainter {
     protected void drawChest(Graphics2D g2, int x, int y){
     	// First draw a floor tile
         drawFloorTile(g2, x, y);
-        int eigth = tilesize / 8;
-        int forth = tilesize / 4;
-        
-        // top bit
-//        int xPoints[] = {x, x + forth, x, x - forth};
-//        int yPoints[] = {y + eigth, y, y - eigth, y};
-//
-//        
-//        int xrPoints[] = {x, 			x + forth, 		x + forth, 	x};
-//        int yrPoints[] = {y + eigth, 	y, 				y + forth, 	y + (eigth * 3)};
-//        
-//        int xlPoints[] = {x, 			x - forth, 		x - forth, 	x};
-//        int ylPoints[] = {y + eigth, 	y, 				y + forth, 	y + (eigth * 3)};
-//        
-//        g2.setPaint(new Color(104, 76, 53));
-//        g2.fillPolygon(xlPoints, ylPoints, 4);
-//        
-//        g2.setPaint(new Color(135, 97, 69));
-//        g2.fillPolygon(xrPoints, yrPoints, 4);
-//        
-//        g2.setPaint(new Color(166, 124, 82));
-//        g2.fillPolygon(xPoints, yPoints, 4);
-//        
         g2.drawImage(chestClosed, x - (tilesize / 2), y - (tilesize / 2), null);    
 
     }
@@ -144,28 +121,6 @@ public class TilePainter {
     protected void drawOpenedChest(Graphics2D g2, int x, int y){
     	// First draw a floor tile
         drawFloorTile(g2, x, y);
-        int eigth = tilesize / 8;
-        int forth = tilesize / 4;
-        
-//        // top bit
-//        int xPoints[] = {x, x + forth, x, x - forth};
-//        int yPoints[] = {y + eigth, y, y - eigth, y};
-//
-//        
-//        int xrPoints[] = {x, 			x + forth, 		x + forth, 	x};
-//        int yrPoints[] = {y + eigth, 	y, 				y + forth, 	y + (eigth * 3)};
-//        
-//        int xlPoints[] = {x, 			x - forth, 		x - forth, 	x};
-//        int ylPoints[] = {y + eigth, 	y, 				y + forth, 	y + (eigth * 3)};
-//        
-//        g2.setPaint(new Color(104, 76, 53));
-//        g2.fillPolygon(xlPoints, ylPoints, 4);
-//        
-//        g2.setPaint(new Color(135, 97, 69));
-//        g2.fillPolygon(xrPoints, yrPoints, 4);
-//        
-//        g2.setPaint(new Color(61, 45, 31));
-//        g2.fillPolygon(xPoints, yPoints, 4);   
         
         g2.drawImage(chestOpen, x - (tilesize / 2), y - (tilesize / 2), null);    
 
