@@ -92,8 +92,6 @@ public class SplashScreen extends JPanel {
 		this.add(allPanels[CONFIRM_CARD], Integer.toString(CONFIRM_CARD));
 		this.add(allPanels[INFORM_CARD], Integer.toString(INFORM_CARD));
 		this.add(allPanels[GENERIC_CARD], Integer.toString(GENERIC_CARD));
-		
-		setVisibleCard(openCard);
 	}
 	
 	/**
@@ -240,7 +238,7 @@ public class SplashScreen extends JPanel {
 		
 		allPanels[STARTUP_CARD].add(Box.createVerticalGlue());
 		
-		addImage(STARTUP_CARD, "/images/img-game-logo.png");
+		addImage(STARTUP_CARD, "src/images/img-game-logo.png");
 		
 		allPanels[STARTUP_CARD].add(Box.createVerticalGlue());
 		
@@ -261,7 +259,7 @@ public class SplashScreen extends JPanel {
 		
 		allPanels[HOST_CARD].add(Box.createVerticalGlue());
 		
-		addImage(HOST_CARD, "/images/img-game-logo.png");
+		addImage(HOST_CARD, "src/images/img-game-logo.png");
 		
 		allPanels[HOST_CARD].add(Box.createVerticalGlue());
 		
@@ -284,7 +282,7 @@ public class SplashScreen extends JPanel {
 
 		allPanels[READY_CARD].add(Box.createVerticalGlue());
 		
-		addImage(READY_CARD, "/images/img-key-binding.png");
+		addImage(READY_CARD, "src/images/img-key-binding.png");
 		
 		allPanels[READY_CARD].add(Box.createVerticalGlue());
 		
@@ -314,7 +312,7 @@ public class SplashScreen extends JPanel {
 		
 		allPanels[DEATH_CARD].add(Box.createVerticalGlue());
 		
-		addImage(DEATH_CARD, "/images/endishere.png");
+		addImage(DEATH_CARD, "src/images/endishere.png");
 		
 		allPanels[DEATH_CARD].add(Box.createVerticalGlue());
 	}
@@ -331,7 +329,7 @@ public class SplashScreen extends JPanel {
 		
 		allPanels[WIN_CARD].add(Box.createVerticalGlue());
 		
-		addImage(WIN_CARD, "/images/img-win.png");
+		addImage(WIN_CARD, "src/images/img-win.png");
 		
 		allPanels[WIN_CARD].add(Box.createVerticalGlue());
 		
@@ -377,7 +375,7 @@ public class SplashScreen extends JPanel {
 		
 		allPanels[ABOUT_CARD].add(Box.createVerticalGlue());
 		
-		addImage(ABOUT_CARD, "/images/img-game-logo.png");
+		addImage(ABOUT_CARD, "src/images/img-game-logo.png");
 		
 		allPanels[ABOUT_CARD].add(Box.createVerticalGlue());
 		
@@ -438,7 +436,7 @@ public class SplashScreen extends JPanel {
 		
 		allPanels[INFORM_CARD].add(Box.createVerticalGlue());
 		
-		addImage(INFORM_CARD, "/images/disneytext.png");
+		addImage(INFORM_CARD, "src/images/disneytext.png");
 		
 		allPanels[INFORM_CARD].add(Box.createVerticalGlue());
 		

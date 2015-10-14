@@ -45,9 +45,9 @@ public class UserInterface extends JFrame {
 	private SplashScreen splash;
 	
 	/* Images */
-	private final ImageIcon iconKey = loadImageIcon("/images/icon-key.png");
-	private final ImageIcon iconEggT = loadImageIcon("/images/icon-egg-true.png");
-	private final ImageIcon iconEggF = loadImageIcon("/images/icon-egg-false.png");
+	private final ImageIcon iconKey = loadImageIcon("src/images/icon-key.png");
+	private final ImageIcon iconEggT = loadImageIcon("src/images/icon-egg-true.png");
+	private final ImageIcon iconEggF = loadImageIcon("src/images/icon-egg-false.png");
 
 	/* Panel content */
 	private final JTextArea messagePane = new JTextArea();
@@ -72,6 +72,7 @@ public class UserInterface extends JFrame {
 		
 		listener = new Listener(client, graphics, this);
 		splash = listener.getSplash();
+		splash.setVisibleCard(SplashScreen.NO_CARD);
 		setListeners();
 	
 		/* Build panes */
@@ -200,6 +201,7 @@ public class UserInterface extends JFrame {
 	public void setContentEnabled(boolean enabled){
 		file.setEnabled(enabled);
 		help.setEnabled(enabled);
+		System.out.println(listener + " ... Listener");
 		listener.setSplashLocked(enabled);
 	}
 	
@@ -347,7 +349,8 @@ public class UserInterface extends JFrame {
 		try {
 			img = ImageIO.read(new File(imageAddress));
 			icon = new ImageIcon(img);
-		} catch (IOException e) { e.printStackTrace(); }
+		} catch (IOException e) {// e.printStackTrace();
+		System.out.println("Image: " + imageAddress); }
 		return icon;
 	}
 	
