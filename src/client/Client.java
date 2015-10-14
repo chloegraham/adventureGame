@@ -144,6 +144,11 @@ public class Client implements Runnable {
 				ui.setPlayerDeath();
 				return;
 			}
+			if(encodedInput.equals("You've won")){
+				System.out.println("HEY SET THIS TO WON!!");
+				ui.setPlayerWon();;
+				return;
+			}
 			
 			String[] encodedSplit = encodedInput.split("<Split>");
 			

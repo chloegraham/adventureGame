@@ -19,7 +19,7 @@ import client.helpers.Actions;
 
 /**
  * Tests for the game world package and save/load.
- * @author Kirsty
+ * @author Kirsty Thorburn 300316972
  *
  */
 public class GameTests {

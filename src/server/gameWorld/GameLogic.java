@@ -12,14 +12,19 @@ import server.movable.Boulder;
 import server.movable.Player;
 import server.tiles.Chest;
 import server.tiles.Door;
+import server.tiles.DoorLevel;
 import server.tiles.DoorNormal;
 import server.tiles.Furniture;
 import server.tiles.Passable;
 import server.tiles.PressurePad;
 import server.tiles.PutDownOnable;
-import server.tiles.Spikes;
 import server.tiles.Tile;
 
+/**
+ * The main class for controlling game logic
+ * @author Chloe
+ *
+ */
 public class GameLogic {
 	private GameWorld gameWorld;
 	private List<Stage> stages;
@@ -114,9 +119,12 @@ public class GameLogic {
 		}
 		
 		for (Player p : players){
-			//CHECK IF EITHER PLAYERS ARE DEAD and return this to the server
+			//CHECK IF EITHER PLAYERS ARE DEAD OR HAVE WON and return this to the server
 			if(p.isDead()){
 				return "You're dead";
+			} 
+			if(p.hasWon()){
+				return "You've won";
 			}
 		}
 		return message;
@@ -160,8 +168,6 @@ public class GameLogic {
 			}
 		}
 		
-		
-		
 		if (nextTile instanceof PressurePad) {
 			((PressurePad)nextTile).activate();
 			
@@ -175,17 +181,36 @@ public class GameLogic {
 			}
 		}
 		
-		// If Tile is a Door
-		// The Passable check above ensure LevelDoor is also Passable
 		if (nextTile instanceof Door) {
-			if ( ((Passable)nextTile).isPassable() ) {
-				TileFullLocation d = TileConnections.getConnectedTile(player.getStageID(), player.getRoomID(), nextLoc);
-				if (d != null){
-					gameWorld.removePlayers();
-					player.setLocation(d.getStage(), d.getRoom(), d.getLocation());
-					gameWorld.addPlayersToRooms();
-					return true;
+			if (((Passable)nextTile).isPassable()) {
+				if(nextTile instanceof DoorLevel){
+					int id = player.getStageID();
+					int numStages = stages.size();
+					System.out.println("stages list size = " + this.stages.size());
+					System.out.println("stage id = " + id);
+					if(numStages > id + 1){
+						//there is a next stage that the player can reach
+						System.out.println("there is a next stage");
+						TileFullLocation d = TileConnections.getConnectedTile(player.getStageID(), player.getRoomID(), nextLoc);
+						gameWorld.removePlayers();
+						player.setLocation(d.getStage(), d.getRoom(), d.getLocation());
+						gameWorld.addPlayersToRooms();
+					} else {
+						//the player has reached the end of the game!
+						System.out.println("there is not a next stage, you won");
+						player.win();
+						return true;
+					}
 				}
+				
+				TileFullLocation d = TileConnections.getConnectedTile(player.getStageID(), player.getRoomID(), nextLoc);
+				gameWorld.removePlayers();
+				player.setLocation(d.getStage(), d.getRoom(), d.getLocation());
+				gameWorld.addPlayersToRooms();
+				
+				
+				// TODO I think this fucks up messages
+				return true;
 			}
 		}
 		
@@ -379,6 +404,12 @@ public class GameLogic {
 	
 
 	
+	/**
+	 * @param player 
+	 * @param room
+	 * @param now
+	 * @return
+	 */
 	private String inspect(Player player, Room room, Point now) {
 		
 		Direction direction = player.getDirection();
