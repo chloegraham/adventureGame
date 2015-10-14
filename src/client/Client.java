@@ -11,6 +11,7 @@ import server.helpers.Actions;
 import server.helpers.Msgs;
 
 /**
+ * 
  * Opens the Users UserInterface and connects to the Game Server.
  * 
  * @author benscully
