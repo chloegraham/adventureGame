@@ -5,10 +5,12 @@ import java.util.TimerTask;
 import client.renderer.RenderPane;
 
 /**
+ * @author Eliot
+ * 300285842
+ * 
  * Simple draw loop for camera animations.
  * 
  * You pass it a RenderPane, then it constantly tells the RenderPane to draw
- * @author Eliot
  *
  */
 public class DrawLoop extends TimerTask {

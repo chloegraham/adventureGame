@@ -4,6 +4,7 @@ import java.awt.Point;
 
 /**
  * Created by Eliot on 15/09/2015.
+ * 300285842
  * 
  * A helper class to convert from Cartesian Coordinates to Isometric, and rotate arrays. 
  */
