@@ -71,7 +71,6 @@ public class TileConnections {
 		map.put(rm3pp9, rm3Door9);
 		map.put(rm3pp10, rm3Door10);
 		map.put(rm3pp11, rm3Door11);
-//		map.put(rm3out, rm4in);
 		return map.get(tileFullLocation);
 	}
 	
