@@ -94,7 +94,6 @@ public class Client implements Runnable {
 	    	while (true)
 		    	decodePassGameToUI();
 	    	
-	    	
 	   } catch (IOException e) {
 		   e.printStackTrace();
 	   } finally {
