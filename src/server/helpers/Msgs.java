@@ -3,7 +3,11 @@ package server.helpers;
 import server.movable.Boulder;
 import server.movable.Moveable;
 import server.movable.Player;
+import server.tiles.Chest;
+import server.tiles.Door;
 import server.tiles.Furniture;
+import server.tiles.Spikes;
+import server.tiles.Wall;
 
 public class Msgs {
 	public static final int PLAYER_ONE = 101;
@@ -38,7 +42,6 @@ public class Msgs {
 	public static final String CHEST_CLOSED = "You opened the chest ";
 	public static final String CHEST_OPENED = "Chest is closed and you can't open it and you can't look inside.";
 	public static final String CHEST_KEY = "There is a key inside & you have picked it up.";
-	public static final String CHEST_NO_KEY = "There is no key inside this chest. It may have already been taken.";
 	
 	private static final String INSPECT_OPEN_CHEST = "This chest is open, you already have its contents you greedy bastard";
 	private static final String INSPECT_CLOSED_CHEST = "This hairy chest is locked.";
@@ -47,10 +50,10 @@ public class Msgs {
 	private static final String INSPECT_PRESSURE_PAD = "Hint: This pressure pad may open a door..";
 	private static final String INSPECT_SPIKES = "This looks dangerous!";
 	private static final String INSPECT_WALL = "This is a wall. Good job good looking";
-	private static final String INSPECT_BOUDLER = "This is a boulder, you may find some use for it";
-	private static final String INSPECT_BOUDLER_ON_PAD = "This boulder is currently activating a pressure pad";
+	private static final String INSPECT_BOUDLER = "This is an egg, you may find some use for it";
+	private static final String INSPECT_BOUDLER_ON_PAD = "This egg is currently activating a pressure pad";
 	private static final String INSPECT_PLAYER = "HI FRIEND";
-	private static final String INSPECT_PLAYER_WITH_BOULDER = "HI FRIEND WITH BOULDER";
+	private static final String INSPECT_PLAYER_WITH_BOULDER = "HI FRIEND WITH EGG. HOPE YOU'RE KEEPIN IT WARM FRIEND.";
 	private static final String INSPECT_PLAYER_ON_PAD = "HI FRIEND ON PRESSURE PAD";
 	
 	
@@ -93,7 +96,10 @@ public class Msgs {
 		else	      return str += Msgs.DOOR_OPEN + "%" + Msgs.DELIM_SPLIT;	// false - "The Door is unlocked. You may enter." RETURN
 		
 		// HASKEY
-		if (hasKey) str += Msgs.DOOR_USED_KEY + "%" + Msgs.DOOR_OPEN + "%";		// true - "You used a Key" + "The Door is unlocked. You may enter."
+		if (hasKey){
+			str = "";
+			str += Msgs.DOOR_USED_KEY + "%" + Msgs.DOOR_OPEN + "%";		// true - "You used a Key" + "The Door is unlocked. You may enter."
+		}
 		else	    str += Msgs.DOOR_NO_KEY + "%";								// false - "You don't have a Key. You can't unlock the door. You can't enter."
 		
 		return str += Msgs.DELIM_SPLIT;
@@ -116,7 +122,6 @@ public class Msgs {
 					
 		// ISKEY		
 		if (isKey) str += Msgs.CHEST_KEY + "%";			// true - "there is a key inside & player has picked it up"
-		else 	   str += Msgs.CHEST_NO_KEY + "%";		// false - "there is no key inside this chest"
 		
 		return str += Msgs.DELIM_SPLIT;
 	}
@@ -126,31 +131,30 @@ public class Msgs {
 	public static String inspectUnmovable(Furniture item) {
 		
 		String str = "";
-//		
-//		if(item instanceof Chest){
-//			
-//			if(((Chest) item).isOpen()){
-//				return str += Msgs.INSPECT_OPEN_CHEST;
-//			}
-//			else {
-//				return str += Msgs.INSPECT_CLOSED_CHEST;
-//			}
-//		} else if(item instanceof Door){
-//			
-//			if(((Door) item).isLocked()){
-//				return str += Msgs.INSPECT_CLOSED_DOOR;
-//			}
-//			else {
-//				return str += Msgs.INSPECT_OPEN_DOOR;
-//			}
-//		}else if(item instanceof Spikes){
-//			return str += Msgs.INSPECT_SPIKES;
-//		}else if(item instanceof Wall){
-//			return str += Msgs.INSPECT_WALL;
-//		}else{
-//			return "this isn't an unmoveable object??";
-//		}
-		return "BEN HAS HACKED THIS TOO";
+		
+		if(item instanceof Chest){
+			
+			if(((Chest) item).isOpen()){
+				return str += Msgs.INSPECT_OPEN_CHEST;
+			}
+			else {
+				return str += Msgs.INSPECT_CLOSED_CHEST;
+			}
+		} else if(item instanceof Door){
+			
+			if(((Door) item).isLocked()){
+				return str += Msgs.INSPECT_CLOSED_DOOR;
+			}
+			else {
+				return str += Msgs.INSPECT_OPEN_DOOR;
+			}
+		}else if(item instanceof Spikes){
+			return str += Msgs.INSPECT_SPIKES;
+		}else if(item instanceof Wall){
+			return str += Msgs.INSPECT_WALL;
+		}else{
+			return "this isn't an unmoveable object??";
+		}
 	}
 
 	public static String inspectMoveable(Moveable moveable, boolean onPressurePad) {
