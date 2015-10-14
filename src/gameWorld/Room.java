@@ -291,11 +291,11 @@ public class Room {
 				else if (temp.equals("D")) {
 					tiles[y][x] = new DoorNormal("D");
 				}
-				else if (temp.equals("l")) {
-					tiles[y][x] = new DoorLevel("l");
+				else if (temp.equals("y")) {
+					tiles[y][x] = new DoorLevel("y");
 				}
-				else if (temp.equals("L")) {
-					tiles[y][x] = new DoorLevel("L");
+				else if (temp.equals("Y")) {
+					tiles[y][x] = new DoorLevel("Y");
 				}
 				
 				

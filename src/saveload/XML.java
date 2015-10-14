@@ -117,7 +117,8 @@ public class XML {
 		/*
 		 *  TODO still to sort
 		 */
-		return STAGE1 + "<Split>" + PLAYER1 + "<Split>" + PLAYER2 + "<Split>";
+		return TUTORIAL + "<Split>" + TUTORIALPLAYER1 + "<Split>" + TUTORIALPLAYER2 + "<Split>";
+//		return STAGE1 + "<Split>" + PLAYER1 + "<Split>" + PLAYER2 + "<Split>";
 //		return STAGE1 + "<Split>" + STAGE2 + "<Split>" + PLAYER1 + "<Split>" + PLAYER2 + "<Split>";
 	}
 	
@@ -144,17 +145,27 @@ public class XML {
 	/*
 	 *  Rooms for Stage 2 + Stage 2
 	 */
-	private static final String S2ROOM1 = "eeee%eeee%eeee%eeee%eeee%eeee%eeee%@" +
-			  							  "nnnn%nnnn%sssn%nnnn%nnnn%ssss%nnnn%@" +
-			  							  "nnnn%bbbn%nnnn%nnnn%nnnn%nnnn%nnnn%@" +
-			  							  "<Room>";
+	private static final String TROOM1 = "wwwww%weeee%weeee%weeee%weeee%@" +
+			  							 "nnndn%nnnnn%nnnnn%nnnnn%nnnnn%@" +
+			  							 "nnnnn%nnnnn%nnnnn%nnnnn%nnnnn%@" +
+			  							 "<Room>";
 
-	private static final String S2ROOM2 = "eeeeee%eeeeee%wwwwew%eeeeee%@" +
-										  "ssssss%nnzzzz%nnnnnn%nnnnnn%@" +
-										  "nnnnnn%nnnnnn%nnnnnn%nnbbbn%@" +
-										  "<Room>";
+	private static final String TROOM2 = "eeee%ewwe%ewwe%ewee%eeee%@" +
+										 "cnnn%nnnn%nnnn%nndn%nnnD%@" +
+										 "nnnn%nnnn%nnnn%nnnn%nnnn%@" +
+										 "<Room>";
+	
+	private static final String TROOM3 = "eeeeew%eeeeee%eeeeew%@" +
+										 "nnnnnn%nnDnnd%znnnnn%@" +
+			  							 "bnnnnn%nnnnnn%nnnnnn%@" +
+			  							 "<Room>";
 
-	private static final String STAGE2 = S2ROOM1 + S2ROOM2 + "<Stage>";
+	private static final String TROOM4 = "eeeeeeeeee%@" +
+			  							 "Dsnsnsnsny%@" +
+			  							 "nnnnnnnnnn%@" +
+			  							 "<Room>";
+
+	private static final String TUTORIAL = TROOM1 + TROOM2 + TROOM3 + TROOM4 +"<Stage>";
 	
 	
 	
@@ -182,4 +193,29 @@ public class XML {
 										  "0%" +							// Holding Boulder 0=false, 1=true
 										  "@" +								// a delimiter which i don't think we actually need anymore
 										  "<Player>";
+	
+	/*
+	 *  Players
+	 */
+	private static final String TUTORIALPLAYER1 = Msgs.PLAYER_ONE + "%" +			// UserID
+												  "0%" +							// StageID    Current Stage ('000' default start) 
+												  "0%" +							// RoomID
+												  "2%" +							// Point.x
+												  "3%" + 							// Point.y
+												  "3%" +							// Facing Direction
+												  "1%" +							// # of Keys Player has
+												  "0%" +							// Holding Boulder 0=false, 1=true
+												  "@" +								// a delimiter which i don't think we actually need anymore
+												  "<Player>";
+	
+	private static final String TUTORIALPLAYER2 = Msgs.PLAYER_TWO + "%" +			// UserID
+												  "0%" +							// StageID    Current Stage ('000' default start) 
+												  "0%" +							// RoomID
+												  "3%" +							// Point.x
+												  "3%" + 							// Point.y
+												  "1%" +							// Facing Direction
+												  "0%" +							// # of Keys Player has
+												  "0%" +							// Holding Boulder 0=false, 1=true
+												  "@" +								// a delimiter which i don't think we actually need anymore
+												  "<Player>";
 }
