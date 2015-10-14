@@ -18,7 +18,7 @@ import sharedHelpers.Msgs;
  * Continuously runs a Server which waits for Clients to connect. Only two Clients can connect.
  * No one can start playing the game until two Clients have connected.
  * 
- * @author benscully
+ * @author benscully 300088269 
  *
  */
 public class Server implements Runnable {
@@ -176,6 +176,11 @@ public class Server implements Runnable {
 		startSpikesTimer();
 	}
 	
+	/**
+	 * Load by retrieving the stored game from the XML and then uses it to create a GameWorld based on the stored game
+	 * 
+	 * @throws IOException
+	 */
 	private void load() throws IOException {
 		// Get encoded gameWorld of the standard new game
 		String encodedGameWorld = XML.load();
@@ -192,6 +197,11 @@ public class Server implements Runnable {
 		startSpikesTimer();
 	}
 	
+	/**
+	 * Retrieve the current game state from GameWorld and store it in XML
+	 * 
+	 * @throws IOException
+	 */
 	private void save() throws IOException {
 		System.out.println("--- Server:    attempting to Save Game.");
 		
