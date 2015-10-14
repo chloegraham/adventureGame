@@ -3,9 +3,6 @@ package server.gameWorld;
 import java.awt.Point;
 import java.util.List;
 
-import server.helpers.Actions;
-import server.helpers.Direction;
-import server.helpers.Msgs;
 import server.helpers.TileConnections;
 import server.helpers.TileFullLocation;
 import server.movable.Boulder;
@@ -19,6 +16,9 @@ import server.tiles.Passable;
 import server.tiles.PressurePad;
 import server.tiles.PutDownOnable;
 import server.tiles.Tile;
+import sharedHelpers.Actions;
+import sharedHelpers.Direction;
+import sharedHelpers.Msgs;
 
 /**
  * The main class for controlling game logic

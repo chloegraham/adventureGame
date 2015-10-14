@@ -10,9 +10,9 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import server.gameWorld.GameLogic;
 import server.gameWorld.GameWorld;
-import server.helpers.Actions;
-import server.helpers.Msgs;
 import server.saveLoad.XML;
+import sharedHelpers.Actions;
+import sharedHelpers.Msgs;
 
 public class Server implements Runnable {
 	// Only ONE GameWorld & GameLogic

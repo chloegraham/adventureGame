@@ -31,9 +31,9 @@ import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 import javax.swing.text.DefaultCaret;
 
-import server.helpers.Actions;
 import client.Client;
 import client.renderer.RenderPane;
+import sharedHelpers.Actions;
 
 /**
  * Organises the content that is displayed to the user, and receives data from the client.

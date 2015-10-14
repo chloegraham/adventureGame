@@ -3,8 +3,8 @@ package server.gameWorld;
 import java.util.ArrayList;
 import java.util.List;
 
-import server.helpers.Msgs;
 import server.movable.Player;
+import sharedHelpers.Msgs;
 
 public class GameWorld {
 	private GameLogic logic;

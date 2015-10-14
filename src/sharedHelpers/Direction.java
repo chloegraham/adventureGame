@@ -1,4 +1,4 @@
-package client.helpers;
+package sharedHelpers;
 
 public enum Direction {
 	NORTH ("North"),

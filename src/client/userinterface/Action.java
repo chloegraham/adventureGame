@@ -1,6 +1,6 @@
 package client.userinterface;
 
-import server.helpers.Actions;
+import sharedHelpers.Actions;
 
 /**
  * Holds the ordinals for possible key events to send to the server.

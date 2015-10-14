@@ -2,8 +2,8 @@ package server.movable;
 
 import java.awt.Point;
 
-import server.helpers.Direction;
-import server.helpers.Msgs;
+import sharedHelpers.Direction;
+import sharedHelpers.Msgs;
 
 
 /**

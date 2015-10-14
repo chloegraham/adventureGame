@@ -1,4 +1,4 @@
-package client.helpers;
+package sharedHelpers;
 
 import java.awt.event.KeyEvent;
 
@@ -6,7 +6,7 @@ import java.awt.event.KeyEvent;
  * Possible actions by player. Send through network connection using ordinal, holds key event (other key events may
  * refer to the same action, and not all actions have a single key event).
  * 
- * Ctrl will be sent through.
+ * Neither Ctrl nor Alt will be sent through.
  * Please don't use the same key twice.
  * 
  * Import the Actions enum to the class that needs to use it:
@@ -16,7 +16,7 @@ import java.awt.event.KeyEvent;
  * Example:
  * 	if (Actions.NORTH.ordinal() == input){ System.out.println("Valid input"); }
  * 
- * @author Kirsty Thorburn 300316972
+ * @author Kirsty
  */
 public enum Actions {
 	// Add extra events here...

@@ -7,8 +7,8 @@ import java.net.InetAddress;
 import java.net.Socket;
 
 import client.userinterface.UserInterface;
-import server.helpers.Actions;
-import server.helpers.Msgs;
+import sharedHelpers.Actions;
+import sharedHelpers.Msgs;
 
 /**
  * 

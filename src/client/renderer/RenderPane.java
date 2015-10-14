@@ -8,8 +8,7 @@ import java.awt.Point;
 
 import javax.swing.JPanel;
 
-
-import server.helpers.Direction;
+import sharedHelpers.Direction;
 
 
 /**

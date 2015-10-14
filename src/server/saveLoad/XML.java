@@ -18,7 +18,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import server.helpers.Msgs;
+import sharedHelpers.Msgs;
 
 /*
  * Xml class for handling saving, loading and creating new game from xml files.
