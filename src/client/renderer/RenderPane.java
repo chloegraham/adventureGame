@@ -166,6 +166,9 @@ public class RenderPane extends JPanel {
         	
         }
         
+        assert(rotatedLevel != null);
+        assert(rotatedObjects != null);
+        assert(rotatedMoveables != null);
         
         int numberOfRows = rotatedLevel.length;
         int numberOfColums = rotatedLevel[0].length;
