@@ -95,10 +95,11 @@ public class UserInterface extends JFrame {
 		setVisible(true);	// Finished building the frame. Show it and wait until the userID is added.
 		
 		
-		// Starting the render loop
+		// Setting up the draw loop
 		DrawLoop drawLooper = new DrawLoop();
 		drawLooper.setGraphics(this.graphics);
 		
+		//Running the loop at about 30fps
 		Timer timer = new Timer();
 		timer.schedule(drawLooper, 0, 33);
 		
