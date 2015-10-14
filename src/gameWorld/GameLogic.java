@@ -5,8 +5,11 @@ import java.util.List;
 
 import movable.Boulder;
 import movable.Player;
-import testenums.TileConnections;
-import testenums.TileFullLocation;
+import serverHelpers.Actions;
+import serverHelpers.Direction;
+import serverHelpers.Msgs;
+import serverHelpers.TileConnections;
+import serverHelpers.TileFullLocation;
 import tiles.Chest;
 import tiles.Door;
 import tiles.DoorNormal;
@@ -14,8 +17,6 @@ import tiles.Passable;
 import tiles.PressurePad;
 import tiles.PutDownOnable;
 import tiles.Tile;
-import userinterface.Action.Actions;
-import convertors.Msgs;
 
 public class GameLogic {
 	private GameWorld gameWorld;
@@ -165,7 +166,7 @@ public class GameLogic {
 		
 		
 		
-		if (nextTile instanceof PressurePad){
+		if (nextTile instanceof PressurePad) {
 			((PressurePad)nextTile).activate();
 			
 			TileFullLocation d = TileConnections.getConnectedTile(player.getStageID(), player.getRoomID(), nextLoc);

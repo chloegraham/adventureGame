@@ -1,6 +1,8 @@
 package renderer;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 
 /**
  * Created by Eliot on 21/09/15.

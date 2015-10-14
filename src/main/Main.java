@@ -1,7 +1,7 @@
 package main;
 
-import serverclient.Client;
-import serverclient.Server;
+import server.Server;
+import client.Client;
 
 public class Main {
 	public static void main(String[] args) throws InterruptedException {

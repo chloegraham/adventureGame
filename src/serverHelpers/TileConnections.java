@@ -1,4 +1,4 @@
-package testenums;
+package serverHelpers;
 
 import java.awt.Point;
 import java.util.HashMap;

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import movable.Player;
-import convertors.Msgs;
+import serverHelpers.Msgs;
 
 public class GameWorld {
 	private GameLogic logic;

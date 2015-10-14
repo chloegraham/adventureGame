@@ -32,8 +32,8 @@ import javax.swing.KeyStroke;
 import javax.swing.text.DefaultCaret;
 
 import renderer.RenderPane;
-import serverclient.Client;
-import userinterface.Action.Actions;
+import serverHelpers.Actions;
+import client.Client;
 
 /**
  * Organises the content that is displayed to the user, and passes data between the server and the interface.

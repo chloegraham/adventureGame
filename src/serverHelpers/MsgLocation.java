@@ -1,4 +1,4 @@
-package testenums;
+package serverHelpers;
 
 public enum MsgLocation {
 	FOREST ("Forest"),

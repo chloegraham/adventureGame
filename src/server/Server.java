@@ -1,4 +1,4 @@
-package serverclient;
+package server;
 
 import gameWorld.GameLogic;
 import gameWorld.GameWorld;
@@ -12,8 +12,8 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import saveload.XML;
-import userinterface.Action.Actions;
-import convertors.Msgs;
+import serverHelpers.Actions;
+import serverHelpers.Msgs;
 
 public class Server implements Runnable {
 	

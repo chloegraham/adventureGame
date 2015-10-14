@@ -1,4 +1,4 @@
-package convertors;
+package client;
 
 public class Layers {
 	private char[][] wallsEmpties;

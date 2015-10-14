@@ -1,6 +1,5 @@
-package convertors;
+package serverHelpers;
 
-import gameWorld.Direction;
 import movable.Boulder;
 import movable.Moveable;
 import movable.Player;

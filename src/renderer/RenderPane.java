@@ -1,11 +1,13 @@
 package renderer;
 
-import javax.swing.*;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Point;
 
-import gameWorld.Direction;
+import javax.swing.JPanel;
 
-import java.awt.*;
-import java.math.*;
+import serverHelpers.Direction;
 
 
 /**

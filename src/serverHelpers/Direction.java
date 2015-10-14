@@ -1,4 +1,4 @@
-package gameWorld;
+package serverHelpers;
 
 public enum Direction {
 	NORTH ("North"),

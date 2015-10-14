@@ -1,24 +1,22 @@
 package gameWorld;
 
 import java.awt.Point;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import movable.Boulder;
 import movable.Player;
+import serverHelpers.Msgs;
 import tiles.Chest;
+import tiles.DoorLevel;
 import tiles.DoorNormal;
 import tiles.DrawFirst;
 import tiles.EmptyTile;
 import tiles.Furniture;
-import tiles.DoorLevel;
 import tiles.PressurePad;
 import tiles.Spikes;
 import tiles.Tile;
 import tiles.Wall;
-import convertors.Msgs;
 
 public class Room {
 	private int stageID;

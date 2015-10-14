@@ -1,4 +1,4 @@
-package serverclient;
+package client;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -6,9 +6,8 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
 
-import convertors.Layers;
-import convertors.Msgs;
-import userinterface.Action.Actions;
+import serverHelpers.Actions;
+import serverHelpers.Msgs;
 import userinterface.UserInterface;
 
 /**

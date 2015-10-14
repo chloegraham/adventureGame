@@ -8,8 +8,8 @@ import java.awt.event.KeyListener;
 import javax.swing.JPanel;
 
 import renderer.RenderPane;
-import serverclient.Client;
-import userinterface.Action.Actions;
+import serverHelpers.Actions;
+import client.Client;
 
 /**
  * Notifies master connection of player input.

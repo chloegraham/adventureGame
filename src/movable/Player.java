@@ -1,10 +1,9 @@
 package movable;
 
-import gameWorld.Direction;
-
 import java.awt.Point;
 
-import convertors.Msgs;
+import serverHelpers.Direction;
+import serverHelpers.Msgs;
 
 public class Player extends Moveable{
 	private int userID;
