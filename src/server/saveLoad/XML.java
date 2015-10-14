@@ -22,15 +22,39 @@ import server.helpers.Msgs;
 
 public class XML {
 	
+	//final constant fields for saving and loading a saved game
 	private final static String saveFileName = "continue.xml";
 	private final static String saveTag = "GameState";
+	
+	//final constant fields for creating the new game
 	private final static String newGameFileName = "newgame.xml";
 	private final static String newGameTag = "NewGame";
 	
+	
+	/**
+	 * Call load on continue.xml and returns the saved gameState to the server
+	 * @return the string from continue.xml representing the last saved gameState
+	 */
 	public static String load() {
         return load(saveFileName, saveTag);
     }
 	
+	/**
+	 * Call load on newgame.xml and returns a new gameState to the server
+	 * @return the string from newgame.xml representing a new level
+	 */
+	public static String newGame(){
+		return load(newGameFileName, newGameTag);
+	}
+	
+	/**
+	 * Actual functionality of load, handling the changing of the contents of a xml file into
+	 * a string which the server receives as the gameState. Handles error checking for file not
+	 * found and passing illegal arguments.
+	 * @param file the name of the file to save to
+	 * @param tag displaying some information about the contents stored
+	 * @return the String which is passed to newGame() or load()
+	 */
 	public static String load(String file, String tag) {
         Document dom;
         // Make an  instance of the DocumentBuilderFactory
@@ -62,6 +86,12 @@ public class XML {
         return null;
     }
 	
+	/**
+	 * Receives the GameState as a string from the server and saves it to continue.xml.
+	 * Handles error checking such as file not found and illegal arguments.
+	 * @param gameState a string received from server representing the current GameState.
+	 * @return true for success, false for fail to save.
+	 */
 	public static boolean save(String gameState) {
 	    Document dom;
 	    Element e = null;
@@ -106,6 +136,12 @@ public class XML {
 	
 	
 	
+	/**
+	 * @param def the String to add the contents 
+	 * @param doc
+	 * @param tag
+	 * @return
+	 */
 	private static String getTextValue(String def, Element doc, String tag) {
 	    String value = def;
 	    NodeList nl;
@@ -116,152 +152,4 @@ public class XML {
 	    return value;
 	}
 	
-	
-	
-	
-	public static String newGame(){
-		return load(newGameFileName, newGameTag);
-	}
-	
-	
-	
-	/*
-	 *  Rooms for Stage 1 + Stage 1
-	 *  -- s1room1 = stage1 room1 etc
-	 */
-	private static final String S1ROOM1 = "wee%wee%wee%wee%wee%wee%wee%wee%wee%wee%wee%wee%@" +
-			  							  "nnn%nnc%nnc%nns%nns%nnz%nDz%nnn%nnn%nnn%nnn%nnn%@" +
-			  							  "nnn%nnn%nnn%nnn%nnn%nnn%nnn%nnb%nnn%nnn%nnn%nnn%@" +
-			  							  "<Room>";
-	
-	private static final String S1ROOM2 = "eeeeeeeee%wweeeeeee%wweeeeeee%eeeeeeeee%@" +
-										  "nnnnnsssD%nnnnnnnnn%nnnnnnnzz%nnnnnnnnn%@" +
-										  "nnnnnnnnn%nnnnnnnnn%nnnnnnnnn%nnbbnnnnn%@" +
-										  "<Room>";
-	
-	private static final String STAGE1 = S1ROOM1 + S1ROOM2 + "<Stage>";
-	
-	
-	
-	/*
-	 *  Rooms for Stage 2 + Stage 2
-	 */
-	private static final String TROOM1 = "wwwww%weeee%weeee%weeee%weeee%@" +
-			  							 "nnndn%nnnnn%nnnnn%nnnnn%nnnnn%@" +
-			  							 "nnnnn%nnnnn%nnnnn%nnnnn%nnnnn%@" +
-			  							 "<Room>";
-
-	private static final String TROOM2 = "eeee%ewwe%ewwe%ewee%eeee%@" +
-										 "cnnn%nnnn%nnnn%nndn%nnnD%@" +
-										 "nnnn%nnnn%nnnn%nnnn%nnnn%@" +
-										 "<Room>";
-	
-	private static final String TROOM3 = "eeeeew%eeeeee%eeeeew%@" +
-										 "nnnnnn%nnDnnd%znnnnn%@" +
-			  							 "bnnnnn%nnnnnn%nnnnnn%@" +
-			  							 "<Room>";
-
-	private static final String TROOM4 = "eeeeeeeeee%@" +
-			  							 "Dsnsnsnsny%@" +
-			  							 "nnnnnnnnnn%@" +
-			  							 "<Room>";
-
-	private static final String TUTORIAL = TROOM1 + TROOM2 + TROOM3 + TROOM4 +"<Stage>";
-	
-	
-	
-	/*
-	 *  Players
-	 */
-	private static final String PLAYER1 = Msgs.PLAYER_ONE + "%" +			// UserID
-										  "0%" +							// StageID    Current Stage ('000' default start) 
-										  "0%" +							// RoomID
-										  "2%" +							// Point.x
-										  "4%" + 							// Point.y
-										  "1%" +							// Facing Direction
-										  "0%" +							// # of Keys Player has
-										  "0%" +							// Holding Boulder 0=false, 1=true
-										  "@" +								// a delimiter which i don't think we actually need anymore
-										  "<Player>";
-	
-	private static final String PLAYER2 = Msgs.PLAYER_TWO + "%" +			// UserID
-										  "0%" +							// StageID    Current Stage ('000' default start) 
-										  "0%" +							// RoomID
-										  "2%" +							// Point.x
-										  "5%" + 							// Point.y
-										  "1%" +							// Facing Direction
-										  "0%" +							// # of Keys Player has
-										  "0%" +							// Holding Boulder 0=false, 1=true
-										  "@" +								// a delimiter which i don't think we actually need anymore
-										  "<Player>";
-	
-	/*
-	 *  Players
-	 */
-	private static final String TUTORIALPLAYER1 = Msgs.PLAYER_ONE + "%" +			// UserID
-												  "0%" +							// StageID    Current Stage ('000' default start) 
-												  "0%" +							// RoomID
-												  "2%" +							// Point.x
-												  "3%" + 							// Point.y
-												  "3%" +							// Facing Direction
-												  "1%" +							// # of Keys Player has
-												  "0%" +							// Holding Boulder 0=false, 1=true
-												  "@" +								// a delimiter which i don't think we actually need anymore
-												  "<Player>";
-	
-	private static final String TUTORIALPLAYER2 = Msgs.PLAYER_TWO + "%" +			// UserID
-												  "0%" +							// StageID    Current Stage ('000' default start) 
-												  "0%" +							// RoomID
-												  "3%" +							// Point.x
-												  "3%" + 							// Point.y
-												  "1%" +							// Facing Direction
-												  "0%" +							// # of Keys Player has
-												  "0%" +							// Holding Boulder 0=false, 1=true
-												  "@" +								// a delimiter which i don't think we actually need anymore
-												  "<Player>";
-	
-	/*
-	 *  Rooms for Stage 2 + Stage 2
-	 */
-	private static final String ZROOM1 = "eeeeee%eeeeee%eeeeee%wwwwww%wwwwww%eeeeee%eeeeee%eeeeee%wwwwww%@" +
-			  							 "cnnnnn%nnnnnn%nnnnnn%nnndnn%nnndnn%nnnnnn%nnnnnn%nnnnnz%nnndnn%@" +
-			  							 "nnnnnn%nnnnnn%nnnnnn%nnnnnn%nnnnnn%nnnnnn%nnnnnn%nnnnnn%nnnnnn%@" +
-			  							 "<Room>";
-
-	private static final String ZROOM2 = "eeeeeeeew%eeeeeeeee%eeeeeeeew%@" +
-										 "ssssncssn%Dssnsnsnd%snsnssnsn%@" +
-										 "nnnnnnnnn%nnnnnnnnn%nnnnnnnnn%@" +
-										 "<Room>";
-	
-	private static final String ZROOM3 = "wwwwwwwwwwwwweeeeeww%weeeeeeeeeeeeewweeww%eeeeeeeeeeeeeeeeeeee%eeeeeeeeeeeeewwwwwww%@" +
-										 "nnnnnnnnnnnnndddndnn%nzzzzzzzzzzzzdnnndnn%Dnnnnnnnnnnnndddnddy%nnnnnnnnnnnnnnnnnnnn%@" +
-			  							 "nnnnnnnnnnnnnnnnnnnn%nnnnnnnnnnnnnnnnnnnn%nbbbbbbbbbbbbnnnnnnn%nnnnnnnnnnnnnnnnnnnn%@" +
-			  							 "<Room>";
-
-	private static final String ZEBRA = ZROOM1 + ZROOM2 + ZROOM3 + "<Stage>";
-	
-	/*
-	 *  Players
-	 */
-	private static final String ZEBRAPLAYER1 = Msgs.PLAYER_ONE + "%" +			// UserID
-												  "0%" +							// StageID    Current Stage ('000' default start) 
-												  "0%" +							// RoomID
-												  "0%" +							// Point.x
-												  "6%" + 							// Point.y
-												  "1%" +							// Facing Direction
-												  "0%" +							// # of Keys Player has
-												  "0%" +							// Holding Boulder 0=false, 1=true
-												  "@" +								// a delimiter which i don't think we actually need anymore
-												  "<Player>";
-	
-	private static final String ZEBRAPLAYER2 = Msgs.PLAYER_TWO + "%" +			// UserID
-												  "0%" +							// StageID    Current Stage ('000' default start) 
-												  "0%" +							// RoomID
-												  "3%" +							// Point.x
-												  "2%" + 							// Point.y
-												  "1%" +							// Facing Direction
-												  "1%" +							// # of Keys Player has
-												  "0%" +							// Holding Boulder 0=false, 1=true
-												  "@" +								// a delimiter which i don't think we actually need anymore
-												  "<Player>";
 }
