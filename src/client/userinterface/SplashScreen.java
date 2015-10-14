@@ -207,7 +207,7 @@ public class SplashScreen extends JPanel {
 	 */
 	private void createStartUpCard(){
 		allPanels[STARTUP_CARD] = new JPanel();
-		allPanels[STARTUP_CARD].setBackground(new Color(220, 220, 220));
+		allPanels[STARTUP_CARD].setBackground(new Color(105, 206, 236));
 		allPanels[STARTUP_CARD].setLayout(new BoxLayout(allPanels[STARTUP_CARD], BoxLayout.Y_AXIS));
 		
 		allPanels[STARTUP_CARD].add(Box.createVerticalGlue());
