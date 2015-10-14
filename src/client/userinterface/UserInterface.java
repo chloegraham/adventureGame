@@ -227,7 +227,7 @@ public class UserInterface extends JFrame {
 		int renderHeight = (int) dim.getHeight();
 
 		// Total size of the frame
-		int frameWidth = (renderWidth);		// Needs extra width for border
+		int frameWidth = (renderWidth);
 		int frameHeight = (renderHeight + menuHeight);
 		this.setResizable(false);
 		setPreferredSize(new Dimension(frameWidth, frameHeight));
