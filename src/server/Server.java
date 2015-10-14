@@ -232,6 +232,10 @@ public class Server implements Runnable {
 			outputOne.writeUTF("You're dead");
 			outputTwo.writeUTF("You're dead");
 		}
+		if(message.equals("You've won")){
+			outputOne.writeUTF("You've won");
+			outputTwo.writeUTF("You've won");
+		}
 		
 		broadcast(userID, message);
 	}

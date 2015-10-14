@@ -1,7 +1,7 @@
 package server.tiles;
 
 
-public class DoorNormal implements Tile, Passable, PutDownOnable, Furniture, Door {	
+public class DoorNormal implements Tile, Passable, Furniture, Door {	
 	private boolean locked;
 
 	public DoorNormal(String symbol) {
@@ -39,11 +39,6 @@ public class DoorNormal implements Tile, Passable, PutDownOnable, Furniture, Doo
 	
 	@Override
 	public boolean isPassable() {
-		return !isLocked();
-	}
-	
-	@Override
-	public boolean isPutDownOnable() {
 		return !isLocked();
 	}
 	

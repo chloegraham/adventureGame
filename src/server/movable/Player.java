@@ -13,6 +13,7 @@ public class Player extends Moveable{
 	private int keys;
 	private boolean hasBoulder;
 	private boolean dead = false;
+	private boolean won = false;
 	
 	
 	/*
@@ -151,7 +152,13 @@ public class Player extends Moveable{
 		return dead;
 	}
 	
+	public void win(){
+		won = true;
+	}
 	
+	public boolean hasWon() {
+		return won;
+	}
 	
 	/*
 	 *

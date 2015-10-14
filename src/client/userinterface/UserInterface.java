@@ -60,7 +60,7 @@ public class UserInterface extends JFrame {
 	/* Inventory pane */
 	private final JLabel keys = new JLabel("0");
 	private final JLabel egg = new JLabel();
-	private final int contentHeight = 82;			// Height of the inventory pane/message box
+	private final int contentHeight = 86;			// Height of the inventory pane/message box
 	
 	private boolean firstGame = true;
 	private boolean playing = false;	// Set true only when the game state and renderer are ready.
