@@ -5,6 +5,16 @@ import java.awt.Point;
 import server.helpers.Direction;
 import server.helpers.Msgs;
 
+
+/**
+ *  The all important player.
+ *  
+ *  Players keep track of a lot of things, most noticeably their location, and their inventory.
+ *  They can also die, and are facing a direction.
+ *  
+ *  Player location is stored as, what stage are they in, what room are they in, and then what tile are they on. 
+ *  
+ */
 public class Player extends Moveable{
 	private int userID;
 	private int stageID;
@@ -14,9 +24,11 @@ public class Player extends Moveable{
 	private boolean hasBoulder;
 	private boolean dead = false;
 	
-	
-	/*
-	 *  
+	/**
+	 * Creates a player from an encodeded string. The string is 
+	 * for creating players from saved gamestate in xml
+	 * 
+	 * @param encodedPlayer
 	 */
 	public Player(String encodedPlayer) {
 		super(new Point(1,1));
@@ -117,8 +129,10 @@ public class Player extends Moveable{
 
 	
 	
-	/*
-	 *  Boulder
+	/**
+	 * Adds a boulder to the players inventory. 
+	 * The player can only carry one boulder at a time.
+	 * @return
 	 */
 	public boolean addBoulder() {
 		if (hasBoulder)
@@ -140,8 +154,8 @@ public class Player extends Moveable{
 
 	
 	
-	/*
-	 *  Dying code
+	/**
+	 * Kills the player
 	 */
 	public void murder() {
 		dead = true;
@@ -153,8 +167,13 @@ public class Player extends Moveable{
 	
 	
 	
-	/*
-	 *
+	/**
+	 * Sets the location of the player
+	 * 
+	 * @param stage		What stage to send the player to
+	 * @param room		What room inside that stage
+	 * @param location	The coordinate they should be on
+	 * @return
 	 */
 	public boolean setLocation(int stage, int room, Point location) {
 		stageID = stage;
@@ -195,6 +214,12 @@ public class Player extends Moveable{
 	}
 	
 	
+	/**
+	 * Gets the string representing the players current state.
+	 * 
+	 * Returns either 'i', 'j', 'k', 'l' depending on the direction. 
+	 * Uppercase if the player is carrying a boulder
+	 */
 	@Override
 	public String toString() {
 		switch (this.direction) {
