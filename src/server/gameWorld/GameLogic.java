@@ -183,34 +183,28 @@ public class GameLogic {
 		
 		if (nextTile instanceof Door) {
 			if (((Passable)nextTile).isPassable()) {
+				
 				if(nextTile instanceof DoorLevel){
 					int id = player.getStageID();
 					int numStages = stages.size();
 					System.out.println("stages list size = " + this.stages.size());
 					System.out.println("stage id = " + id);
-					if(numStages > id + 1){
-						//there is a next stage that the player can reach
-						System.out.println("there is a next stage");
-						TileFullLocation d = TileConnections.getConnectedTile(player.getStageID(), player.getRoomID(), nextLoc);
-						gameWorld.removePlayers();
-						player.setLocation(d.getStage(), d.getRoom(), d.getLocation());
-						gameWorld.addPlayersToRooms();
-					} else {
-						//the player has reached the end of the game!
+					if(numStages < id + 1){
 						System.out.println("there is not a next stage, you won");
 						player.win();
 						return true;
 					}
 				}
 				
+				
 				TileFullLocation d = TileConnections.getConnectedTile(player.getStageID(), player.getRoomID(), nextLoc);
-				gameWorld.removePlayers();
-				player.setLocation(d.getStage(), d.getRoom(), d.getLocation());
-				gameWorld.addPlayersToRooms();
-				
-				
-				// TODO I think this fucks up messages
-				return true;
+				if (d != null){
+					gameWorld.removePlayers();
+					player.setLocation(d.getStage(), d.getRoom(), d.getLocation());
+					gameWorld.addPlayersToRooms();
+					
+					return true;	
+				}
 			}
 		}
 		

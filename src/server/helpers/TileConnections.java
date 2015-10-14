@@ -12,7 +12,9 @@ public class TileConnections {
 	private static final TileFullLocation lv0rm3in = new TileFullLocation(0, 2, new Point(2,1));
 	private static final TileFullLocation lv0rm3out = new TileFullLocation(0, 2, new Point(5,1));
 	private static final TileFullLocation lv0rm4in = new TileFullLocation(0, 3, new Point(0,0));
+	private static final TileFullLocation lv0rm4out = new TileFullLocation(0, 3, new Point(9,0));
 	
+	private static final TileFullLocation rm1in = new TileFullLocation(1, 0, new Point(0,7));
 	private static final TileFullLocation rm1out = new TileFullLocation(1, 0, new Point(3,8));
 	private static final TileFullLocation rm1pp = new TileFullLocation(1, 0, new Point(5,7));
 	private static final TileFullLocation rm1ppDoor = new TileFullLocation(1, 0, new Point(3,3));
@@ -53,6 +55,7 @@ public class TileConnections {
 		map.put(lv0rm2out, lv0rm3in);
 		map.put(lv0rm3pp, lv0rm3out);
 		map.put(lv0rm3out, lv0rm4in);
+		map.put(lv0rm4out, rm1in);
 		map.put(rm1pp, rm1ppDoor);
 		map.put(rm1out, rm2in);
 		map.put(rm2out, rm3in);
@@ -68,7 +71,6 @@ public class TileConnections {
 		map.put(rm3pp9, rm3Door9);
 		map.put(rm3pp10, rm3Door10);
 		map.put(rm3pp11, rm3Door11);
-//		map.put(rm3out, rm4in);
 		return map.get(tileFullLocation);
 	}
 	
