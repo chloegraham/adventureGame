@@ -207,7 +207,7 @@ public class SplashScreen extends JPanel {
 	 */
 	private void createStartUpCard(){
 		allPanels[STARTUP_CARD] = new JPanel();
-		allPanels[STARTUP_CARD].setBackground(new Color(200, 200, 200));
+		allPanels[STARTUP_CARD].setBackground(new Color(220, 220, 220));
 		allPanels[STARTUP_CARD].setLayout(new BoxLayout(allPanels[STARTUP_CARD], BoxLayout.Y_AXIS));
 		
 		allPanels[STARTUP_CARD].add(Box.createVerticalGlue());
@@ -228,7 +228,7 @@ public class SplashScreen extends JPanel {
 	private void createMenuCard(Listener listener){
 		Dimension btnSize = new Dimension(100, 25);
 		allPanels[HOST_CARD] = new JPanel();
-		allPanels[HOST_CARD].setBackground(new Color(200, 200, 200));
+		allPanels[HOST_CARD].setBackground(new Color(220, 220, 220));
 		allPanels[HOST_CARD].setLayout(new BoxLayout(allPanels[HOST_CARD], BoxLayout.Y_AXIS));
 		
 		allPanels[HOST_CARD].add(Box.createVerticalGlue());
@@ -273,17 +273,20 @@ public class SplashScreen extends JPanel {
 	private void createDeathCard(){
 		allPanels[DEATH_CARD] = new JPanel();
 		allPanels[DEATH_CARD].setLayout(new BoxLayout(allPanels[DEATH_CARD], BoxLayout.Y_AXIS));
-		allPanels[DEATH_CARD].setBackground(new Color(100, 0, 0, 220));		// Red, partially transparent.
+		allPanels[DEATH_CARD].setBackground(new Color(150, 0, 0, 200));		// Red, partially transparent.
 		
 		allPanels[DEATH_CARD].add(Box.createVerticalGlue());
 		
-		addImage(DEATH_CARD, "img-death.png");
-		
-		allPanels[DEATH_CARD].add(Box.createVerticalGlue());
-		
-		JLabel message = new JLabel("Press any key to continue.");
+		JLabel message = new JLabel("A chicken has died and been transported to KFC.");
 		message.setAlignmentX(CENTER_ALIGNMENT);
 		allPanels[DEATH_CARD].add(message);
+		message = new JLabel("Press any key to start again.");
+		message.setAlignmentX(CENTER_ALIGNMENT);
+		allPanels[DEATH_CARD].add(message);
+		
+		allPanels[DEATH_CARD].add(Box.createVerticalGlue());
+		
+		addImage(DEATH_CARD, "endishere.png");
 		
 		allPanels[DEATH_CARD].add(Box.createVerticalGlue());
 	}
@@ -312,7 +315,7 @@ public class SplashScreen extends JPanel {
 	private void createAboutCard(){
 		allPanels[ABOUT_CARD] = new JPanel();
 		allPanels[ABOUT_CARD].setLayout(new BoxLayout(allPanels[ABOUT_CARD], BoxLayout.Y_AXIS));
-		allPanels[ABOUT_CARD].setBackground(new Color(200, 200, 200, 200));		// slightly transparent.
+		allPanels[ABOUT_CARD].setBackground(new Color(220, 220, 220, 220));		// slightly transparent.
 		
 		allPanels[ABOUT_CARD].add(Box.createVerticalGlue());
 		
@@ -347,7 +350,7 @@ public class SplashScreen extends JPanel {
 	private void createConfirmCard(Listener listener){
 		Dimension btnSize = new Dimension(100, 25);
 		allPanels[CONFIRM_CARD] = new JPanel();
-		allPanels[CONFIRM_CARD].setBackground(new Color(230, 230, 230, 220));
+		allPanels[CONFIRM_CARD].setBackground(new Color(220, 220, 220, 220));
 		allPanels[CONFIRM_CARD].setLayout(new BoxLayout(allPanels[CONFIRM_CARD], BoxLayout.Y_AXIS));
 		
 		allPanels[CONFIRM_CARD].add(Box.createVerticalGlue());
@@ -373,14 +376,16 @@ public class SplashScreen extends JPanel {
 	private void createInformCard(){
 		allPanels[INFORM_CARD] = new JPanel();
 		allPanels[INFORM_CARD].setLayout(new BoxLayout(allPanels[INFORM_CARD], BoxLayout.Y_AXIS));
-		allPanels[INFORM_CARD].setBackground(new Color(200, 200, 200, 200));		// slightly transparent.
+		allPanels[INFORM_CARD].setBackground(new Color(220, 220, 220, 220));		// slightly transparent.
+		
+		allPanels[INFORM_CARD].add(Box.createVerticalGlue());
+		
+		addImage(INFORM_CARD, "disneytext.png");
 		
 		allPanels[INFORM_CARD].add(Box.createVerticalGlue());
 		
 		informMessage.setAlignmentX(CENTER_ALIGNMENT);
 		allPanels[INFORM_CARD].add(informMessage);
-		
-		allPanels[INFORM_CARD].add(Box.createVerticalGlue());
 		
 		JLabel message = new JLabel("Press any key to continue.");
 		message.setAlignmentX(CENTER_ALIGNMENT);
@@ -396,7 +401,7 @@ public class SplashScreen extends JPanel {
 	private void createGenericCard(){
 		allPanels[GENERIC_CARD] = new JPanel();
 		allPanels[GENERIC_CARD].setLayout(new BoxLayout(allPanels[GENERIC_CARD], BoxLayout.Y_AXIS));
-		allPanels[GENERIC_CARD].setBackground(new Color(200, 200, 200, 200));		// slightly transparent.
+		allPanels[GENERIC_CARD].setBackground(new Color(220, 220, 220, 220));		// slightly transparent.
 		
 		allPanels[GENERIC_CARD].add(Box.createVerticalGlue());
 		

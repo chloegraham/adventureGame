@@ -1,5 +1,6 @@
 package client.userinterface;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Toolkit;
@@ -45,8 +46,8 @@ public class UserInterface extends JFrame {
 	
 	/* Images */
 	private final ImageIcon iconKey = loadImageIcon("icon-key.png");
-	private final ImageIcon iconBoulT = loadImageIcon("icon-boulder-true.png");
-	private final ImageIcon iconBoulF = loadImageIcon("icon-boulder-false.png");
+	private final ImageIcon iconEggT = loadImageIcon("icon-boulder-true.png");
+	private final ImageIcon iconEggF = loadImageIcon("icon-boulder-false.png");
 
 	/* Panel content */
 	private final JTextArea messagePane = new JTextArea();
@@ -58,7 +59,7 @@ public class UserInterface extends JFrame {
 	
 	/* Inventory pane */
 	private final JLabel keys = new JLabel("0");
-	private final JLabel boulder = new JLabel();
+	private final JLabel egg = new JLabel();
 	private final int contentHeight = 82;			// Height of the inventory pane/message box
 	
 	private boolean firstGame = true;
@@ -147,9 +148,9 @@ public class UserInterface extends JFrame {
 	/** If true, show a boulder being carried in inventory. Otherwise, show no boulder. */
 	public void setBoulder(boolean carrying){
 		if (carrying){
-			if (iconBoulT != null){ boulder.setIcon(iconBoulT); }
+			if (iconEggT != null){ egg.setIcon(iconEggT); }
 		}
-		else{ if (iconBoulF != null){ boulder.setIcon(iconBoulF); } }
+		else{ if (iconEggF != null){ egg.setIcon(iconEggF); } }
 		
 	}
 	
@@ -246,7 +247,7 @@ public class UserInterface extends JFrame {
 		int renderHeight = (int) dim.getHeight();
 
 		int frameWidth = (renderWidth + 16);		// Needs extra width for border
-		int frameHeight = (renderHeight + contentHeight + menuHeight + 16);
+		int frameHeight = (renderHeight + menuHeight + 16);
 		setPreferredSize(new Dimension(frameWidth, frameHeight));
 		
 		// Position Frame in screen
@@ -258,8 +259,8 @@ public class UserInterface extends JFrame {
 		// Set position and size of items inside frame
 		graphics.setBounds(0, menuHeight, renderWidth, renderHeight);
 		splash.setBounds(0, 0, frameWidth, frameHeight);
-		inventoryPane.setBounds((renderWidth-contentHeight), renderHeight, contentHeight, contentHeight);
-		scrollPane.setBounds(0, renderHeight, (renderWidth-contentHeight), contentHeight);
+		inventoryPane.setBounds((renderWidth-contentHeight), renderHeight-contentHeight, contentHeight, contentHeight);
+		scrollPane.setBounds(0, renderHeight-contentHeight, (renderWidth-contentHeight), contentHeight);
 		menuBar.setBounds(0, 0, frameWidth, menuHeight);
 	}
 	
@@ -271,18 +272,21 @@ public class UserInterface extends JFrame {
 		Dimension dim = new Dimension(contentHeight, 25);
 		inventoryPane.setLayout(new BoxLayout(inventoryPane, BoxLayout.Y_AXIS));
 		inventoryPane.setBorder(BorderFactory.createTitledBorder("Inventory"));
+		inventoryPane.setBackground(new Color(220, 220, 220, 220));
 		//Keys
 		if (iconKey != null){ keys.setIcon(iconKey); }
 		keys.setMaximumSize(dim);
 		keys.setToolTipText("Keys");
+		keys.setOpaque(false);
 		inventoryPane.add(keys);
 		//Boulder
-		if (iconBoulF != null){ boulder.setIcon(iconBoulF); }
-		boulder.setMaximumSize(dim);
-		inventoryPane.add(boulder);
-		boulder.setToolTipText("Boulder");
+		if (iconEggF != null){ egg.setIcon(iconEggF); }
+		egg.setMaximumSize(dim);
+		inventoryPane.add(egg);
+		egg.setToolTipText("Egg");
+		egg.setOpaque(false);
 		
-		inventoryPane.setOpaque(false);
+		//inventoryPane.setOpaque(false);
 	}
 	
 	/**
@@ -291,7 +295,9 @@ public class UserInterface extends JFrame {
 	private JScrollPane buildMessagePane(){
 		JScrollPane scrollPane = new JScrollPane(messagePane,
 				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		messagePane.setOpaque(false);
+		scrollPane.setOpaque(false);
+		messagePane.setBackground(new Color(220, 220,220, 220));
+		//messagePane.setOpaque(false);
 		messagePane.setEditable(false);
 		// Set the pane to always be scrolled to the end
 		((DefaultCaret)messagePane.getCaret()).setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
@@ -385,6 +391,7 @@ public class UserInterface extends JFrame {
 			if (splash.getOpenCard() != SplashScreen.INFORM_CARD){	// Inform card needs to stay up until the player has read it.
 				splash.setVisibleCard(SplashScreen.READY_CARD);		// Show player key bindings and allow them to start
 			}
+			if (firstGame){ firstGame = false; }
 		}
 	}
 	
