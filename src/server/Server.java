@@ -14,6 +14,9 @@ import server.helpers.Actions;
 import server.helpers.Msgs;
 import server.saveLoad.XML;
 
+/**
+ * The server. Rather important. 
+ */
 public class Server implements Runnable {
 	
 	// Only ONE GameWorld & GameLogic

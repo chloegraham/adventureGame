@@ -1,5 +1,7 @@
 package client.helpers;
 
+import client.helpers.Direction;
+
 public enum Direction {
 	NORTH ("North"),
 	SOUTH ("South"),
@@ -19,6 +21,13 @@ public enum Direction {
 		throw new RuntimeException("Passed an invalid integer that doesn't relate to an ordinal in MsgDirection.enum");
 	}
 	
+	/**
+	 * Rotates a dirrection 90 degrees clockwise. 
+	 * 
+	 * For example, North would rotate to East. 
+	 * @param inputDir
+	 * @return
+	 */
 	public static Direction rotateClockwise(Direction inputDir){
 		Direction outputDir = Direction.NORTH;
 		
@@ -30,6 +39,13 @@ public enum Direction {
 		return outputDir;
 	}
 	
+	/**
+	 * Rotates a dirrection 90 degrees CounterClockwise. 
+	 * 
+	 * For example, North would rotate to East. 
+	 * @param inputDir
+	 * @return
+	 */
 	public static Direction rotateCounterClockwise(Direction inputDir){
 		Direction outputDir = Direction.NORTH;
 		

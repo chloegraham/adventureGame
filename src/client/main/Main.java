@@ -1,5 +1,9 @@
 package client.main;
 
+/**
+ * The main class of the client. Will make two clients, 
+ * so you can play it by yourself.
+ */
 import client.Client;
 
 public class Main {

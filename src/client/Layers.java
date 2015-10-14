@@ -1,5 +1,10 @@
 package client;
 
+/**
+ * This class stores the 3 char layers, for the RenderPane to draw.
+ * @author Eliot
+ *
+ */
 public class Layers {
 	private char[][] wallsEmpties;
 	private char[][] furniture;

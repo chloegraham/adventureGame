@@ -17,6 +17,8 @@ import java.awt.event.KeyEvent;
  * 	if (Actions.NORTH.ordinal() == input){ System.out.println("Valid input"); }
  * 
  * @author Kirsty Thorburn 300316972
+ * 
+ * Note, this class is indentical to Actions in server.helpers
  */
 public enum Actions {
 	// Add extra events here...

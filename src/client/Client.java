@@ -11,6 +11,7 @@ import server.helpers.Actions;
 import server.helpers.Msgs;
 
 /**
+ * The client, run by somebody who wants to join to the server and play the game.
  * 
  * Opens the Users UserInterface and connects to the Game Server.
  * 

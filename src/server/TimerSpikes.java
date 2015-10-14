@@ -2,11 +2,18 @@ package server;
 
 import java.io.IOException;
 
+/**
+ * This timer makes the spikes go up and down once a second. 
+ *
+ */
 public class TimerSpikes implements Runnable {
 	private Server server;
 	
 	private boolean pause = false;
 	
+	/**
+	 * @param s The server who's spikes will be activated
+	 */
 	public TimerSpikes(Server s) {
 		server = s;
 	}

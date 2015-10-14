@@ -9,6 +9,11 @@ import server.tiles.Furniture;
 import server.tiles.Spikes;
 import server.tiles.Wall;
 
+/**
+ * This class keeps track of what messages to send to the player in the message box. 
+ * If a player inspects a door for example, this class stores the exact string to send. 
+ * @author Eliot
+ */
 public class Msgs {
 	public static final int PLAYER_ONE = 101;
 	public static final int PLAYER_TWO = 202;
