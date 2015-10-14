@@ -132,7 +132,7 @@ public class Listener extends JPanel implements KeyListener, ActionListener {
 				}	// Changed mind, ignore
 				else if (ac.equals("Restart")){
 					splash.setVisibleStartup("Restarting the level. Waiting for game state ...");
-					client.handleAction(Actions.RESTART.ordinal());
+					client.handleAction(Actions.NEWGAME.ordinal());
 				}
 				else if (ac.equals("Quit")){
 					System.exit(0);
