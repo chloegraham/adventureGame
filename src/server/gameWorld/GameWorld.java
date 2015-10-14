@@ -6,8 +6,10 @@ import java.util.List;
 import server.helpers.Msgs;
 import server.movable.Player;
 
-
-
+/**
+* @author Chloe 300306822, Ben
+*
+*/
 public class GameWorld {
 	private GameLogic logic;
 	private List<Stage> stages;
