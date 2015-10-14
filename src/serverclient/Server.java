@@ -225,6 +225,8 @@ public class Server implements Runnable {
 	 */
 	private void handleAction(int ordinal, int userID) throws IOException {
 		String message = logic.handleAction(ordinal, userID);
+		//if received message from logic states a player has died, deal with the death here
+		if(message.equals("You're dead")) System.out.println("server knows dead");
 		broadcast(userID, message);
 	}
 	
