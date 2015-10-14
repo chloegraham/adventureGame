@@ -14,11 +14,11 @@ public class GameWorld {
 	public GameWorld(String encodedGameWorld){
 		String[] split = encodedGameWorld.split(Msgs.DELIM_SPLIT);
 		
-		stages = new ArrayList<>(); 
-		players = new ArrayList<>();
-		
+		stages = new ArrayList<Stage>(); 
+		players = new ArrayList<Player>();
+		//populate the stages and players lists appropriately
 		int index = 0;
-		for (String s  : split) {
+		for (String s: split) {
 			if (s.contains(Msgs.DELIM_STAGE)) {
 				stages.add(new Stage(s, index++));
 			}
@@ -35,6 +35,9 @@ public class GameWorld {
 	
 	
 	
+	/**
+	 * 
+	 */
 	public void addPlayersToRooms() {
 		for (Player p : players) {
 			Stage stage = stages.get(p.getStageID());
@@ -51,17 +54,10 @@ public class GameWorld {
 		}
 	}
 
-
-	
-
-
-
 	/*
 	 * 
 	 */
 	public GameLogic getLogic() { return logic; }
-	
-	
 	
 	/*
 	 * 
