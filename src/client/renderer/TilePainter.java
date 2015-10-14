@@ -23,6 +23,8 @@ public class TilePainter {
     private BufferedImage chickenSpriteSouth;
     private BufferedImage chickenSpriteEast;
     private BufferedImage chickenSpriteWest;
+    private BufferedImage goal;
+
 
 
     public TilePainter(int tileSize){
@@ -33,6 +35,7 @@ public class TilePainter {
         	chickenSpriteSouth = ImageIO.read(new File("chicken2.png"));
         	chickenSpriteWest = ImageIO.read(new File("chicken3.png"));
         	chickenSpriteEast = ImageIO.read(new File("chicken1.png"));
+        	goal = ImageIO.read(new File("goal.png"));
 
 
         } catch (IOException ex) {
@@ -182,8 +185,8 @@ public class TilePainter {
 	    g2.setPaint(new Color(105, 206, 236));
 	    g2.fillPolygon(xPoints, yPoints, 4);
 	
-	    g2.setPaint(new Color(50, 50, 50));
-	    g2.drawPolygon(xPoints, yPoints, 4);
+//	    g2.setPaint(new Color(50, 50, 50));
+//	    g2.drawPolygon(xPoints, yPoints, 4);
     }
     
     protected void drawPressurePad(Graphics2D g2, int x, int y){
@@ -296,14 +299,7 @@ protected void drawCharachterEastWithBoulder(Graphics2D g2, int x, int y){
 }
 
 protected void drawGoalTile(Graphics2D g2, int x, int y){
-    int xPoints[] = {x, x + (tilesize / 2), x, x - (tilesize / 2)};
-    int yPoints[] = {y, y + (tilesize / 4), y + (tilesize / 2), y + (tilesize / 4)};
-
-    g2.setPaint(new Color(79, 255, 106));
-    g2.fillPolygon(xPoints, yPoints, 4);
-
-    g2.setPaint(new Color(50, 50, 50));
-    g2.drawPolygon(xPoints, yPoints, 4);
+    g2.drawImage(goal, x - (tilesize / 2), y - (tilesize / 2), null);    
 }
 
 

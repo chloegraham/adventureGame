@@ -1,11 +1,13 @@
 package client.renderer;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 
 import javax.swing.JPanel;
+
 
 import server.helpers.Direction;
 
@@ -53,6 +55,8 @@ public class RenderPane extends JPanel {
         Graphics2D g2 = (Graphics2D) g;
 
         if(this.level != null && this.objects != null && this.moveables != null ){
+        		g2.setPaint(new Color(40,40,40));
+        		g2.fillRect(0,0, 800, 600);
             	paintFromCharLayers(g2);        	
         }else{
         	//System.out.println("Set the layers before painting");
