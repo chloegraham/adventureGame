@@ -22,10 +22,16 @@ import server.helpers.Msgs;
 
 public class XML {
 	
-	private final static String fileName = "continue.xml";
-	private final static String tag = "GameState";
+	private final static String saveFileName = "continue.xml";
+	private final static String saveTag = "GameState";
+	private final static String newGameFileName = "newgame.xml";
+	private final static String newGameTag = "NewGame";
 	
 	public static String load() {
+        return load(saveFileName, saveTag);
+    }
+	
+	public static String load(String file, String tag) {
         Document dom;
         // Make an  instance of the DocumentBuilderFactory
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -34,7 +40,7 @@ public class XML {
             DocumentBuilder db = dbf.newDocumentBuilder();
             // parse using the builder to get the DOM mapping of the    
             // XML file
-            dom = db.parse(fileName);
+            dom = db.parse(file);
 
             Element doc = dom.getDocumentElement();
             
@@ -72,7 +78,7 @@ public class XML {
 	        Element rootEle = dom.createElement("Continue");
 
 	        // create data elements and place them under root
-	        e = dom.createElement(tag);
+	        e = dom.createElement(saveTag);
 	        e.appendChild(dom.createTextNode(gameState));
 	        rootEle.appendChild(e);
 
@@ -84,7 +90,7 @@ public class XML {
 
 	            // send DOM to file
 	            tr.transform(new DOMSource(dom), 
-	            new StreamResult(new FileOutputStream(fileName)));
+	            new StreamResult(new FileOutputStream(saveFileName)));
 	            return true;
 
 	        } catch (TransformerException te) {
@@ -114,13 +120,7 @@ public class XML {
 	
 	
 	public static String newGame(){
-		/*
-		 *  TODO still to sort
-		 */
-		return TUTORIAL + "<Split>" + ZEBRA + "<Split>" + TUTORIALPLAYER1 + "<Split>" + TUTORIALPLAYER2 + "<Split>";
-//		return ZEBRA + "<Split>" + ZEBRAPLAYER1 + "<Split>" + ZEBRAPLAYER2 + "<Split>";
-//		return STAGE1 + "<Split>" + PLAYER1 + "<Split>" + PLAYER2 + "<Split>";
-//		return STAGE1 + "<Split>" + STAGE2 + "<Split>" + PLAYER1 + "<Split>" + PLAYER2 + "<Split>";
+		return load(newGameFileName, newGameTag);
 	}
 	
 	
