@@ -143,6 +143,7 @@ public class Client implements Runnable {
 			String[] encodedSplit = encodedInput.split("<Split>");
 			
 			String encodedLayers = encodedSplit[0];
+			encodedLayers = encodedLayers.replace(Msgs.DELIM_ROOM, "");
 			String encodedPlayer;
 			String encodedMessages;
 			

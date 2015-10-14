@@ -37,9 +37,6 @@ public class Stage {
 		for (Room r : rooms) 
 			sb.append(r.getEncodedRoom());
 		
-		sb.append('@');
-		sb.append(stageID);
-		sb.append('@');
 		return sb.toString() +
 			   Msgs.DELIM_STAGE +
 			   Msgs.DELIM_SPLIT;

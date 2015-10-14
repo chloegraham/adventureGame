@@ -59,7 +59,6 @@ public class Player extends Moveable{
 		str += userID + "%";
 		str += stageID + "%";
 		str += roomID + "%";
-		str += keys + "%";
 		
 		Point point = getLocation();
 		int x = point.x;
@@ -68,6 +67,7 @@ public class Player extends Moveable{
 		str += y + "%";
 		
 		str += direction.ordinal() + "%";
+		str += keys + "%";
 		int boulder = hasBoulder() ? 1 : 0;
 		str += boulder + "%";
 		

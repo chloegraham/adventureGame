@@ -180,11 +180,8 @@ public class Room {
 			sb.append('%');
 		}
 		sb.append('@');
-		sb.append(roomID);
-		sb.append('@');
 		return sb.toString() +
-			   Msgs.DELIM_ROOM +
-			   Msgs.DELIM_SPLIT;
+			   Msgs.DELIM_ROOM;
 	}
 	
 	

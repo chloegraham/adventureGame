@@ -97,7 +97,7 @@ public class GameWorld {
 		
 		// return the encoded room which the player is on
 		String encodedRoom = room.getEncodedRoom();
-		encodedRoom += logic.bouldersKeysLocation(userID);
+		encodedRoom += Msgs.DELIM_SPLIT + logic.bouldersKeysLocation(userID);
 		
 		return encodedRoom;
 	}
