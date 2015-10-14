@@ -143,15 +143,22 @@ public class Room {
 	/*
 	 *  Activate all the Spikes on this Level
 	 */
-	public void activateSpikes() {
+	public String activateSpikes() {
+		String temp = "";
 		for (Spikes s : spikes)
 			s.activate();
 		
-		for (Player p : players)
-			for (Spikes s : spikes)
-				if (p.getLocation().equals(s.getLocation()))
-					if (s.isActivated())
-						p.getUserID();
+		for (Player p : players){
+			for (Spikes s : spikes){
+				if (p.getLocation().equals(s.getLocation())){
+					if (s.isActivated()){
+						p.murder();
+						temp = "You're dead";
+					}
+				}		
+			}
+		}
+		return temp;
 	}
 	
 	/*

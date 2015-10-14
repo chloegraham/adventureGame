@@ -209,11 +209,14 @@ public class Server implements Runnable {
 	 */
 	public void activateSpikes() throws IOException {
 		lock.lock();
-		
-		logic.activateSpikes();				// activate all the spikes
-		broadcast(Msgs.PLAYER_ONE, "");		// broadcast to both Players
-		broadcast(Msgs.PLAYER_TWO, "");		// broadcast to both Players
-		
+		//TODO: hi this was chloe, passing back strings all day every day. chur
+		String temp = logic.activateSpikes();				// activate all the spikes
+		if(temp.equals("You're dead")){
+			outputOne.writeUTF("You're dead");
+			outputTwo.writeUTF("You're dead");
+		}
+			broadcast(Msgs.PLAYER_ONE, "");		// broadcast to both Players
+			broadcast(Msgs.PLAYER_TWO, "");		// broadcast to both Players
 		lock.unlock();
 	}
 	
@@ -237,7 +240,7 @@ public class Server implements Runnable {
 	private void broadcast(int userID, String message) throws IOException {
 		String current = gameWorld.getEncodedGameWorld(userID);
 		current += message;
-		System.out.println("current = " + current);
+		//System.out.println("current = " + current);
 		int otherUserID = Msgs.PLAYER_TWO;
 		if (userID == Msgs.PLAYER_TWO)
 			otherUserID = Msgs.PLAYER_ONE;
