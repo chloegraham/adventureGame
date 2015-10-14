@@ -14,6 +14,13 @@ import server.saveLoad.XML;
 import sharedHelpers.Actions;
 import sharedHelpers.Msgs;
 
+/**
+ * Continuously runs a Server which waits for Clients to connect. Only two Clients can connect.
+ * No one can start playing the game until two Clients have connected.
+ * 
+ * @author benscully
+ *
+ */
 public class Server implements Runnable {
 	// Only ONE GameWorld & GameLogic
 	private static GameWorld gameWorld;
@@ -33,6 +40,7 @@ public class Server implements Runnable {
 	private DataOutputStream outputTwo;
 	private DataInputStream inputTwo;
 	
+	// A thread which activates the Spike Tiles every few seconds
 	private TimerSpikes timer;
 	private Thread timerThread;
 	
@@ -65,8 +73,12 @@ public class Server implements Runnable {
 	
 	
 	
-	/*
-	 *  Handle Action
+	/**
+	 * handles the actions which have been sent to the Server from the Clients.
+	 * 
+	 * @param ordinal Enum ordinal of the Actions Enum
+	 * @param userID the Client trying to complete an action
+	 * @throws IOException
 	 */
 	private void handleAction(int ordinal, int userID) throws IOException {
 		if (ordinal == Actions.NEWGAME.ordinal()) {
@@ -89,6 +101,12 @@ public class Server implements Runnable {
 		}
 	}
 
+	/**
+	 * tell both Clients about changes to the game state after one Client has made a change.
+	 * 
+	 * @param userID the ID of the Client who called the Broadcast
+	 * @param message message to be displayed by the Clients UI
+	 */
 	private void broadcast(int userID, String message) {
 		String current = gameWorld.getEncodedGameWorld(userID);
 		current += message;
@@ -137,8 +155,10 @@ public class Server implements Runnable {
 
 	
 	
-	/*
-	 *  New, Load, Save
+	/**
+	 * Creates a NewGame by retrieving the NewGame from the XML and then uses 
+	 * 
+	 * @throws IOException
 	 */
 	private void newGame() throws IOException {
 		// Get encoded gameWorld of the standard new game
@@ -190,8 +210,10 @@ public class Server implements Runnable {
 	
 	
 	
-	/*
-	 *  Spikes
+	/**
+	 * tells every Spike tile in the Game World to be activated (if up go down, if down go up)
+	 * 
+	 * @throws IOException
 	 */
 	public void activateSpikes() throws IOException {
 		lock.lock();
