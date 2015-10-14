@@ -20,6 +20,10 @@ import org.xml.sax.SAXException;
 
 import server.helpers.Msgs;
 
+/*
+ * Xml class for handling saving, loading and creating new game from xml files.
+ * @author Chris
+ */
 public class XML {
 	
 	//final constant fields for saving and loading a saved game
@@ -137,10 +141,11 @@ public class XML {
 	
 	
 	/**
-	 * @param def the String to add the contents 
-	 * @param doc
-	 * @param tag
-	 * @return
+	 * Helper method for getting the information from an xml file
+	 * @param def the String to add the contents to
+	 * @param doc the file
+	 * @param tag the tag surrounding the information needed
+	 * @return string of all the information
 	 */
 	private static String getTextValue(String def, Element doc, String tag) {
 	    String value = def;
