@@ -33,11 +33,10 @@ public class Client implements Runnable {
 	private UserInterface ui;
 	
 	
-	// TODO just for testing
-	private String hostORguest = "n/a";  	// TODO put this inside run() once it's no longer used for testing
-	private int testID;						// TODO remove 'testID' field & @param once testing finished
-	public Client(int test) {
-		testID = test;
+	private String hostORguest = "n/a";  	
+	private int clientID;					
+	public Client(int clientID) {
+		this.clientID = clientID;
 	}
 	
 
@@ -94,7 +93,6 @@ public class Client implements Runnable {
 	    	 */
 	    	while (true)
 		    	decodePassGameToUI();
-	    	
 	    	
 	   } catch (IOException e) {
 		   e.printStackTrace();
@@ -194,7 +192,7 @@ public class Client implements Runnable {
 	@Override
 	public String toString() {
 		if (clientSocket == null)
-			return "*** Client( testid-" +testID+ "  userid-" +userID+ "):    socketStatus- NOT CONNECTED    isHost?- " +hostORguest;
-		return "*** Client( testid-" +testID+ "  userid-" +userID+ "):    socketStatus- CONNECTED " +clientSocket.getPort()+"/"+clientSocket.getLocalPort()+ "    isHost?- " +hostORguest;
+			return "*** Client( testid-" +clientID+ "  userid-" +userID+ "):    socketStatus- NOT CONNECTED    isHost?- " +hostORguest;
+		return "*** Client( testid-" +clientID+ "  userid-" +userID+ "):    socketStatus- CONNECTED " +clientSocket.getPort()+"/"+clientSocket.getLocalPort()+ "    isHost?- " +hostORguest;
 	}
 }
