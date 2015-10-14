@@ -22,10 +22,11 @@ import server.tiles.Tile;
 
 /**
  * The main class for controlling game logic
- * @author Chloe
+ * @author Chloe 300306822
  *
  */
 public class GameLogic {
+	
 	private GameWorld gameWorld;
 	private List<Stage> stages;
 	private List<Player> players;
@@ -37,8 +38,15 @@ public class GameLogic {
 	}
 	
 	
+	/**
+	 * A method to handle a user's action and pass back a message to the server which can be broadcasted for the user to see
+	 * @param ordinal which identifies the key pressed
+	 * @param userID identifies which user pressed a key
+	 * @return an appropriate string which can be displayed on the user's screen
+	 */
 	public String handleAction(int ordinal, int userID) {
-		// absdjkfasj
+		
+		//identify which user is being dealt with
 		Player player = null;
 		for (Player p : players){
 			if (userID == p.getUserID()){
@@ -48,8 +56,7 @@ public class GameLogic {
 		
 		assert(player != null);
 		
-		
-		// ansjfknsadjkf
+		//identify which stage the player is on that will be dealt with on this turn
 		Stage stage = null;
 		for (Stage s : stages)
 			if (s.getStageID() == player.getStageID())
@@ -57,8 +64,7 @@ public class GameLogic {
 		
 		assert(stage != null);
 		
-		
-		// sajndfjaskd
+		//identify the current room
 		Room room = null;
 		for (Room r : stage.getRooms())
 			if (r.getRoomID() == player.getRoomID())
@@ -66,47 +72,48 @@ public class GameLogic {
 		
 		assert(room != null);
 		
-		
 		String message = "";
-		Point current = player.getLocation();
+		Point currentPoint = player.getLocation();
 		Point newLocation = null;
 		
+		/* Move key presses */
 		if(Actions.NORTH.ordinal() == ordinal) {
 			player.setDirection(Direction.NORTH);
-			newLocation = new Point(current.x, current.y-1);
+			newLocation = new Point(currentPoint.x, currentPoint.y-1);
 			boolean success = move(player, room, newLocation);
 			message = Msgs.moveMsg(player.getDirection(), success);
 			
 		}
 		else if (Actions.EAST.ordinal() == ordinal) {
 			player.setDirection(Direction.EAST);
-			newLocation = new Point(current.x+1, current.y);
+			newLocation = new Point(currentPoint.x+1, currentPoint.y);
 			boolean success = move(player, room, newLocation);
 			message = Msgs.moveMsg(player.getDirection(), success);
 			
 		}
 		else if (Actions.SOUTH.ordinal() == ordinal) {
 			player.setDirection(Direction.SOUTH);
-			newLocation = new Point(current.x, current.y+1);
+			newLocation = new Point(currentPoint.x, currentPoint.y+1);
 			boolean success = move(player, room, newLocation);
 			message = Msgs.moveMsg(player.getDirection(), success);
 			
 		}
 		else if (Actions.WEST.ordinal() == ordinal) {
 			player.setDirection(Direction.WEST);
-			newLocation = new Point(current.x-1, current.y);
+			newLocation = new Point(currentPoint.x-1, currentPoint.y);
 			boolean success = move(player, room, newLocation);
 			message = Msgs.moveMsg(player.getDirection(), success);
 			
 		}
+		
+		/* Interact and inspect key presses */
 		else if (Actions.INTERACT.ordinal() == ordinal) { 
-			message = interact(player, room, current);
+			message = interact(player, room, currentPoint);
 			
 		}
 		else if (Actions.INSPECT.ordinal() == ordinal) { 
-			message = inspect(player, room, current);
-			
-			
+			message = inspect(player, room, currentPoint);
+	
 		}
 		else if (Actions.NEWGAME.ordinal() == ordinal) {
 		}
@@ -118,49 +125,53 @@ public class GameLogic {
 			throw new IllegalArgumentException("GameLogic:  received an unexpected ordinal. It might be 'Inspect' which we have't coded yet.");
 		}
 		
+		//Check if either players have won or are dead and return this to the server
 		for (Player p : players){
-			//CHECK IF EITHER PLAYERS ARE DEAD OR HAVE WON and return this to the server
 			if(p.isDead()){
-				return "You're dead";
+				message = "You're dead";
 			} 
 			if(p.hasWon()){
-				return "You've won";
+				message = "You've won";
 			}
 		}
 		return message;
 	}
 	
+	/**
+	 * @param player to be moved
+	 * @param room to be moved within (unless moving onto a door which will place player into next room)
+	 * @param nextLoc, the location that the player hopes to move to
+	 * @return true if move is successful, otherwise false
+	 */
 	private boolean move(Player player, Room room, Point nextLoc) {
 		
-		// Check for out of bounds
+		//Check for move out of bounds
 		if (nextLoc.y < 0 || nextLoc.y > room.getTiles().length-1 || nextLoc.x < 0 || nextLoc.x > room.getTiles()[0].length-1)
 			return false;
-			
+		
 		Tile nextTile = room.getTiles()[nextLoc.y][nextLoc.x];
 		Point currLoc =  player.getLocation();
 		Tile currTile = room.getTiles()[currLoc.y][currLoc.x];
 		
-		// Check Boulders because Players can't move on to Boulders
+		//Check boulders because players can't move on to them
 		for(Boulder b: room.getBoulders())
 			if(b.getLocation().equals(nextLoc))
 				return false;	
 		
-		// If Tile is not type Passable = can't move on to.
-		// If Tile is type Passable but state is !isPassable() = can't move on to.
+		//if a tile is not type Passable, then it can't be moved onto. if the tle is type Passable but state is !isPassable(), still can't move on to
 		if (!(nextTile instanceof Passable) || (nextTile instanceof Passable && !((Passable)nextTile).isPassable()))
 			return false;
 		
+		//if the player's current tile they are on is a pressure pad then deactivate it and close the corresponding door
 		if(currTile instanceof PressurePad){
-			((PressurePad)currTile).activate();
-			
-			TileFullLocation d = TileConnections.getConnectedTile(player.getStageID(), player.getRoomID(), currLoc);
-			
+			((PressurePad)currTile).activate();	
+			//if currTile (pressure pad) is connected to a door, it will close said door
+			TileFullLocation d = TileConnections.getConnectedTile(player.getStageID(), player.getRoomID(), currLoc);	
+			//if d is not null, currTile is connected to a door, so close the door as the player leaves the pad
 			if (d != null) {
 				Point doorPoint = d.getLocation();
-				Door doorTile = (Door)room.getTiles()[doorPoint.y][doorPoint.x];
-				
-				doorTile.lock();
-				
+				Door doorTile = (Door)room.getTiles()[doorPoint.y][doorPoint.x];		
+				doorTile.lock();			
 				//if there's a player in the doorway when getting off the activated pressure pad then kill them
 				for(Player p : players)
 					if(p.getLocation().equals(doorPoint))
@@ -168,41 +179,36 @@ public class GameLogic {
 			}
 		}
 		
+		//if the tile that the player is moving onto is a pressure pad then activate it and the corresponding door if present
 		if (nextTile instanceof PressurePad) {
-			((PressurePad)nextTile).activate();
-			
+			((PressurePad)nextTile).activate();		
 			TileFullLocation d = TileConnections.getConnectedTile(player.getStageID(), player.getRoomID(), nextLoc);
 			
 			if (d != null) {
 				Point doorPoint = d.getLocation();
 				Door doorTile = (Door)room.getTiles()[doorPoint.y][doorPoint.x];	
-			
 				doorTile.unlock();
 			}
 		}
 		
+		//allow the player to move onto a door if it's open (passable)
+		//if the door is of type DoorLevel it will place the player into the next level (Stage)
 		if (nextTile instanceof Door) {
 			if (((Passable)nextTile).isPassable()) {
 				if(nextTile instanceof DoorLevel){
 					int id = player.getStageID();
 					int numStages = stages.size();
-					System.out.println("stages list size = " + this.stages.size());
-					System.out.println("stage id = " + id);
+					//if the player's current stage id (each stageID is incremented) is greater than the number of stages in the list then there is not another stage and the player has won
 					if(numStages < id + 1){
-						System.out.println("there is not a next stage, you won");
 						player.win();
 						return true;
 					}
-				}
-				
+				}	
 				
 				TileFullLocation d = TileConnections.getConnectedTile(player.getStageID(), player.getRoomID(), nextLoc);
 				gameWorld.removePlayers();
 				player.setLocation(d.getStage(), d.getRoom(), d.getLocation());
 				gameWorld.addPlayersToRooms();
-				
-				
-				// TODO I think this fucks up messages
 				return true;
 			}
 		}
@@ -284,7 +290,6 @@ public class GameLogic {
 			
 			return Msgs.chestMsg(open, opened, isKey);
 		} 
-		
 		
 		
 		/*
@@ -471,7 +476,6 @@ public class GameLogic {
 		}
 		return temp;
 	}
-	
 	
 	
 	public String bouldersKeysLocation(int userID) {
