@@ -10,6 +10,7 @@ import javax.imageio.ImageIO;
 
 /**
  * Created by Eliot on 21/09/15.
+ * 300285842
  * 
  * Mercy on ye who enter this class
  * 
