@@ -2,6 +2,10 @@ package server.movable;
 
 import java.awt.Point;
 
+/**
+ * Big heavy boulders. Note in the game they are called Eggs, to fit with the chicken theme. 
+ * 
+ */
 public class Boulder extends Moveable {
 
 	public Boulder(Point location) {

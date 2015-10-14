@@ -30,6 +30,7 @@ public class DoorLevel implements Tile, Passable, Furniture, Door {
 	
 	@Override
 	public boolean isPassable() {
+
 		return true;
 	}
 	

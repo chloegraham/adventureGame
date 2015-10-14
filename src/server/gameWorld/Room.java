@@ -18,6 +18,15 @@ import server.tiles.Spikes;
 import server.tiles.Tile;
 import server.tiles.Wall;
 
+
+/**
+ * A room is essentially a fancy collection of tiles. 
+ * 
+ * Every room is part of a stage, and have a specific order in that stage. 
+ * For example a room could be  "the second room in the third stage".
+ * 
+ * Rooms also keep track of players, spikes, and boulders inside them.
+ */
 public class Room {
 	private int stageID;
 	private int roomID;

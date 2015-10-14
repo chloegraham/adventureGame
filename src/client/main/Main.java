@@ -10,6 +10,5 @@ public class Main {
 		Thread tClient2 = new Thread(client2);
 		tClient.start();
 		tClient2.start();
-		
 	}
 }

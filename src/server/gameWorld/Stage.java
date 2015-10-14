@@ -6,6 +6,14 @@ import java.util.List;
 import server.helpers.Msgs;
 import server.movable.Player;
 
+
+/**
+ * A stage is a collection of connected rooms. 
+ * 
+ * A players goal in a stage is to reach the end tile, which 
+ * transports them to the next stage. 
+ *
+ */
 public class Stage {
 	private int stageID;
 	private List<Room> rooms;
