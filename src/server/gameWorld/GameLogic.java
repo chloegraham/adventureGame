@@ -189,12 +189,12 @@ public class GameLogic {
 		if (nextTile instanceof Door) {
 			if ( ((Passable)nextTile).isPassable() ) {
 				TileFullLocation d = TileConnections.getConnectedTile(player.getStageID(), player.getRoomID(), nextLoc);
-				gameWorld.removePlayers();
-				player.setLocation(d.getStage(), d.getRoom(), d.getLocation());
-				gameWorld.addPlayersToRooms();
-				
-				// TODO I think this fucks up messages
-				return true;
+				if (d != null){
+					gameWorld.removePlayers();
+					player.setLocation(d.getStage(), d.getRoom(), d.getLocation());
+					gameWorld.addPlayersToRooms();
+					return true;
+				}
 			}
 		}
 		

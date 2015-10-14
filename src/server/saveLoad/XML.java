@@ -117,7 +117,8 @@ public class XML {
 		/*
 		 *  TODO still to sort
 		 */
-		return TUTORIAL + "<Split>" + TUTORIALPLAYER1 + "<Split>" + TUTORIALPLAYER2 + "<Split>";
+//		return TUTORIAL + "<Split>" + TUTORIALPLAYER1 + "<Split>" + TUTORIALPLAYER2 + "<Split>";
+		return ZEBRA + "<Split>" + ZEBRAPLAYER1 + "<Split>" + ZEBRAPLAYER2 + "<Split>";
 //		return STAGE1 + "<Split>" + PLAYER1 + "<Split>" + PLAYER2 + "<Split>";
 //		return STAGE1 + "<Split>" + STAGE2 + "<Split>" + PLAYER1 + "<Split>" + PLAYER2 + "<Split>";
 	}
@@ -215,6 +216,56 @@ public class XML {
 												  "3%" + 							// Point.y
 												  "1%" +							// Facing Direction
 												  "0%" +							// # of Keys Player has
+												  "0%" +							// Holding Boulder 0=false, 1=true
+												  "@" +								// a delimiter which i don't think we actually need anymore
+												  "<Player>";
+	
+	/*
+	 *  Rooms for Stage 2 + Stage 2
+	 */
+	private static final String ZROOM1 = "eeeeee%eeeeee%eeeeee%wwwwww%wwwwww%eeeeee%eeeeee%eeeeee%wwwwww%@" +
+			  							 "cnnnnn%nnnnnn%nnnnnn%nnndnn%nnndnn%nnnnnn%nnnnnn%nnnnnz%nnndnn%@" +
+			  							 "nnnnnn%nnnnnn%nnnnnn%nnnnnn%nnnnnn%nnnnnn%nnnnnn%nnnnnn%nnnnnn%@" +
+			  							 "<Room>";
+
+	private static final String ZROOM2 = "eeeeeeeew%eeeeeeeee%eeeeeeeew%@" +
+										 "ssssncssn%Dssnsnsnd%snsnssnsn%@" +
+										 "nnnnnnnnn%nnnnnnnnn%nnnnnnnnn%@" +
+										 "<Room>";
+	
+	private static final String ZROOM3 = "wwwwwwwwwwwwweeeeeww%weeeeeeeeeeeeewweeww%eeeeeeeeeeeeeeeeeeee%eeeeeeeeeeeeewwwwwww%@" +
+										 "nnnnnnnnnnnnndddndnn%nzzzzzzzzzzzzdnnndnn%Dnnnnnnnnnnnndddnddd%nnnnnnnnnnnnnnnnnnnn%@" +
+			  							 "nnnnnnnnnnnnnnnnnnnn%nnnnnnnnnnnnnnnnnnnn%nbbbbbbbbbbbbnnnnnnn%nnnnnnnnnnnnnnnnnnnn%@" +
+			  							 "<Room>";
+
+	private static final String ZROOM4 = "eeeeeeeeee%@" +
+			  							 "Dsnsnsnsny%@" +
+			  							 "nnnnnnnnnn%@" +
+			  							 "<Room>";
+
+	private static final String ZEBRA = ZROOM1 + ZROOM2 + ZROOM3 + "<Stage>";
+	
+	/*
+	 *  Players
+	 */
+	private static final String ZEBRAPLAYER1 = Msgs.PLAYER_ONE + "%" +			// UserID
+												  "0%" +							// StageID    Current Stage ('000' default start) 
+												  "0%" +							// RoomID
+												  "0%" +							// Point.x
+												  "6%" + 							// Point.y
+												  "1%" +							// Facing Direction
+												  "0%" +							// # of Keys Player has
+												  "0%" +							// Holding Boulder 0=false, 1=true
+												  "@" +								// a delimiter which i don't think we actually need anymore
+												  "<Player>";
+	
+	private static final String ZEBRAPLAYER2 = Msgs.PLAYER_TWO + "%" +			// UserID
+												  "0%" +							// StageID    Current Stage ('000' default start) 
+												  "0%" +							// RoomID
+												  "3%" +							// Point.x
+												  "2%" + 							// Point.y
+												  "1%" +							// Facing Direction
+												  "1%" +							// # of Keys Player has
 												  "0%" +							// Holding Boulder 0=false, 1=true
 												  "@" +								// a delimiter which i don't think we actually need anymore
 												  "<Player>";
