@@ -200,7 +200,7 @@ public class SplashScreen extends JPanel {
 			if (event == KeyEvent.VK_C){ setVisibleCard(NO_CARD); }	// Cancel
 			else if (event == confirmButton.getMnemonic()){ return confirmButton.getActionCommand(); }
 		}
-		else if (openCard == READY_CARD || openCard == ABOUT_CARD){	// Cards that can be closed by key press
+		else if (openCard == READY_CARD || openCard == ABOUT_CARD || openCard == DEATH_CARD){	// Cards that can be closed by key press
 			if (ui.getPlaying()){ setVisibleCard(NO_CARD); }
 			else { setVisibleStartup("Cannot return to game. Waiting for game state ..."); }
 		}

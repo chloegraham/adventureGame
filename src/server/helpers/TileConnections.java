@@ -39,7 +39,6 @@ public class TileConnections {
 	
 	//Final fields for every pressure pad inside level 2
 	private static final TileFullLocation rm1pp = new TileFullLocation(1, 0, new Point(5,7));
-	private static final TileFullLocation rm3pp1 = new TileFullLocation(1, 2, new Point(2,1));
 	private static final TileFullLocation rm3pp2 = new TileFullLocation(1, 2, new Point(3,1));
 	private static final TileFullLocation rm3pp3 = new TileFullLocation(1, 2, new Point(4,1));
 	private static final TileFullLocation rm3pp4 = new TileFullLocation(1, 2, new Point(5,1));
@@ -52,10 +51,9 @@ public class TileConnections {
 	private static final TileFullLocation rm3pp11 = new TileFullLocation(1, 2, new Point(12,1));
 	
 	//Final fields for every door that is controlled by a pressure pad in level 2
-	private static final TileFullLocation rm3Door1 = new TileFullLocation(1, 3, new Point(17,2));
-	private static final TileFullLocation rm3Door2 = new TileFullLocation(1, 3, new Point(16,2));
-	private static final TileFullLocation rm3Door3 = new TileFullLocation(1, 3, new Point(16,1));
-	private static final TileFullLocation rm3Door4 = new TileFullLocation(1, 3, new Point(16,0));
+	private static final TileFullLocation rm3Door2 = new TileFullLocation(1, 3, new Point(17,2));
+	private static final TileFullLocation rm3Door3 = new TileFullLocation(1, 3, new Point(17,1));
+	private static final TileFullLocation rm3Door4 = new TileFullLocation(1, 3, new Point(17,0));
 	private static final TileFullLocation rm3Door5 = new TileFullLocation(1, 3, new Point(15,0));
 	private static final TileFullLocation rm3Door6 = new TileFullLocation(1, 3, new Point(14,0));
 	private static final TileFullLocation rm3Door7 = new TileFullLocation(1, 3, new Point(13,0));
@@ -81,7 +79,6 @@ public class TileConnections {
 		map.put(rm1out, rm2in);
 		map.put(rm2out, rm3in);
 		map.put(rm3pp, rm3out);
-		map.put(rm3pp1, rm3Door1);
 		map.put(rm3pp2, rm3Door2);
 		map.put(rm3pp3, rm3Door3);
 		map.put(rm3pp4, rm3Door4);

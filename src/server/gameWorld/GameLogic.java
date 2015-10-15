@@ -31,6 +31,7 @@ public class GameLogic {
 	private List<Stage> stages;
 	private List<Player> players;
 	
+	
 	public GameLogic(GameWorld gameWorld, List<Stage> stages, List<Player> players){
 		this.gameWorld = gameWorld;
 		this.stages = stages;
@@ -200,7 +201,7 @@ public class GameLogic {
 					int id = player.getStageID();
 					int numStages = stages.size();
 					//if the player's current stage id (each stageID is incremented) is greater than the number of stages in the list then there is not another stage and the player has won
-					if(numStages < id + 1){
+					if(numStages <= id + 1){
 						player.win();
 						return true;
 					}

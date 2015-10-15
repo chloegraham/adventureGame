@@ -103,7 +103,7 @@ public class Listener extends JPanel implements KeyListener, ActionListener {
 		/* Splash screen controls */
 		if (!splashLocked){
 			int openCard = splash.getOpenCard();
-			if (openCard == SplashScreen.HOST_CARD || openCard == SplashScreen.CONFIRM_CARD || openCard == SplashScreen.DEATH_CARD){
+			if (openCard == SplashScreen.HOST_CARD || openCard == SplashScreen.CONFIRM_CARD){
 				if (ac.equals("New Game")){
 					splash.setVisibleStartup("Creating a new game. Waiting for game state ...");
 					client.handleAction(Actions.NEWGAME.ordinal());

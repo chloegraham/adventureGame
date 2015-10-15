@@ -92,6 +92,7 @@ public class Server implements Runnable {
 			if(message.equals("You're dead")){
 				outputOne.writeUTF("You're dead");
 				outputTwo.writeUTF("You're dead");
+				newGame();
 			}
 			if(message.equals("You've won")){
 				outputOne.writeUTF("You've won");
