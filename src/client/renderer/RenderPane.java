@@ -8,12 +8,12 @@ import java.awt.Point;
 
 import javax.swing.JPanel;
 
-
-import server.helpers.Direction;
+import sharedHelpers.Direction;
 
 
 /**
  * Created by Eliot on 15/09/2015.
+ * 300285842
  * 
  * This is the main render pane. It draws the game state based off 3 2d char arrays.
  * 
@@ -166,6 +166,9 @@ public class RenderPane extends JPanel {
         	
         }
         
+        assert(rotatedLevel != null);
+        assert(rotatedObjects != null);
+        assert(rotatedMoveables != null);
         
         int numberOfRows = rotatedLevel.length;
         int numberOfColums = rotatedLevel[0].length;

@@ -10,12 +10,18 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import server.gameWorld.GameLogic;
 import server.gameWorld.GameWorld;
-import server.helpers.Actions;
-import server.helpers.Msgs;
 import server.saveLoad.XML;
+import sharedHelpers.Actions;
+import sharedHelpers.Msgs;
 
+/**
+ * Continuously runs a Server which waits for Clients to connect. Only two Clients can connect.
+ * No one can start playing the game until two Clients have connected.
+ * 
+ * @author benscully 300088269 
+ *
+ */
 public class Server implements Runnable {
-	
 	// Only ONE GameWorld & GameLogic
 	private static GameWorld gameWorld;
 	private static GameLogic logic;
@@ -24,224 +30,84 @@ public class Server implements Runnable {
 	private final static int port = 19999;
 	private static ServerSocket serverSocket;
 	
-	
 	// x1 Socket for each Player/Client
 	private static Socket socketOne;
 	private DataOutputStream outputOne;
 	private DataInputStream inputOne;
-	
 	
 	// x1 Thread for each Player/Client
 	private static Socket socketTwo;
 	private DataOutputStream outputTwo;
 	private DataInputStream inputTwo;
 	
-	private static Lock lock;
-	
+	// A thread which activates the Spike Tiles every few seconds
 	private TimerSpikes timer;
 	private Thread timerThread;
 	
+	private static Lock lock;
+	
 	public void run() {
-	    try{
-	    	lock = new ReentrantLock(true);
-	    	
-	    	// ONLY ONE - Initialize ServerSocket
-	    	serverSocket = new ServerSocket(port);
-	    	System.out.println(toString());
-	    	
-	    	
-	    	
-	    	/*
-	    	 *  Listen for first Client connection
-	    	 */
-	    	socketOne = serverSocket.accept();
-	    	inputOne = new DataInputStream(socketOne.getInputStream());
-	    	outputOne = new DataOutputStream(socketOne.getOutputStream());
-	    	System.out.println(toString());
-	    	
-	    	
-	    	
-	    	/*
-	    	 *  Tell the Client who connected to socketOne that they are PlayerONE and Host
-	    	 *  that PlayerONE can see the Menu-new,load
-	    	 *  (when they choose one until a render comes back show "waiting for player two")
-	    	 */
-	    	if (isLoadValid())
-	    		outputOne.writeUTF(Msgs.DELIM_HOSTLOAD);
-	    	else
-	    		outputOne.writeUTF(Msgs.DELIM_HOST);
-	    	String confirmHost = inputOne.readUTF();
-	    	if (!confirmHost.equals(Msgs.DELIM_HOST) && !confirmHost.equals(Msgs.DELIM_HOSTLOAD))
-	    		throw new IllegalArgumentException("Attempt to confirm the Host failed.");
-	    	
-	    	
-	    	
-	    	/*
-	    	 *  Listen for second Client connection
-	    	 */
-	    	socketTwo = serverSocket.accept();
-	    	inputTwo = new DataInputStream(socketTwo.getInputStream());
-	    	outputTwo = new DataOutputStream(socketTwo.getOutputStream());
-	    	System.out.println(toString());
-	    	
-	    	
-	    	
-	    	/*
-	    	 *  Tell the Client who connected to socketTwo that they are PlayerTWO and Guest
-	    	 *  that PlayerTWO has a splash that they are waiting for game render
-	    	 */
-	    	outputTwo.writeUTF(Msgs.DELIM_GUEST);
-	    	String confirmGuest = inputTwo.readUTF();
-	    	if (!confirmGuest.equals(Msgs.DELIM_GUEST))
-	    		throw new IllegalArgumentException("Attempt to confirm the Guest failed.");
-	    	System.out.println(toString());
+    	lock = new ReentrantLock(true);
+    	
+    	// Initialize ServerSocket
+    	initializeServerSocket();
+    	
+    	// Listen for first Client connection
+    	establishSocketOne();
+    	
+    	//  Listen for second Client connection
+    	establishSocketTwo();
 
-	    	
-	    	
-	    	/*
-	    	 *  Listen for Actions from Clients
-	    	 */
-	    	while (true) { 
-	    		
-	    		if (inputOne.available() > 0) {
-			    	lock.lock();
-	    			
-	    			// Listen for an action to handle
-	    			String handleAction = inputOne.readUTF();
-			    	if (!handleAction.contains(Msgs.DELIM_ACTION))
-			    		throw new IllegalArgumentException("A handle action was sent without 'action' in the string (or wasn't even an action.)");
-			    	int ordinal = Integer.parseInt(handleAction.substring(Msgs.DELIM_ACTION.length()));
-			    	
-			    	// Print chosen handle action to Server for testing & understanding
-			    	System.out.println("--- Server-  PlayerONE is trying to do Action " + Actions.getName(ordinal));
-			    	
-			    	
-			    	if (gameWorld == null)
-		    			if (ordinal != Actions.NEWGAME.ordinal() && ordinal != Actions.LOAD.ordinal())
-		    				throw new IllegalArgumentException("GameWorld still null and Client is trying to send Actions that aren't New or Load");
-			    	
-			    	
-			    	if (ordinal == Actions.NEWGAME.ordinal()){
-			    		newGame();
-			    		outputOne.writeUTF(String.valueOf(Actions.NEWGAME.ordinal()));
-			    		outputTwo.writeUTF(String.valueOf(Actions.NEWGAME.ordinal()));
-			    	}
-			    	else if (ordinal == Actions.LOAD.ordinal()){
-			    		load();
-			    		outputOne.writeUTF(String.valueOf(Actions.LOAD.ordinal()));
-			    		outputTwo.writeUTF(String.valueOf(Actions.LOAD.ordinal()));
-			    	}
-			    	else if (ordinal == Actions.SAVE.ordinal()){
-			    		boolean temp = save();
-			    		if (temp == true){
-			    			broadcast(Msgs.PLAYER_ONE, "Player one called save successfully");
-			    			broadcast(Msgs.PLAYER_TWO, "Player one called save successfully");
-			    		} else {
-			    			broadcast(Msgs.PLAYER_ONE, "Player one failed to save successfully");
-			    			broadcast(Msgs.PLAYER_TWO, "Player one failed to save successfully");
-			    		}
-			    	}
-			    	else
-			    		handleAction(ordinal, Msgs.PLAYER_ONE);
-			    	
-			    	lock.unlock();
-	    		}
-		    	
-	    		
-		    	if (inputTwo.available() > 0) {
-		    		lock.lock();
-		    		
-		    		// Listen for an action to handle
-			    	String handleAction = inputTwo.readUTF();
-			    	if (!handleAction.contains(Msgs.DELIM_ACTION))
-			    		throw new IllegalArgumentException("A handle action was sent without 'action' in the string (or wasn't even an action.)");
-			    	int ordinal = Integer.parseInt(handleAction.substring(Msgs.DELIM_ACTION.length()));
-			    	
-			    	
-			    	// Print chosen handle action to Server for testing & understanding
-			    	System.out.println("--- Server-  PlayerTWO is trying to do Action " + Actions.getName(ordinal));
-			    	
-			    	
-			    	// Checks that PlayerTWO doesn't attempt invalid actions
-			    	if (gameWorld == null)
-			    			throw new IllegalArgumentException("Player TWO should never be able to send Action with null GameWorld. Also Player TWO should never be able to New or Load Game.");
-			    	
-			    	if (ordinal == Actions.NEWGAME.ordinal()){
-			    		newGame();
-			    		outputOne.writeUTF(String.valueOf(Actions.NEWGAME.ordinal()));
-			    		outputTwo.writeUTF(String.valueOf(Actions.NEWGAME.ordinal()));
-			    	}
-			    	else if (ordinal == Actions.LOAD.ordinal()){
-			    		load();
-			    		outputOne.writeUTF(String.valueOf(Actions.LOAD.ordinal()));
-			    		outputTwo.writeUTF(String.valueOf(Actions.LOAD.ordinal()));
-			    	}
-			    	else if (ordinal == Actions.SAVE.ordinal()){
-			    		boolean temp = save();
-			    		if (temp == true){
-			    			broadcast(Msgs.PLAYER_ONE, "Player one called save successfully");
-			    			broadcast(Msgs.PLAYER_TWO, "Player one called save successfully");
-			    		} else {
-			    			broadcast(Msgs.PLAYER_ONE, "Player one failed to save successfully");
-			    			broadcast(Msgs.PLAYER_TWO, "Player one failed to save successfully");
-			    		}
-			    	}
-			    	else
-			    		handleAction(ordinal, Msgs.PLAYER_TWO);
-			    	
-			    	lock.unlock();
-		    	}
-	    	}
-	    } catch (IOException e) {
-	    	e.printStackTrace();
-	    } finally {
-	    	System.out.println(toString() + " finally.");
-	    	try {
-				serverSocket.close();
-			} catch (IOException e) { e.printStackTrace(); }
-	    }
+    	// Listen for Actions from Clients
+    	while (true) { 
+			try {
+				
+				handleActionSocketOne();
+				handleActionSocketTwo();
+				
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+    	}
     }
 	
 	
 	
-	/*
+	/**
+	 * handles the actions which have been sent to the Server from the Clients.
 	 * 
-	 */
-	public void activateSpikes() throws IOException {
-		lock.lock();
-		//TODO: hi this was chloe, passing back strings all day every day. chur
-		String temp = logic.activateSpikes();				// activate all the spikes
-		if(temp.equals("You're dead")){
-			outputOne.writeUTF("You're dead");
-			outputTwo.writeUTF("You're dead");
-		}
-			broadcast(Msgs.PLAYER_ONE, "");		// broadcast to both Players
-			broadcast(Msgs.PLAYER_TWO, "");		// broadcast to both Players
-		lock.unlock();
-	}
-	
-	
-	
-	/*
-	 *  Ask Logic to handle users action & then Broadcast the results back to the Clients
+	 * @param ordinal Enum ordinal of the Actions Enum
+	 * @param userID the Client trying to complete an action
+	 * @throws IOException
 	 */
 	private void handleAction(int ordinal, int userID) throws IOException {
-		String message = logic.handleAction(ordinal, userID);
-		//if received message from logic states a player has died, deal with the death here
-		if(message.equals("You're dead")){
-			outputOne.writeUTF("You're dead");
-			outputTwo.writeUTF("You're dead");
+		if (ordinal == Actions.NEWGAME.ordinal()) {
+    		newGame();
+		} else if (ordinal == Actions.LOAD.ordinal()) {
+    		load();
+		} else if (ordinal == Actions.SAVE.ordinal()) {
+    		save();
+		} else {
+			String message = logic.handleAction(ordinal, userID);
+			if(message.equals("You're dead")){
+				outputOne.writeUTF("You're dead");
+				outputTwo.writeUTF("You're dead");
+			}
+			if(message.equals("You've won")){
+				outputOne.writeUTF("You've won");
+				outputTwo.writeUTF("You've won");
+			}
+			broadcast(userID, message);
 		}
-		if(message.equals("You've won")){
-			outputOne.writeUTF("You've won");
-			outputTwo.writeUTF("You've won");
-		}
-		
-		broadcast(userID, message);
 	}
-	
 
-	private void broadcast(int userID, String message) throws IOException {
+	/**
+	 * tell both Clients about changes to the game state after one Client has made a change.
+	 * 
+	 * @param userID the ID of the Client who called the Broadcast
+	 * @param message message to be displayed by the Clients UI
+	 */
+	private void broadcast(int userID, String message) {
 		String current = gameWorld.getEncodedGameWorld(userID);
 		current += message;
 		//System.out.println("current = " + current);
@@ -252,19 +118,47 @@ public class Server implements Runnable {
 		String other = gameWorld.getEncodedGameWorld(otherUserID);
 		
 		if (userID == Msgs.PLAYER_ONE) {
-			outputOne.writeUTF(current);
-			outputTwo.writeUTF(other);
+			socketOneWriteUTF(current);
+			socketTwoWriteUTF(other);
 			
 		} else {
-			outputOne.writeUTF(other);
-			outputTwo.writeUTF(current);
+			socketOneWriteUTF(other);
+			socketTwoWriteUTF(current);
+		}
+	}
+	
+	private void handleActionSocketOne() throws IOException {
+		if (inputOne.available() > 0) {
+	    	lock.lock();
+			
+			String handleAction = socketOneReadString();	// Listen for an action to handle
+	    	int ordinal = Integer.parseInt(handleAction.substring(Msgs.DELIM_ACTION.length()));
+	    	
+	    	System.out.println("--- Server-  PlayerONE is trying to do Action " + Actions.getName(ordinal)); // Message to watch Servers progress
+	    	handleAction(ordinal, Msgs.PLAYER_ONE);
+	    	lock.unlock();
+		}
+	}
+	
+	private void handleActionSocketTwo() throws IOException {
+		if (inputTwo.available() > 0) {
+	    	lock.lock();
+			
+			String handleAction = socketTwoReadString();	// Listen for an action to handle
+	    	int ordinal = Integer.parseInt(handleAction.substring(Msgs.DELIM_ACTION.length()));
+	    	
+	    	System.out.println("--- Server-  PlayerTWO is trying to do Action " + Actions.getName(ordinal)); // Message to watch Servers progress
+	    	handleAction(ordinal, Msgs.PLAYER_TWO);
+	    	lock.unlock();
 		}
 	}
 
-
-
-	/*
-	 *  New, Load, Save
+	
+	
+	/**
+	 * Creates a NewGame by retrieving the NewGame from the XML and then uses 
+	 * 
+	 * @throws IOException
 	 */
 	private void newGame() throws IOException {
 		// Get encoded gameWorld of the standard new game
@@ -276,12 +170,17 @@ public class Server implements Runnable {
 		logic = gameWorld.getLogic();
 		System.out.println("--- Server:    expected that a NewGame has stated");
 
-		this.timer = new TimerSpikes(this);
-		this.timerThread = new Thread(timer);
-		timerThread.start();
+		socketOneWriteUTF(String.valueOf(Actions.NEWGAME.ordinal()));
+		socketTwoWriteUTF(String.valueOf(Actions.NEWGAME.ordinal()));
+		
+		startSpikesTimer();
 	}
 	
-	
+	/**
+	 * Load by retrieving the stored game from the XML and then uses it to create a GameWorld based on the stored game
+	 * 
+	 * @throws IOException
+	 */
 	private void load() throws IOException {
 		// Get encoded gameWorld of the standard new game
 		String encodedGameWorld = XML.load();
@@ -292,36 +191,192 @@ public class Server implements Runnable {
 		logic = gameWorld.getLogic();
 		System.out.println("--- Server:    expected that a Loaded Game has stated");
 
-		this.timer = new TimerSpikes(this);
-		this.timerThread = new Thread(timer);
-		timerThread.start();
+		socketOneWriteUTF(String.valueOf(Actions.LOAD.ordinal()));
+		socketTwoWriteUTF(String.valueOf(Actions.LOAD.ordinal()));
+		
+		startSpikesTimer();
 	}
 	
-	
-	private boolean save() throws IOException {
+	/**
+	 * Retrieve the current game state from GameWorld and store it in XML
+	 * 
+	 * @throws IOException
+	 */
+	private void save() throws IOException {
 		System.out.println("--- Server:    attempting to Save Game.");
-		//TODO: someone think of a better implementation this feels hacky
-		return XML.save(gameWorld.getEncodedGameSave());
+		
+		if (XML.save(gameWorld.getEncodedGameSave())) {
+			broadcast(Msgs.PLAYER_ONE, "Player one called save successfully");
+			broadcast(Msgs.PLAYER_TWO, "Player one called save successfully");
+		} else {
+			broadcast(Msgs.PLAYER_ONE, "Player one failed to save successfully");
+			broadcast(Msgs.PLAYER_TWO, "Player one failed to save successfully");
+		}
 	}
 
-	
 	private boolean isLoadValid() {
 		return XML.load() != null;
 	}
 	
 	
+	
+	/**
+	 * tells every Spike tile in the Game World to be activated (if up go down, if down go up)
+	 * 
+	 * @throws IOException
+	 */
+	public void activateSpikes() throws IOException {
+		lock.lock();
+		
+		String temp = logic.activateSpikes();	// activate all the spikes
+		if(temp.equals("You're dead")){
+			socketOneWriteUTF(temp);
+			socketTwoWriteUTF(temp);
+		}
+		broadcast(Msgs.PLAYER_ONE, "");			// broadcast to both Players
+		broadcast(Msgs.PLAYER_TWO, "");			// broadcast to both Players
+		
+		lock.unlock();
+	}
+	
+	private void startSpikesTimer() {
+		timer = new TimerSpikes(this);
+		timerThread = new Thread(timer);
+		timerThread.start();
+	}
+	
+	
+	
+	/*
+	 *  Establishing client socket connections
+	 */
+	private void initializeServerSocket() {
+		try {
+			serverSocket = new ServerSocket(port);
+			System.out.println(toString());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void establishSocketOne() {
+		try {
+			acceptSocketOne();
+			tellSocketOneItsHost();
+		} catch (IOException e) {
+			e.printStackTrace();
+			
+			establishSocketOne();
+		}
+	}
+	
+	private void establishSocketTwo() {
+		try {
+			acceptSocketTwo();
+			tellSocketTwoItsGuest();
+		} catch (IOException e) {
+			e.printStackTrace();
+			
+			establishSocketTwo();
+		}
+	}
+	
+	private void acceptSocketOne() throws IOException {
+		socketOne = serverSocket.accept();
+    	inputOne = new DataInputStream(socketOne.getInputStream());
+    	outputOne = new DataOutputStream(socketOne.getOutputStream());
+    	System.out.println(toString());
+	}
+	
+	private void acceptSocketTwo() throws IOException {
+		socketTwo = serverSocket.accept();
+    	inputTwo = new DataInputStream(socketTwo.getInputStream());
+    	outputTwo = new DataOutputStream(socketTwo.getOutputStream());
+    	System.out.println(toString());
+	}
+	
+	private void tellSocketOneItsHost() throws IOException {
+		if (isLoadValid())
+    		socketOneWriteUTF(Msgs.DELIM_HOSTLOAD);
+    	else
+			socketOneWriteUTF(Msgs.DELIM_HOST);
+    	String confirmHost = socketOneReadString();
+    	if (!confirmHost.equals(Msgs.DELIM_HOST) && !confirmHost.equals(Msgs.DELIM_HOSTLOAD))
+    		throw new IllegalArgumentException("Attempt to confirm the Host failed.");
+    	System.out.println(toString());
+	}
+	
+	private void tellSocketTwoItsGuest() throws IOException {
+		socketTwoWriteUTF(Msgs.DELIM_GUEST);
+    	String confirmGuest = socketTwoReadString();
+    	if (!confirmGuest.equals(Msgs.DELIM_GUEST))
+    		throw new IllegalArgumentException("Attempt to confirm the Guest failed.");
+    	System.out.println(toString());
+	}
+	
+	
+	
+	/*
+	 *  Read & Write for the Sockets
+	 */
+	private void socketOneWriteUTF(String write) {
+		try {
+			outputOne.writeUTF(write);
+		} catch (IOException e) {
+			e.printStackTrace();
+			
+			establishSocketOne();
+		}
+	}
+	
+	private void socketTwoWriteUTF(String write) {
+		try {
+			outputTwo.writeUTF(write);
+		} catch (IOException e) {
+			e.printStackTrace();
+			
+			establishSocketTwo();
+		}
+	}
+	
+	private String socketOneReadString() {
+		String str = null;
+		try {
+			str = inputOne.readUTF();
+		} catch (IOException e) {
+			e.printStackTrace();
+			
+			establishSocketOne();
+		}
+		return str;
+	}
+	
+	private String socketTwoReadString() {
+		String str = null;
+		try {
+			str = inputTwo.readUTF();
+		} catch (IOException e) {
+			e.printStackTrace();
+			
+			establishSocketOne();
+		}
+		return str;
+	}
+	
+	
+	
 	@Override
 	public String toString() {
 		String serverSock = "NOT STARTED";
-		if (serverSocket!=null)
+		if (serverSocket != null)
 			serverSock = "RUNNING";
 		
 		String sockOne = "WAITING";
-		if (socketOne!=null)
+		if (socketOne != null)
 			sockOne = "CONNECTED";
 		
 		String sockTwo = "WAITING";
-		if (socketTwo!=null)
+		if (socketTwo != null)
 			sockTwo = "CONNECTED";
 			
 		return "--- Server(ServerSocket- " + serverSock + "):    socketONEstatus- " + sockOne + "    socketTWOstatus- " + sockTwo;

@@ -1,4 +1,4 @@
-package server.helpers;
+package sharedHelpers;
 
 import server.movable.Boulder;
 import server.movable.Moveable;

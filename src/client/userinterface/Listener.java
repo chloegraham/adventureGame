@@ -7,9 +7,9 @@ import java.awt.event.KeyListener;
 
 import javax.swing.JPanel;
 
-import server.helpers.Actions;
 import client.Client;
 import client.renderer.RenderPane;
+import sharedHelpers.Actions;
 
 /**
  * Notifies master connection of player input.

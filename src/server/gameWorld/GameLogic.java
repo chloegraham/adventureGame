@@ -3,9 +3,6 @@ package server.gameWorld;
 import java.awt.Point;
 import java.util.List;
 
-import server.helpers.Actions;
-import server.helpers.Direction;
-import server.helpers.Msgs;
 import server.helpers.TileConnections;
 import server.helpers.TileFullLocation;
 import server.movable.Boulder;
@@ -19,6 +16,9 @@ import server.tiles.Passable;
 import server.tiles.PressurePad;
 import server.tiles.PutDownOnable;
 import server.tiles.Tile;
+import sharedHelpers.Actions;
+import sharedHelpers.Direction;
+import sharedHelpers.Msgs;
 
 /**
  * The main class for controlling game logic
@@ -195,6 +195,7 @@ public class GameLogic {
 		//if the door is of type DoorLevel it will place the player into the next level (Stage)
 		if (nextTile instanceof Door) {
 			if (((Passable)nextTile).isPassable()) {
+				
 				if(nextTile instanceof DoorLevel){
 					int id = player.getStageID();
 					int numStages = stages.size();
@@ -206,10 +207,13 @@ public class GameLogic {
 				}	
 				
 				TileFullLocation d = TileConnections.getConnectedTile(player.getStageID(), player.getRoomID(), nextLoc);
-				gameWorld.removePlayers();
-				player.setLocation(d.getStage(), d.getRoom(), d.getLocation());
-				gameWorld.addPlayersToRooms();
-				return true;
+				if (d != null){
+					gameWorld.removePlayers();
+					player.setLocation(d.getStage(), d.getRoom(), d.getLocation());
+					gameWorld.addPlayersToRooms();
+					
+					return true;	
+				}
 			}
 		}
 		

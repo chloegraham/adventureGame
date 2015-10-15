@@ -4,7 +4,20 @@ import java.awt.Point;
 import java.util.HashMap;
 import java.util.Map;
 
+/* 
+ * A class to create a two way map structure to simulate a linked list between rooms and levels.
+ * The class also handles the relationship between pressure pads and doors which are locked
+ * and unlocked by pressure pads.
+ * 
+ * Slightly hard-coded. Borderline.
+ * 
+ * @author benscully & Chris
+ */
+
+
 public class TileConnections {
+	
+	//Final fields of all the connections in level 1
 	private static final TileFullLocation lv0rm1out = new TileFullLocation(0, 0, new Point(3,0));
 	private static final TileFullLocation lv0rm2in = new TileFullLocation(0, 1, new Point(3,4));
 	private static final TileFullLocation lv0rm2out = new TileFullLocation(0, 1, new Point(2,3));
@@ -14,9 +27,9 @@ public class TileConnections {
 	private static final TileFullLocation lv0rm4in = new TileFullLocation(0, 3, new Point(0,0));
 	private static final TileFullLocation lv0rm4out = new TileFullLocation(0, 3, new Point(9,0));
 	
+	//Final fields of all the connections to move between rooms in level 2
 	private static final TileFullLocation rm1in = new TileFullLocation(1, 0, new Point(0,7));
 	private static final TileFullLocation rm1out = new TileFullLocation(1, 0, new Point(3,8));
-	private static final TileFullLocation rm1pp = new TileFullLocation(1, 0, new Point(5,7));
 	private static final TileFullLocation rm1ppDoor = new TileFullLocation(1, 0, new Point(3,3));
 	private static final TileFullLocation rm2in = new TileFullLocation(1, 1, new Point(0,1));
 	private static final TileFullLocation rm2out = new TileFullLocation(1, 1, new Point(8,1));
@@ -24,6 +37,8 @@ public class TileConnections {
 	private static final TileFullLocation rm3out = new TileFullLocation(1, 2, new Point(18,2));
 	private static final TileFullLocation rm3pp = new TileFullLocation(1, 2, new Point(1,1));
 	
+	//Final fields for every pressure pad inside level 2
+	private static final TileFullLocation rm1pp = new TileFullLocation(1, 0, new Point(5,7));
 	private static final TileFullLocation rm3pp1 = new TileFullLocation(1, 2, new Point(2,1));
 	private static final TileFullLocation rm3pp2 = new TileFullLocation(1, 2, new Point(3,1));
 	private static final TileFullLocation rm3pp3 = new TileFullLocation(1, 2, new Point(4,1));
@@ -36,6 +51,7 @@ public class TileConnections {
 	private static final TileFullLocation rm3pp10 = new TileFullLocation(1, 2, new Point(11,1));
 	private static final TileFullLocation rm3pp11 = new TileFullLocation(1, 2, new Point(12,1));
 	
+	//Final fields for every door that is controlled by a pressure pad in level 2
 	private static final TileFullLocation rm3Door1 = new TileFullLocation(1, 3, new Point(17,2));
 	private static final TileFullLocation rm3Door2 = new TileFullLocation(1, 3, new Point(16,2));
 	private static final TileFullLocation rm3Door3 = new TileFullLocation(1, 3, new Point(16,1));
@@ -49,6 +65,11 @@ public class TileConnections {
 	private static final TileFullLocation rm3Door11 = new TileFullLocation(1, 3, new Point(15,2));
 	
 	
+	
+	/**
+	 * @param tileFullLocation the variables storing all the information describing a tiles location 
+	 * @return a map of every pairing of tiles, pressure pad and door or door and door for movement between rooms/level
+	 */
 	private static TileFullLocation getConnectedTile1(TileFullLocation tileFullLocation) {
 		Map<TileFullLocation, TileFullLocation> map = new HashMap<>();
 		map.put(lv0rm1out, lv0rm2in);
@@ -71,10 +92,13 @@ public class TileConnections {
 		map.put(rm3pp9, rm3Door9);
 		map.put(rm3pp10, rm3Door10);
 		map.put(rm3pp11, rm3Door11);
-//		map.put(rm3out, rm4in);
 		return map.get(tileFullLocation);
 	}
 	
+	/**
+	 * @param tileFullLocation the variables storing all the information describing a tiles location 
+	 * @return a map of every pairing of tiles, pressure pad and door or door and door for movement between rooms/level
+	 */
 	private static TileFullLocation getConnectedTile2(TileFullLocation tileFullLocation) {
 		Map<TileFullLocation, TileFullLocation> map = new HashMap<>();
 		map.put(lv0rm2in, lv0rm1out);
@@ -85,6 +109,12 @@ public class TileConnections {
 		return map.get(tileFullLocation);
 	}
 	
+	/**
+	 * @param currStage 
+	 * @param currRoom
+	 * @param currLocation
+	 * @return the pair of the current tile, based on the map populated inside this class
+	 */
 	public static TileFullLocation getConnectedTile(int currStage, int currRoom, Point currLocation) {
 		TileFullLocation tileFullLocation = new TileFullLocation(currStage, currRoom, currLocation);
 		TileFullLocation transfer = null;

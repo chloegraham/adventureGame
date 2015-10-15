@@ -1,5 +1,10 @@
-package client.helpers;
+package sharedHelpers;
 
+/**
+ * Dirrections. The classes in sharedHelpers package are used in both the server, and the client,
+ * and must be identical.
+ *
+ */
 public enum Direction {
 	NORTH ("North"),
 	SOUTH ("South"),

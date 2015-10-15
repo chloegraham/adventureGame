@@ -4,7 +4,6 @@ import java.awt.Point;
 import java.util.HashSet;
 import java.util.Set;
 
-import server.helpers.Msgs;
 import server.movable.Boulder;
 import server.movable.Player;
 import server.tiles.Chest;
@@ -17,6 +16,7 @@ import server.tiles.PressurePad;
 import server.tiles.Spikes;
 import server.tiles.Tile;
 import server.tiles.Wall;
+import sharedHelpers.Msgs;
 
 
 /**

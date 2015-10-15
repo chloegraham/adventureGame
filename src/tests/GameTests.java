@@ -10,12 +10,12 @@ import server.gameWorld.GameLogic;
 import server.gameWorld.GameWorld;
 import server.gameWorld.Room;
 import server.gameWorld.Stage;
-import server.helpers.Direction;
 import server.movable.Boulder;
 import server.movable.Player;
 import server.saveLoad.XML;
 import server.tiles.Chest;
-import client.helpers.Actions;
+import sharedHelpers.Direction;
+import sharedHelpers.Actions;
 
 /**
  * Tests for the game world package and save/load.
